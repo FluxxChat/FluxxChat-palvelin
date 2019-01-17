@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"lib": ["es2018"],
+		"moduleResolution": "node",
+		"module": "commonjs",
+		"noUnusedLocals": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"target": "ES2016",
+		"outDir": "dist",
+		"strictNullChecks": true
+	}
+}
