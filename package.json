@@ -11,7 +11,8 @@
     "start": "node ./dist/index.js",
     "start:watch": "nodemon ./dist/index.js",
     "commit": "git-cz",
-    "lint": "tslint --fix \"src/**/*.ts\""
+    "lint": "tslint --fix \"src/**/*.ts\"",
+    "heroku-postbuild": "yarn build"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.3.2",
