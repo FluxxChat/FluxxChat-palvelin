@@ -1,5 +1,9 @@
 # FluxxChat palvelin
 
+### Heroku link
+
+https://fluxxchat-palvelin.herokuapp.com/
+
 ### Setup
 
 Install dependencies
