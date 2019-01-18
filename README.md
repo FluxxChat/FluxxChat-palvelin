@@ -1,5 +1,13 @@
 # FluxxChat palvelin
 
+### Setup
+
+Install dependencies
+
+```
+$ yarn
+```
+
 ### Running
 
 Build sources and run server:
