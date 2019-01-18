@@ -4,6 +4,7 @@ import { Message } from 'fluxxchat-protokolla';
 type MessageHandler = (msg: Message) => void;
 
 export class Connection {
+	public closed = false;
 	private socket: WebSocket;
 	private messageHandlers: MessageHandler[] = [];
 
@@ -15,6 +16,10 @@ export class Connection {
 			for (const handler of this.messageHandlers) {
 				handler(message);
 			}
+		});
+
+		socket.on('close', data => {
+			this.closed = true;
 		});
 	}
 
