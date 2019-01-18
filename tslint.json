@@ -1,5 +1,21 @@
 {
-	"rules": {
-		"indent": [true, "tabs", 4]
-	}
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended"],
+  "jsRules": {},
+  "rules": {
+    "indent": [true, "tabs"],
+    "ordered-imports": false,
+    "ban-types": false,
+    "quotemark": [true, "single"],
+    "trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
+    "semicolon": [true, "always", "ignore-bound-class-methods"],
+    "object-literal-sort-keys": false,
+    "object-literal-key-quotes": [true, "as-needed"],
+    "arrow-parens": [true, "ban-single-arg-parens"],
+    "interface-name": [true, "never-prefix"],
+    "variable-name": [true, "check-format", "ban-keywords", "allow-pascal-case", "allow-leading-underscore"],
+    "max-line-length": false,
+		"max-classes-per-file": false
+  },
+  "rulesDirectory": []
 }

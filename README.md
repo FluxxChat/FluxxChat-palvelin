@@ -29,3 +29,15 @@ $ yarn build:watch
 ```
 $ yarn start:watch
 ```
+
+### Contributing
+
+This project uses [conventional commit messages](https://www.conventionalcommits.org/en/v1.0.0-beta.2/). Example valid commit message:
+```
+feat: added graceful shutdown
+```
+You can also use the following command for commits:
+```
+$ yarn commit
+```
+The above command will guide you through the parts of the commit message interactively.
