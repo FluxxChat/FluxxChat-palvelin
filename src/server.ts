@@ -1,7 +1,7 @@
-import { Message, NewRuleMessage } from 'fluxxchat-protokolla';
-import { Rule, RULES } from './rules/rule';
-import { Connection } from './connection';
-import { intersection } from './util';
+import {Message, NewRuleMessage} from 'fluxxchat-protokolla';
+import {Rule, RULES} from './rules/rule';
+import {Connection} from './connection';
+import {intersection} from './util';
 
 export class FluxxChatServer {
 	private enabledRules: Rule[] = [];

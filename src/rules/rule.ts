@@ -1,6 +1,6 @@
-import { Message } from 'fluxxchat-protokolla';
-import { FluxxChatServer } from '../server';
-import { AnonymityRule } from './anonymity_rule';
+import {Message} from 'fluxxchat-protokolla';
+import {FluxxChatServer} from '../server';
+import {AnonymityRule} from '././anonymity-rule';
 
 export class Rule {
 	public ruleCategories: Set<RuleCategory>;

@@ -1,8 +1,10 @@
 {
   "defaultSeverity": "error",
-  "extends": ["tslint:recommended"],
+  "extends": ["tslint:recommended", "tslint-eslint-rules"],
   "jsRules": {},
   "rules": {
+    "object-curly-spacing": [true, "never"],
+    "file-name-casing": [true, "kebab-case"],
     "indent": [true, "tabs"],
     "ordered-imports": false,
     "ban-types": false,

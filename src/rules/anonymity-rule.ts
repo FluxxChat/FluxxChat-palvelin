@@ -1,6 +1,6 @@
-import { Rule, RuleCategory } from './rule';
-import { FluxxChatServer } from '../server';
-import { Message } from 'fluxxchat-protokolla';
+import {Rule, RuleCategory} from './rule';
+import {FluxxChatServer} from '../server';
+import {Message} from 'fluxxchat-protokolla';
 
 export class AnonymityRule implements Rule {
 	public ruleCategories: Set<RuleCategory> = new Set(['ANONYMITY'] as RuleCategory[]);
@@ -14,6 +14,6 @@ export class AnonymityRule implements Rule {
 	}
 
 	public applyMessage(_server: FluxxChatServer, message: Message): Message {
-		return { ...message, senderNickname: '***' };
+		return {...message, senderNickname: '***'};
 	}
 }

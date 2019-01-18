@@ -1,5 +1,5 @@
 import * as WebSocket from 'ws';
-import { Message } from 'fluxxchat-protokolla';
+import {Message} from 'fluxxchat-protokolla';
 
 type MessageHandler = (msg: Message) => void;
 
