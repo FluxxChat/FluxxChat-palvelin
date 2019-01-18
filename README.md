@@ -1,5 +1,7 @@
 # FluxxChat palvelin
 
+[Documentation](https://github.com/FluxxChat/FluxxChat-dokumentaatio)
+
 ### Setup
 
 Install dependencies
