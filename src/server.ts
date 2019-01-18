@@ -7,7 +7,7 @@ export class FluxxChatServer {
 	private enabledRules: Rule[] = [];
 	private connections: Connection[] = [];
 
-	public handleMessage(message: Message): void {
+	public handleMessage(message: Message) {
 		// special code for the new rule message
 		if (message instanceof NewRuleMessage) {
 			if (RULES[message.ruleName]) {
@@ -24,9 +24,12 @@ export class FluxxChatServer {
 		for (const rule of this.enabledRules) {
 			message = rule.applyMessage(this, message);
 		}
+
 		for (const connection of this.connections) {
-			if (!connection.closed) {
+			try {
 				connection.sendMessage(message);
+			} catch (err) {
+				console.error(`Could not send message to client: ${err.message}`); // tslint:disable-line:no-console
 			}
 		}
 
@@ -38,8 +41,14 @@ export class FluxxChatServer {
 		// TODO
 	}
 
-	public addConnection(conn: Connection): void {
+	public removeConnection(conn: Connection) {
+		const index = this.connections.findIndex(c => c.id === conn.id);
+		this.connections.splice(index, 1);
+	}
+
+	public addConnection(conn: Connection) {
 		this.connections.push(conn);
 		conn.onMessage(message => this.handleMessage(message));
+		conn.onClose(() => this.removeConnection(conn));
 	}
 }
