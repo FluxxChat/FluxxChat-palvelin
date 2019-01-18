@@ -2,6 +2,10 @@
 
 [Documentation](https://github.com/FluxxChat/FluxxChat-dokumentaatio)
 
+### Heroku link
+
+[Link](https://fluxxchat-palvelin.herokuapp.com/)
+
 ### Setup
 
 Install dependencies

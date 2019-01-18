@@ -21,7 +21,7 @@ const app = express();
 
 // Fallback to index.html
 app.get('/', (_req, res) => {
-	return res.json({ message: 'Hello World!' })
+	return res.json({ message: 'Hello World!' });
 });
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
