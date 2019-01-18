@@ -5,7 +5,7 @@ type MessageHandler = (msg: Message) => void;
 
 export class Connection {
 	private socket: WebSocket;
-	private messageHandlers: MessageHandler[];
+	private messageHandlers: MessageHandler[] = [];
 
 	constructor(socket: WebSocket) {
 		this.socket = socket;
