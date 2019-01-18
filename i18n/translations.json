@@ -1,0 +1,8 @@
+{
+    "Server listening on port $[1]": {
+        "fi": "Palvelin kuuntelee porttia $[1]"
+    },
+    "New connection": {
+        "fi": "Uusi yhteys"
+    }
+}
