@@ -498,7 +498,6 @@ commander@^2.12.1:
 commander@~2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.1.0.tgz#d121bbae860d9992a3d517ba96f56588e47c6781"
-  integrity sha1-0SG7roYNmZKj1Re6lvVliOR8Z4E=
 
 commitizen@^3.0.5:
   version "3.0.5"
@@ -1354,7 +1353,6 @@ load-json-file@^4.0.0:
 localize@^0.4.7:
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/localize/-/localize-0.4.7.tgz#e3b69e5ac1ee47fe211ff07a02b8f2e969bf9cfa"
-  integrity sha1-47aeWsHuR/4hH/B6Arjy6Wm/nPo=
   dependencies:
     commander "~2.1.0"
 
@@ -2272,10 +2270,9 @@ type-is@~1.6.16:
     media-typer "0.3.0"
     mime-types "~2.1.18"
 
-typescript@^3.2.2:
-  version "3.2.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.4.tgz#c585cb952912263d915b462726ce244ba510ef3d"
-  integrity sha512-0RNDbSdEokBeEAkgNbxJ+BLwSManFy9TeXz8uW+48j/xhEXv1ePME60olyzw2XzUqUBNAYFeJadIqAgNqIACwg==
+typescript@3.1:
+  version "3.1.6"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-3.1.6.tgz#b6543a83cfc8c2befb3f4c8fba6896f5b0c9be68"
 
 universalify@^0.1.0:
   version "0.1.2"
