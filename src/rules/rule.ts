@@ -25,7 +25,7 @@ export class DisablingRule extends Rule {
 	}
 }
 
-export type RuleCategory = 'ANONYMITY';
+export type RuleCategory = 'ANONYMITY' | 'MESSAGE-LENGTH';
 
 export const RULES: { [ruleName: string]: Rule } = {
 	anonymity: new AnonymityRule(),
