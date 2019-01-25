@@ -1,4 +1,4 @@
-import {Message, NewRuleMessage} from 'fluxxchat-protokolla';
+import {Message} from 'fluxxchat-protokolla';
 import {Rule, RULES} from './rules/rule';
 import {Connection} from './connection';
 import {intersection} from './util';
@@ -9,7 +9,7 @@ export class FluxxChatServer {
 
 	public handleMessage(message: Message) {
 		// special code for the new rule message
-		if (message instanceof NewRuleMessage) {
+		if (message.type === 'NEW_RULE') {
 			if (RULES[message.ruleName]) {
 				const newRule = RULES[message.ruleName];
 				this.enabledRules = this.enabledRules.filter(r => intersection(newRule.ruleCategories, r.ruleCategories).size === 0);
