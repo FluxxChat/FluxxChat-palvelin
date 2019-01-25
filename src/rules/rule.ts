@@ -29,5 +29,6 @@ export type RuleCategory = 'ANONYMITY';
 
 export const RULES: { [ruleName: string]: Rule } = {
 	anonymity: new AnonymityRule(),
-	no_anonymity: new DisablingRule('ANONYMITY')
+	no_anonymity: new DisablingRule('ANONYMITY'),
+	disable_all: new DisablingRule('ANONYMITY')
 };
