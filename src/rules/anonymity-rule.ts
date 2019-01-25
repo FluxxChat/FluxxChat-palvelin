@@ -6,6 +6,9 @@ export class AnonymityRule extends Rule {
 	public ruleCategories: Set<RuleCategory> = new Set(['ANONYMITY'] as RuleCategory[]);
 
 	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: any): Message {
-		return {...message, senderNickname: '***'};
+		if (message.type === 'TEXT') {
+			return {...message, senderNickname: '***'};
+		}
+		return message;
 	}
 }
