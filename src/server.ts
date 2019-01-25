@@ -1,10 +1,10 @@
 import {Message, NewRuleMessage} from 'fluxxchat-protokolla';
-import {Rule, RULES} from './rules/rule';
+import {RULES, EnabledRule} from './rules/rule';
 import {Connection} from './connection';
 import {intersection} from './util';
 
 export class FluxxChatServer {
-	private enabledRules: Rule[] = [];
+	private enabledRules: EnabledRule[] = [];
 	private connections: Connection[] = [];
 
 	public handleMessage(message: Message) {
@@ -12,8 +12,8 @@ export class FluxxChatServer {
 		if (message instanceof NewRuleMessage) {
 			if (RULES[message.ruleName]) {
 				const newRule = RULES[message.ruleName];
-				this.enabledRules = this.enabledRules.filter(r => intersection(newRule.ruleCategories, r.ruleCategories).size === 0);
-				this.enabledRules.push(newRule);
+				this.enabledRules = this.enabledRules.filter(r => intersection(newRule.ruleCategories, r.rule.ruleCategories).size === 0);
+				this.enabledRules.push(new EnabledRule(newRule, null));
 			} else {
 				console.log('Unknown rule: ' + message.ruleName); // tslint:disable-line:no-console
 				return;
