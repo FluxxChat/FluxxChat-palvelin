@@ -1,15 +1,40 @@
-import {Message, NewRuleMessage} from 'fluxxchat-protokolla';
+import * as protocol from 'fluxxchat-protokolla';
 import {Rule, RULES} from './rules/rule';
 import {Connection} from './connection';
+import {Room} from './room';
 import {intersection} from './util';
 
 export class FluxxChatServer {
 	private enabledRules: Rule[] = [];
 	private connections: Connection[] = [];
+	private rooms: { [id: string]: Room} = {};
 
-	public handleMessage(message: Message) {
+	public handleMessage(conn: Connection, message: protocol.Message) {
+		if (!conn.room) {
+			if (message instanceof protocol.JoinRoomMessage) {
+				conn.nickname = message.nickname;
+				if (this.rooms[message.roomId]) {
+					const room = this.rooms[message.roomId];
+					room.addConnection(conn);
+					room.sendStateMessages();
+				} else {
+					console.log('Unknown room: ' + message.roomId); // tslint:disable-line:no-console
+					return;
+				}
+			} else if (message instanceof protocol.CreateRoomMessage) {
+				const room = new Room();
+				this.rooms[room.id] = room;
+				conn.sendMessage({type: 'ROOM_CREATED', roomId: room.id} as protocol.RoomCreatedMessage);
+				return;
+			} else {
+				console.log('Illegal message type in roomless state: ' + message.type); // tslint:disable-line:no-console
+				return;
+			}
+			return;
+		}
+
 		// special code for the new rule message
-		if (message instanceof NewRuleMessage) {
+		if (message instanceof protocol.NewRuleMessage) {
 			if (RULES[message.ruleName]) {
 				const newRule = RULES[message.ruleName];
 				this.enabledRules = this.enabledRules.filter(r => intersection(newRule.ruleCategories, r.ruleCategories).size === 0);
@@ -25,7 +50,7 @@ export class FluxxChatServer {
 			message = rule.applyMessage(this, message);
 		}
 
-		for (const connection of this.connections) {
+		for (const connection of conn.room.connections) {
 			try {
 				connection.sendMessage(message);
 			} catch (err) {
@@ -37,10 +62,6 @@ export class FluxxChatServer {
 		this.connections = this.connections.filter(c => !c.closed);
 	}
 
-	public sendMessage(nickname: string, message: Message) {
-		// TODO
-	}
-
 	public removeConnection(conn: Connection) {
 		const index = this.connections.findIndex(c => c.id === conn.id);
 		this.connections.splice(index, 1);
@@ -48,7 +69,7 @@ export class FluxxChatServer {
 
 	public addConnection(conn: Connection) {
 		this.connections.push(conn);
-		conn.onMessage(message => this.handleMessage(message));
+		conn.onMessage((_, message) => this.handleMessage(conn, message));
 		conn.onClose(() => this.removeConnection(conn));
 	}
 }
