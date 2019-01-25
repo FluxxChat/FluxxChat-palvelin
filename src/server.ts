@@ -2,7 +2,7 @@ import {Message, NewRuleMessage} from 'fluxxchat-protokolla';
 import {EnabledRule} from './rules/rule';
 import {Connection} from './connection';
 import {intersection} from './util';
-import {RULES} from './rules/activeRules';
+import {RULES} from './rules/active-rules';
 
 export class FluxxChatServer {
 	private enabledRules: EnabledRule[] = [];
