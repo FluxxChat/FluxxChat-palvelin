@@ -66,6 +66,10 @@ export class FluxxChatServer {
 	public removeConnection(conn: Connection) {
 		const index = this.connections.findIndex(c => c.id === conn.id);
 		this.connections.splice(index, 1);
+		if (conn.room) {
+			conn.room.removeConnection(conn);
+			conn.room.sendStateMessages();
+		}
 	}
 
 	public addConnection(conn: Connection) {
