@@ -20,7 +20,7 @@ export class Connection {
 		this.socket = socket;
 
 		socket.on('message', data => {
-			const message = Message.fromJSON(data.toString());
+			const message: Message = JSON.parse(data.toString());
 			for (const handler of this.messageHandlers) {
 				handler(this, message);
 			}
