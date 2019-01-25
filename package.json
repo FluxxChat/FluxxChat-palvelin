@@ -9,7 +9,7 @@
     "build": "tsc && cp -r i18n dist/",
     "build:watch": "tsc -w && cp -r i18n dist/",
     "start": "node ./dist/index.js",
-    "start:watch": "nodemon ./dist/index.js",
+    "start:watch": "node ./dist/index.js",
     "commit": "git-cz",
     "lint": "tslint --fix \"src/**/*.ts\"",
     "heroku-postbuild": "yarn build"
