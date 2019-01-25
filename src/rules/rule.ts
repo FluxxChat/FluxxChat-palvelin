@@ -28,7 +28,7 @@ export class Rule {
 		// do nothing as default
 	}
 
-	public applyMessage(server: FluxxChatServer, message: Message, parameter: any): Message {
+	public applyMessage(server: FluxxChatServer, message: Message, parameter?: any): Message {
 		return message;
 	}
 }
