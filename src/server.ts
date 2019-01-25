@@ -46,6 +46,10 @@ export class FluxxChatServer {
 			}
 		}
 
+		if (message.type === 'TEXT') {
+			message.senderNickname = conn.nickname;
+		}
+
 		// main routine
 		for (const rule of this.enabledRules) {
 			message = rule.applyMessage(this, message);
