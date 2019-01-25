@@ -1,7 +1,5 @@
 import {Message} from 'fluxxchat-protokolla';
 import {FluxxChatServer} from '../server';
-import {AnonymityRule} from '././anonymity-rule';
-import {MessageLengthRule} from './message-length-rule';
 
 export class EnabledRule {
 	public rule: Rule;
@@ -28,7 +26,7 @@ export class Rule {
 		// do nothing as default
 	}
 
-	public applyMessage(server: FluxxChatServer, message: Message, parameter?: any): Message {
+	public applyMessage(server: FluxxChatServer, message: Message, parameter: any): Message {
 		return message;
 	}
 }
@@ -41,13 +39,3 @@ export class DisablingRule extends Rule {
 }
 
 export type RuleCategory = 'ANONYMITY' | 'MESSAGE-LENGTH';
-
-export const RULES: { [ruleName: string]: Rule } = {
-	anonymity: new AnonymityRule(),
-	no_anonymity: new DisablingRule('ANONYMITY'),
-
-	message_length: new MessageLengthRule(),
-	no_message_length: new DisablingRule('MESSAGE-LENGTH'),
-
-	disable_all: new DisablingRule('ANONYMITY')
-};
