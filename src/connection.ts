@@ -22,14 +22,22 @@ export class Connection {
 		socket.on('message', data => {
 			const message: Message = JSON.parse(data.toString());
 			for (const handler of this.messageHandlers) {
-				handler(this, message);
+				try {
+					handler(this, message);
+				} catch (err) {
+					console.error(err); // tslint:disable-line:no-console
+				}
 			}
 		});
 
 		socket.on('close', () => {
 			this.closed = true;
 			for (const handler of this.closeHandlers) {
-				handler();
+				try {
+					handler();
+				} catch (err) {
+					console.error(err); // tslint:disable-line:no-console
+				}
 			}
 		});
 	}
