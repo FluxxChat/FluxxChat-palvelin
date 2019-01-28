@@ -1,6 +1,6 @@
 import {Message} from 'fluxxchat-protokolla';
 import {FluxxChatServer} from '../server';
-import { Connection } from '../connection';
+import {Connection} from '../connection';
 
 export class EnabledRule {
 	public rule: Rule;
@@ -27,7 +27,7 @@ export class Rule {
 		// do nothing as default
 	}
 
-	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: any, sender: Connection): Message | null {
+	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: any, _sender: Connection): Message | null {
 		return message;
 	}
 }
