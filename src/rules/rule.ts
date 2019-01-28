@@ -1,5 +1,6 @@
 import {Message} from 'fluxxchat-protokolla';
 import {FluxxChatServer} from '../server';
+import { Connection } from '../connection';
 
 export class EnabledRule {
 	public rule: Rule;
@@ -10,8 +11,8 @@ export class EnabledRule {
 		this.parameter = parameter;
 	}
 
-	public applyMessage(server: FluxxChatServer, message: Message): Message {
-		return this.rule.applyMessage(server, message, this.parameter);
+	public applyMessage(server: FluxxChatServer, message: Message, sender: Connection): Message | null {
+		return this.rule.applyMessage(server, message, this.parameter, sender);
 	}
 }
 
@@ -26,7 +27,7 @@ export class Rule {
 		// do nothing as default
 	}
 
-	public applyMessage(server: FluxxChatServer, message: Message, parameter: any): Message {
+	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: any, sender: Connection): Message | null {
 		return message;
 	}
 }
@@ -38,4 +39,4 @@ export class DisablingRule extends Rule {
 	}
 }
 
-export type RuleCategory = 'ANONYMITY' | 'MESSAGE-LENGTH';
+export type RuleCategory = 'ANONYMITY' | 'MESSAGE-LENGTH' | 'MUTE';

@@ -31,7 +31,12 @@ export class FluxxChatServer {
 		}
 
 		for (const rule of conn.room.enabledRules) {
-			message = rule.applyMessage(this, message);
+			const newMessage = rule.applyMessage(this, message, conn);
+			if (!newMessage) {
+				return; // message removed
+			} else {
+				message = newMessage;
+			}
 		}
 
 		for (const connection of conn.room.connections) {
