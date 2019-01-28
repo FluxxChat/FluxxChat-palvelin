@@ -63,7 +63,7 @@ export class DisablingRule extends RuleBase implements Rule {
 	constructor(rules: Rule[]) {
 		super();
 		this.ruleCategories = new Set(rules.map(rule => rule.ruleCategories));
-		this.title = `Disables the following rules: ${rules.map(rule => rule.title).join(', ')}.`;
+		this.description = `Disables the following rules: ${rules.map(rule => rule.title).join(', ')}.`;
 	}
 }
 
