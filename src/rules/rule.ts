@@ -15,27 +15,59 @@ export class EnabledRule {
 	}
 }
 
-export class Rule {
+export interface Rule {
+	ruleCategories: Set<RuleCategory>;
+	title: string;
+	description: string;
+	ruleEnabled: () => void;
+	ruleDisabled: () => void;
+	applyMessage: (server: FluxxChatServer, message: Message, parameter: any) => Message;
+	toJSON: () => {
+		ruleCategories: RuleCategory[];
+		title: string;
+		description: string;
+	};
+}
+
+export class RuleBase {
 	public ruleCategories: Set<RuleCategory>;
+	public title: string;
+	public description: string;
 
-	public ruleEnabled(): void {
-		// do nothing as default
+	public ruleEnabled() {
+		// Nothing
 	}
 
-	public ruleDisabled(): void {
-		// do nothing as default
+	public ruleDisabled() {
+		// Nothing
 	}
 
-	public applyMessage(server: FluxxChatServer, message: Message, parameter: any): Message {
+	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: any): Message {
 		return message;
 	}
-}
 
-export class DisablingRule extends Rule {
-	constructor(...categories: RuleCategory[]) {
-		super();
-		this.ruleCategories = new Set(categories);
+	public toJSON() {
+		return {
+			ruleCategories: [...this.ruleCategories],
+			title: this.title,
+			description: this.description
+		};
 	}
 }
 
-export type RuleCategory = 'ANONYMITY' | 'MESSAGE-LENGTH';
+export class DisablingRule extends RuleBase implements Rule {
+	public ruleCategories;
+	public title = 'Disable';
+	public description;
+
+	constructor(rules: Rule[]) {
+		super();
+		this.ruleCategories = new Set(rules.map(rule => rule.ruleCategories));
+		this.title = `Disables the following rules: ${rules.map(rule => rule.title).join(', ')}.`;
+	}
+}
+
+export enum RuleCategory {
+	ANONYMITY = 'ANONYMITY',
+	MESSAGELENGTH = 'MESSAGE-LENGTH'
+}
