@@ -1,4 +1,4 @@
-import {Message} from 'fluxxchat-protokolla';
+import {Message, Card, RuleParameterTypes} from 'fluxxchat-protokolla';
 import {FluxxChatServer} from '../server';
 
 export class EnabledRule {
@@ -8,6 +8,10 @@ export class EnabledRule {
 	constructor(rule: Rule, parameter: any) {
 		this.rule = rule;
 		this.parameter = parameter;
+	}
+
+	public toJSON() {
+		return {... this.rule.toJSON(), parameters: this.parameter};
 	}
 
 	public applyMessage(server: FluxxChatServer, message: Message): Message {
@@ -22,17 +26,15 @@ export interface Rule {
 	ruleEnabled: () => void;
 	ruleDisabled: () => void;
 	applyMessage: (server: FluxxChatServer, message: Message, parameter: any) => Message;
-	toJSON: () => {
-		ruleCategories: RuleCategory[];
-		title: string;
-		description: string;
-	};
+	toJSON: () => Card;
 }
 
 export class RuleBase {
 	public ruleCategories: Set<RuleCategory>;
 	public title: string;
 	public description: string;
+	public ruleName: string;
+	public parameterTypes: RuleParameterTypes;
 
 	public ruleEnabled() {
 		// Nothing
@@ -48,9 +50,11 @@ export class RuleBase {
 
 	public toJSON() {
 		return {
-			ruleCategories: [...this.ruleCategories],
-			title: this.title,
-			description: this.description
+			name: this.title,
+			description: this.description,
+			ruleName: this.ruleName,
+			parameterTypes: this.parameterTypes,
+			parameters: {}
 		};
 	}
 }

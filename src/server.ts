@@ -57,7 +57,7 @@ export class FluxxChatServer {
 		conn.onClose(() => this.removeConnection(conn));
 	}
 
-	private enactRule(conn: Connection, ruleName: keyof typeof RULES) {
+	private enactRule(conn: Connection, ruleName: string) {
 		if (!conn.room) {
 			throw new Error('Must be connected to a room');
 		}
