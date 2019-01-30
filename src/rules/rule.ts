@@ -34,7 +34,7 @@ export class RuleBase {
 	public title: string;
 	public description: string;
 	public ruleName: string;
-	public parameterTypes: RuleParameterTypes;
+	public parameterTypes: RuleParameterTypes = {};
 
 	public ruleEnabled() {
 		// Nothing
@@ -48,7 +48,7 @@ export class RuleBase {
 		return message;
 	}
 
-	public toJSON() {
+	public toJSON(): Card {
 		return {
 			name: this.title,
 			description: this.description,
@@ -63,11 +63,13 @@ export class DisablingRule extends RuleBase implements Rule {
 	public ruleCategories;
 	public title = 'Disable';
 	public description;
+	public parameterTypes = {};
 
-	constructor(rules: Rule[]) {
+	constructor(rules: Rule[], ruleName: string) {
 		super();
 		this.ruleCategories = new Set(rules.reduce((acc, rule) => acc.concat(rule), [] as Rule[]));
 		this.description = `Disables the following rules: ${rules.map(rule => rule.title).join(', ')}.`;
+		this.ruleName = ruleName;
 	}
 }
 
