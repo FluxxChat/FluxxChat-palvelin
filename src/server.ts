@@ -92,9 +92,9 @@ export class FluxxChatServer {
 			conn.nickname = requestedNickname;
 			room.addConnection(conn);
 			room.sendStateMessages();
-			for (const key in RULES) {
-				conn.sendMessage({type: "CARD", card: RULES[key].toJSON()});
-			}
+			Object.keys(RULES).forEach(key => {
+				conn.sendMessage({type: 'CARD', card: RULES[key].toJSON()});
+			});
 		} else {
 			throw new Error(`Room does not exist: ${roomId}`);
 		}
