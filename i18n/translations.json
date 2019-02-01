@@ -17,6 +17,12 @@
     "Restricts message length.": {
         "fi": "Rajoittaa viestin pituuden."
     },
+    "Mute Player": {
+        "fi": "Hiljennä pelaaja"
+    },
+    "Mutes a specific player.": {
+        "fi": "Hiljentää valitun pelaajan."
+    },
     "Disable": {
         "fi": "Kumoa sääntö"
     },

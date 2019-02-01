@@ -1,21 +1,22 @@
-import {Message, Card, RuleParameterTypes} from 'fluxxchat-protokolla';
+import {Message, Card, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
 import {FluxxChatServer} from '../server';
+import {Connection} from '../connection';
 
 export class EnabledRule {
 	public rule: Rule;
-	public parameter: any;
+	public parameter: RuleParameters;
 
-	constructor(rule: Rule, parameter: any) {
+	constructor(rule: Rule, parameter: RuleParameters) {
 		this.rule = rule;
 		this.parameter = parameter;
 	}
 
-	public toJSON() {
-		return {... this.rule.toJSON(), parameters: this.parameter};
+	public applyMessage(server: FluxxChatServer, message: Message, sender: Connection): Message | null {
+		return this.rule.applyMessage(server, message, this.parameter, sender);
 	}
 
-	public applyMessage(server: FluxxChatServer, message: Message): Message {
-		return this.rule.applyMessage(server, message, this.parameter);
+	public toJSON() {
+		return {...this.rule.toJSON(), parameters: this.parameter};
 	}
 }
 
@@ -25,7 +26,7 @@ export interface Rule {
 	description: string;
 	ruleEnabled: () => void;
 	ruleDisabled: () => void;
-	applyMessage: (server: FluxxChatServer, message: Message, parameter: any) => Message;
+	applyMessage: (server: FluxxChatServer, message: Message, parameter: RuleParameters, sender: Connection) => Message | null;
 	toJSON: () => Card;
 }
 
@@ -44,7 +45,7 @@ export class RuleBase {
 		// Nothing
 	}
 
-	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: any): Message {
+	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: RuleParameters, _sender: Connection): Message | null {
 		return message;
 	}
 
@@ -72,5 +73,6 @@ export class DisablingRule extends RuleBase implements Rule {
 
 export enum RuleCategory {
 	ANONYMITY = 'ANONYMITY',
-	MESSAGELENGTH = 'MESSAGE-LENGTH'
+	MESSAGELENGTH = 'MESSAGE-LENGTH',
+	MUTE = 'MUTE'
 }

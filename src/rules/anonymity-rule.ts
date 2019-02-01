@@ -1,6 +1,7 @@
 import {Rule, RuleCategory, RuleBase} from './rule';
 import {FluxxChatServer} from '../server';
-import {Message, TextMessage, RuleParameterTypes} from 'fluxxchat-protokolla';
+import {Message, TextMessage, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
+import {Connection} from '../connection';
 
 export class AnonymityRule extends RuleBase implements Rule {
 	public ruleCategories = new Set([RuleCategory.ANONYMITY]);
@@ -9,7 +10,7 @@ export class AnonymityRule extends RuleBase implements Rule {
 	public ruleName = 'anonymity';
 	public parameterTypes = {} as RuleParameterTypes;
 
-	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: any): Message {
+	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: RuleParameters, _sender: Connection): Message {
 		if (message.type === 'TEXT') {
 			return {...message, senderNickname: '***'} as TextMessage;
 		}
