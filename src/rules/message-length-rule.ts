@@ -5,8 +5,8 @@ import {isNumber} from 'util';
 
 export class MessageLengthRule extends RuleBase implements Rule {
 	public ruleCategories = new Set([RuleCategory.MESSAGELENGTH]);
-	public title = 'Message Length';
-	public description = 'Restricts message length.';
+	public title = global._('Message Length Limit');
+	public description = global._('Restricts message length.');
 
 	public applyMessage(_server: FluxxChatServer, message: TextMessage, parameter: any): TextMessage {
 		if (isNumber(parameter) && message.textContent.length > parameter) {

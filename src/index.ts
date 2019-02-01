@@ -7,7 +7,7 @@ import {Connection} from './connection';
 
 const localize = new Localize('./i18n/');
 localize.setLocale('fi');
-const _: (str: string, ...subs: any[]) => string = localize.translate;
+global._ = localize.translate;
 
 const server = new FluxxChatServer();
 
@@ -26,5 +26,5 @@ app.get('/', (_req, res) => {
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
 httpServer.listen(PORT, () => {
-	console.log(_('Server listening on port $[1]', PORT)); // tslint:disable-line:no-console
+	console.log(global._('Server listening on port $[1]', PORT)); // tslint:disable-line:no-console
 });

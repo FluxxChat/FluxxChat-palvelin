@@ -56,14 +56,12 @@ export class RuleBase {
 }
 
 export class DisablingRule extends RuleBase implements Rule {
-	public ruleCategories;
-	public title = 'Disable';
-	public description;
+	public title = global._('Disable');
 
 	constructor(rules: Rule[]) {
 		super();
-		this.ruleCategories = new Set(rules.reduce((acc, rule) => acc.concat(rule), [] as Rule[]));
-		this.description = `Disables the following rules: ${rules.map(rule => rule.title).join(', ')}.`;
+		this.ruleCategories = new Set(rules.reduce((acc, rule) => acc.concat(Array.from(rule.ruleCategories)), [] as RuleCategory[]));
+		this.description = global._('Disables the following rules: $[1].', rules.map(rule => rule.title).join(', '));
 	}
 }
 

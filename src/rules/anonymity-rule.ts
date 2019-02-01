@@ -4,8 +4,8 @@ import {Message, TextMessage} from 'fluxxchat-protokolla';
 
 export class AnonymityRule extends RuleBase implements Rule {
 	public ruleCategories = new Set([RuleCategory.ANONYMITY]);
-	public title = 'Anonymity';
-	public description = 'Hides the identity of players.';
+	public title = global._('Anonymity');
+	public description = global._('Hides the identity of players.');
 
 	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: any): Message {
 		if (message.type === 'TEXT') {
