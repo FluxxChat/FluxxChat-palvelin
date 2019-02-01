@@ -1,4 +1,4 @@
-import {Message, RoomCreatedMessage} from 'fluxxchat-protokolla';
+import {Message, RoomCreatedMessage, Card} from 'fluxxchat-protokolla';
 import {Connection} from './connection';
 import {Room} from './room';
 import {RULES} from './rules/active-rules';
@@ -23,7 +23,7 @@ export class FluxxChatServer {
 		}
 
 		if (message.type === 'NEW_RULE') {
-			this.enactRule(conn, message.card.ruleName);
+			this.enactRule(conn, message.card);
 		}
 
 		if (message.type === 'TEXT') {
@@ -62,7 +62,7 @@ export class FluxxChatServer {
 		conn.onClose(() => this.removeConnection(conn));
 	}
 
-	private enactRule(conn: Connection, ruleName: string) {
+	private enactRule(conn: Connection, card: Card) {
 		if (!conn.room) {
 			throw new Error('Must be connected to a room');
 		}
@@ -71,12 +71,12 @@ export class FluxxChatServer {
 			throw new Error('You can only play cards on your turn');
 		}
 
-		const rule = RULES[ruleName];
+		const rule = RULES[card.ruleName];
 		if (!rule) {
-			throw new Error(`No such rule: ${ruleName}`);
+			throw new Error(`No such rule: ${card.ruleName}`);
 		}
 
-		conn.room.addRule(rule);
+		conn.room.addRule(rule, card.parameters);
 	}
 
 	private createRoom(conn: Connection) {

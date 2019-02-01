@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import {Connection} from './connection';
-import {RoomStateMessage, TextMessage, Message} from 'fluxxchat-protokolla';
+import {RoomStateMessage, TextMessage, Message, RuleParameters} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
 import {intersection} from './util';
 
@@ -23,9 +23,9 @@ export class Room {
 		this.broadcastMessage(msg);
 	}
 
-	public addRule(rule: Rule) {
+	public addRule(rule: Rule, parameters: RuleParameters) {
 		this.enabledRules = this.enabledRules.filter(r => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0);
-		this.enabledRules.push(new EnabledRule(rule, null));
+		this.enabledRules.push(new EnabledRule(rule, parameters));
 
 		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
 		const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;

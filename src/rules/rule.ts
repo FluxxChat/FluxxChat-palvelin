@@ -4,9 +4,9 @@ import {Connection} from '../connection';
 
 export class EnabledRule {
 	public rule: Rule;
-	public parameter: any;
+	public parameter: RuleParameters;
 
-	constructor(rule: Rule, parameter: any) {
+	constructor(rule: Rule, parameter: RuleParameters) {
 		this.rule = rule;
 		this.parameter = parameter;
 	}
