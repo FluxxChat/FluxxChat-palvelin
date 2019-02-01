@@ -5,8 +5,8 @@ import {Connection} from '../connection';
 
 export class AnonymityRule extends RuleBase implements Rule {
 	public ruleCategories = new Set([RuleCategory.ANONYMITY]);
-	public title = 'Anonymity';
-	public description = 'Hides the identity of players.';
+	public title = global._('Anonymity');
+	public description = global._('Hides the identity of players.');
 	public ruleName = 'anonymity';
 	public parameterTypes = {} as RuleParameterTypes;
 

@@ -67,6 +67,10 @@ export class FluxxChatServer {
 			throw new Error('Must be connected to a room');
 		}
 
+		if (!conn.room.turn || conn.room.turn.id !== conn.id) {
+			throw new Error('You can only play cards on your turn');
+		}
+
 		const rule = RULES[ruleName];
 		if (!rule) {
 			throw new Error(`No such rule: ${ruleName}`);
