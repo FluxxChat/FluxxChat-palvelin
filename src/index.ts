@@ -2,12 +2,13 @@ import http from 'http';
 import express from 'express';
 import * as WebSocket from 'ws';
 import Localize = require('localize');
-import {FluxxChatServer} from './server';
-import {Connection} from './connection';
 
 const localize = new Localize('./i18n/');
 localize.setLocale('fi');
 global._ = localize.translate;
+
+import {FluxxChatServer} from './server';
+import {Connection} from './connection';
 
 const server = new FluxxChatServer();
 

@@ -18,6 +18,9 @@
         "fi": "Rajoittaa viestin pituuden."
     },
     "Disable": {
+        "fi": "Kumoa sääntö"
+    },
+    "Disables the following rules: $[1].": {
         "fi": "Kumoaa seuraavat säännöt: $[1]."
     }
 }
