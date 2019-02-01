@@ -1,0 +1,23 @@
+{
+  "addons": [
+
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "FluxxChat-palvelin",
+  "scripts": {
+    "build": "yarn build",
+    "start": "yarn start"
+  },
+  "stack": "heroku-18"
+}
