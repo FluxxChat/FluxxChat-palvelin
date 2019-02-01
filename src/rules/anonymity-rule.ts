@@ -7,7 +7,7 @@ export class AnonymityRule extends RuleBase implements Rule {
 	public title = 'Anonymity';
 	public description = 'Hides the identity of players.';
 	public ruleName = 'anonymity';
-	public parameterTypes = {playButton: ''} as RuleParameterTypes;
+	public parameterTypes = {none: ''} as RuleParameterTypes;
 
 	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: any): Message {
 		if (message.type === 'TEXT') {
