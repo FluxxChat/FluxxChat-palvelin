@@ -16,7 +16,7 @@ export class EnabledRule {
 	}
 
 	public toJSON() {
-		return {... this.rule.toJSON(), parameters: this.parameter};
+		return {...this.rule.toJSON(), parameters: this.parameter};
 	}
 }
 
