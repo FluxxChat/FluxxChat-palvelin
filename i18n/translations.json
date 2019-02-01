@@ -4,5 +4,23 @@
     },
     "New connection": {
         "fi": "Uusi yhteys"
+    },
+    "Anonymity": {
+        "fi": "Nimettömyys"
+    },
+    "Hides the identity of players.": {
+        "fi": "Piilottaa pelaajien identiteetin."
+    },
+    "Message Length Limit": {
+        "fi": "Rajoitettu viestipituus"
+    },
+    "Restricts message length.": {
+        "fi": "Rajoittaa viestin pituuden."
+    },
+    "Disable": {
+        "fi": "Kumoa sääntö"
+    },
+    "Disables the following rules: $[1].": {
+        "fi": "Kumoaa seuraavat säännöt: $[1]."
     }
 }
