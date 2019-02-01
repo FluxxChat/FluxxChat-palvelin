@@ -17,7 +17,7 @@ export class EnabledRule {
 
 	public toJSON() {
 		return {... this.rule.toJSON(), parameters: this.parameter};
-	}S
+	}
 }
 
 export interface Rule {
