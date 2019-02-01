@@ -16,6 +16,8 @@
   },
   "name": "FluxxChat-palvelin",
   "scripts": {
+    "build": "yarn build",
+    "start": "yarn start"
   },
   "stack": "heroku-18"
 }
