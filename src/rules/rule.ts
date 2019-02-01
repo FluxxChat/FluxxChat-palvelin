@@ -63,7 +63,7 @@ export class DisablingRule extends RuleBase implements Rule {
 	public ruleCategories;
 	public title = 'Disable';
 	public description;
-	public parameterTypes = {none: ''} as RuleParameterTypes;
+	public parameterTypes = {} as RuleParameterTypes;
 
 	constructor(rules: Rule[], ruleName: string) {
 		super();
