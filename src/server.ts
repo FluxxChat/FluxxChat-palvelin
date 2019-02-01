@@ -23,7 +23,7 @@ export class FluxxChatServer {
 		}
 
 		if (message.type === 'NEW_RULE') {
-			this.enactRule(conn, message.ruleName);
+			this.enactRule(conn, message.card.ruleName);
 		}
 
 		if (message.type === 'TEXT') {
@@ -97,6 +97,9 @@ export class FluxxChatServer {
 			conn.nickname = requestedNickname;
 			room.addConnection(conn);
 			room.sendStateMessages();
+			Object.keys(RULES).forEach(key => {
+				conn.sendMessage({type: 'CARD', card: RULES[key].toJSON()});
+			});
 		} else {
 			throw new Error(`Room does not exist: ${roomId}`);
 		}

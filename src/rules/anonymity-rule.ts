@@ -1,12 +1,16 @@
-import {Rule, RuleCategory} from './rule';
+import {Rule, RuleCategory, RuleBase} from './rule';
 import {FluxxChatServer} from '../server';
-import {Message, TextMessage} from 'fluxxchat-protokolla';
+import {Message, TextMessage, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 
-export class AnonymityRule extends Rule {
-	public ruleCategories: Set<RuleCategory> = new Set(['ANONYMITY'] as RuleCategory[]);
+export class AnonymityRule extends RuleBase implements Rule {
+	public ruleCategories = new Set([RuleCategory.ANONYMITY]);
+	public title = 'Anonymity';
+	public description = 'Hides the identity of players.';
+	public ruleName = 'anonymity';
+	public parameterTypes = {} as RuleParameterTypes;
 
-	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: any, _sender: Connection): Message {
+	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: RuleParameters, _sender: Connection): Message {
 		if (message.type === 'TEXT') {
 			return {...message, senderNickname: '***'} as TextMessage;
 		}

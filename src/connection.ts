@@ -43,7 +43,11 @@ export class Connection {
 	}
 
 	public sendMessage(message: Message): void {
-		this.socket.send(JSON.stringify(message));
+		try {
+			this.socket.send(JSON.stringify(message));
+		} catch (err) {
+			console.error(err); // tslint:disable-line:no-console
+		}
 	}
 
 	public onMessage(handler: MessageHandler): void {

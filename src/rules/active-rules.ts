@@ -1,17 +1,18 @@
-import {Rule, DisablingRule} from './rule';
+import {DisablingRule} from './rule';
 import {AnonymityRule} from './anonymity-rule';
 import {MessageLengthRule} from './message-length-rule';
 import {MuteRule} from './mute-rule';
 
-export const RULES: { [ruleName: string]: Rule } = {
-	anonymity: new AnonymityRule(),
-	no_anonymity: new DisablingRule('ANONYMITY'),
+const ANONYMITY = new AnonymityRule();
+const MESSAGE_LENGTH = new MessageLengthRule();
+const MUTE = new MuteRule();
 
-	message_length: new MessageLengthRule(),
-	no_message_length: new DisablingRule('MESSAGE-LENGTH'),
-
-	mute: new MuteRule(),
-	unmute_all: new DisablingRule('MUTE'),
-
-	disable_all: new DisablingRule('ANONYMITY')
+export const RULES = {
+	anonymity: ANONYMITY,
+	no_anonymity: new DisablingRule([ANONYMITY], 'no_anonymity'),
+	message_length: MESSAGE_LENGTH,
+	no_message_length: new DisablingRule([MESSAGE_LENGTH], 'no_message_length'),
+	mute: MUTE,
+	unmute_all: new DisablingRule([MUTE], 'unmute_all'),
+	disable_all: new DisablingRule([ANONYMITY, MESSAGE_LENGTH, MUTE], 'disable_all')
 };

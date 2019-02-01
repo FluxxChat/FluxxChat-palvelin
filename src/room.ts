@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import {Connection} from './connection';
-import {RoomStateMessage, User, TextMessage, Message} from 'fluxxchat-protokolla';
+import {RoomStateMessage, TextMessage, Message} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
 import {intersection} from './util';
 
@@ -20,6 +20,7 @@ export class Room {
 	public addRule(rule: Rule) {
 		this.enabledRules = this.enabledRules.filter(r => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0);
 		this.enabledRules.push(new EnabledRule(rule, null));
+		this.sendStateMessages();
 	}
 
 	public removeConnection(conn: Connection) {
@@ -35,10 +36,10 @@ export class Room {
 	}
 
 	public getStateMessage(): RoomStateMessage {
-		const users: User[] = this.connections.map(conn => ({id: conn.id, nickname: conn.nickname}));
 		return {
 			type: 'ROOM_STATE',
-			users
+			users: this.connections.map(conn => ({id: conn.id, nickname: conn.nickname})),
+			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON())
 		};
 	}
 
