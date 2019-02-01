@@ -23,7 +23,7 @@ export class FluxxChatServer {
 		}
 
 		if (message.type === 'NEW_RULE') {
-			this.enactRule(conn, message.ruleName);
+			this.enactRule(conn, message.card.ruleName);
 		}
 
 		if (message.type === 'TEXT') {
