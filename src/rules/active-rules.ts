@@ -1,4 +1,4 @@
-import {DisablingRule} from './rule';
+import {DisablingRule, Rule} from './rule';
 import {AnonymityRule} from './anonymity-rule';
 import {MessageLengthRule} from './message-length-rule';
 import {MuteRule} from './mute-rule';
@@ -7,7 +7,7 @@ const ANONYMITY = new AnonymityRule();
 const MESSAGE_LENGTH = new MessageLengthRule();
 const MUTE = new MuteRule();
 
-export const RULES = {
+export const RULES: {[key: string]: Rule} = {
 	anonymity: ANONYMITY,
 	no_anonymity: new DisablingRule([ANONYMITY], 'no_anonymity'),
 	message_length: MESSAGE_LENGTH,
