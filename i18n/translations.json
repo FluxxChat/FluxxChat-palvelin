@@ -28,5 +28,11 @@
     },
     "Disables the following rules: $[1].": {
         "fi": "Kumoaa seuraavat säännöt: $[1]."
+    },
+    "All messages are rendered as MarkDown.": {
+        "fi": "Kikki viestit tulkitaan MarkDownina"
+    },
+    "MarkDown Formatting": {
+        "fi": "MarkDown muotoilu"
     }
 }
