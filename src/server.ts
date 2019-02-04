@@ -1,7 +1,8 @@
-import {Message, RoomCreatedMessage, Card} from 'fluxxchat-protokolla';
+import {Message, RoomCreatedMessage, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from './connection';
 import {Room} from './room';
 import {RULES} from './rules/active-rules';
+import {Rule} from './rules/rule';
 
 export class FluxxChatServer {
 	private connections: Connection[] = [];
@@ -23,7 +24,7 @@ export class FluxxChatServer {
 		}
 
 		if (message.type === 'NEW_RULE') {
-			this.enactRule(conn, message.card);
+			this.enactRule(conn, message.ruleName, message.ruleParameters);
 		}
 
 		if (message.type === 'TEXT') {
@@ -62,7 +63,38 @@ export class FluxxChatServer {
 		conn.onClose(() => this.removeConnection(conn));
 	}
 
-	private enactRule(conn: Connection, card: Card) {
+	private validateRuleParameters(conn: Connection, rule: Rule, ruleParameters: RuleParameters) {
+		const params = {};
+
+		for (const key of Object.keys(rule.parameterTypes)) {
+			const type = rule.parameterTypes[key];
+			const value = ruleParameters[key];
+
+			if (!value) {
+				throw new Error(`Required parameter: ${key}`);
+			}
+
+			if (type === 'number') {
+				if (isNaN(Number(value))) {
+					throw new Error(`Parameter ${key} must be numeric`);
+				}
+
+				params[key] = Number(value);
+			} else if (type === 'player') {
+				if (!conn.room || !conn.room.connections.find(c => c.id === value)) {
+					throw new Error('Invalid target');
+				}
+
+				params[key] = value;
+			} else {
+				params[key] = value;
+			}
+		}
+
+		return params;
+	}
+
+	private enactRule(conn: Connection, ruleName: string, ruleParameters: RuleParameters) {
 		if (!conn.room) {
 			throw new Error('Must be connected to a room');
 		}
@@ -71,12 +103,14 @@ export class FluxxChatServer {
 			throw new Error('You can only play cards on your turn');
 		}
 
-		const rule = RULES[card.ruleName];
+		const rule = RULES[ruleName];
 		if (!rule) {
-			throw new Error(`No such rule: ${card.ruleName}`);
+			throw new Error(`No such rule: ${ruleName}`);
 		}
 
-		conn.room.addRule(rule, card.parameters);
+		const parameters = this.validateRuleParameters(conn, rule, ruleParameters);
+
+		conn.room.addRule(rule, parameters);
 	}
 
 	private createRoom(conn: Connection) {
