@@ -1,7 +1,6 @@
 import {Rule, RuleCategory, RuleBase} from './rule';
 import {FluxxChatServer} from '../server';
 import {TextMessage, RuleParameterTypes} from 'fluxxchat-protokolla';
-import {isNumber} from 'util';
 import {Connection} from '../connection';
 
 export class MessageLengthRule extends RuleBase implements Rule {
@@ -12,8 +11,8 @@ export class MessageLengthRule extends RuleBase implements Rule {
 	public parameterTypes = {length: 'number'} as RuleParameterTypes;
 
 	public applyMessage(_server: FluxxChatServer, message: TextMessage, parameter: any, _sender: Connection): TextMessage {
-		if (isNumber(parameter) && message.textContent.length > parameter) {
-			return {...message, textContent: message.textContent.substring(0, parameter)};
+		if (message.textContent.length > parameter.length) {
+			return {...message, textContent: message.textContent.substring(0, parameter.length)};
 		}
 		return message;
 	}

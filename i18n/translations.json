@@ -5,6 +5,12 @@
     "New connection": {
         "fi": "Uusi yhteys"
     },
+    "$[1] connected": {
+        "fi": "$[1] liittyi huoneeseen"
+    },
+    "$[1] disconnected": {
+        "fi": "$[1] poistui huoneesta"
+    },
     "Anonymity": {
         "fi": "Nimettömyys"
     },

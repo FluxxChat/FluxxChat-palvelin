@@ -25,7 +25,7 @@ export class Connection {
 				try {
 					handler(this, message);
 				} catch (err) {
-					console.error(err); // tslint:disable-line:no-console
+					console.error(err.message); // tslint:disable-line:no-console
 				}
 			}
 		});

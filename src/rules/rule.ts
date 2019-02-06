@@ -24,6 +24,8 @@ export interface Rule {
 	ruleCategories: Set<RuleCategory>;
 	title: string;
 	description: string;
+	ruleName: string;
+	parameterTypes: RuleParameterTypes;
 	ruleEnabled: () => void;
 	ruleDisabled: () => void;
 	applyMessage: (server: FluxxChatServer, message: Message, parameter: RuleParameters, sender: Connection) => Message | null;
@@ -31,11 +33,11 @@ export interface Rule {
 }
 
 export class RuleBase {
-	public ruleCategories: Set<RuleCategory>;
-	public title: string;
-	public description: string;
-	public ruleName: string;
-	public parameterTypes: RuleParameterTypes = {};
+	public ruleCategories;
+	public title;
+	public description;
+	public ruleName;
+	public parameterTypes = {};
 
 	public ruleEnabled() {
 		// Nothing

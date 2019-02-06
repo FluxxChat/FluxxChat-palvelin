@@ -19,7 +19,7 @@ export class Room {
 		this.connections.unshift(conn);
 		conn.room = this;
 
-		const msg: TextMessage = {type: 'TEXT', textContent: `${conn.nickname} connected`};
+		const msg: TextMessage = {type: 'TEXT', textContent: global._('$[1] connected', conn.nickname)};
 		this.broadcastMessage(msg);
 	}
 
@@ -42,7 +42,7 @@ export class Room {
 			? this.connections[index % this.connections.length]
 			: null;
 
-		const msg: TextMessage = {type: 'TEXT', textContent: `${conn.nickname} disconnected`};
+		const msg: TextMessage = {type: 'TEXT', textContent: global._('$[1] disconnected', conn.nickname)};
 		this.broadcastMessage(msg);
 	}
 
