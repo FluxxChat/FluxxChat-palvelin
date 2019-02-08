@@ -3,11 +3,13 @@ import {AnonymityRule} from './anonymity-rule';
 import {MessageLengthRule} from './message-length-rule';
 import {MuteRule} from './mute-rule';
 import {MarkdownRule} from './formatting-rule';
+import {PseudonymeRule} from './pseudonymes';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_LENGTH = new MessageLengthRule();
 const MUTE = new MuteRule();
 const MARKDOWN = new MarkdownRule();
+const PSEUDONYMES = new PseudonymeRule();
 
 export const RULES: {[key: string]: Rule} = {
 	anonymity: ANONYMITY,
@@ -17,6 +19,8 @@ export const RULES: {[key: string]: Rule} = {
 	mute: MUTE,
 	unmute_all: new DisablingRule([MUTE], 'unmute_all'),
 	markdown_formatting: MARKDOWN,
+	pseudonymes: PSEUDONYMES,
+	no_pseudonymes: new DisablingRule([PSEUDONYMES], 'no_pseudonymes'),
 	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting'),
-	disable_all: new DisablingRule([ANONYMITY, MESSAGE_LENGTH, MUTE], 'disable_all')
+	disable_all: new DisablingRule([ANONYMITY, MESSAGE_LENGTH, MUTE, MARKDOWN, PSEUDONYMES], 'disable_all')
 };

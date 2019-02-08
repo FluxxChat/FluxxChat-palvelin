@@ -4,7 +4,7 @@ import {Message, RuleParameterTypes} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 
 export class MuteRule extends RuleBase implements Rule {
-	public ruleCategories: Set<RuleCategory> = new Set(['MUTE'] as RuleCategory[]);
+	public ruleCategories: Set<RuleCategory> = new Set([RuleCategory.MUTE] as RuleCategory[]);
 	public title = global._('Mute Player');
 	public description = global._('Mutes a specific player.');
 	public ruleName = 'mute';

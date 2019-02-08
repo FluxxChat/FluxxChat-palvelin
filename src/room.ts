@@ -24,6 +24,7 @@ export class Room {
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
+		rule.ruleEnabled();
 		this.enabledRules = this.enabledRules.filter(r => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0);
 		this.enabledRules.push(new EnabledRule(rule, parameters));
 
