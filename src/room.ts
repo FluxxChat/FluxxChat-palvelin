@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import {Connection} from './connection';
-import {RoomStateMessage, Message, RuleParameters, SystemMessage} from 'fluxxchat-protokolla';
+import {RoomStateMessage, Message, RuleParameters, SystemMessage, Severity} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
 import {intersection} from './util';
 
@@ -19,7 +19,7 @@ export class Room {
 		this.connections.unshift(conn);
 		conn.room = this;
 
-		this.broadcast(global._('$[1] connected', conn.nickname));
+		this.broadcast('info', global._('$[1] connected', conn.nickname));
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
@@ -31,7 +31,7 @@ export class Room {
 		this.turn = this.connections[nextTurnIndex];
 
 		this.sendStateMessages();
-		this.broadcast(global._('New rule: $[1]', rule.title));
+		this.broadcast('info', global._('New rule: $[1]', rule.title));
 	}
 
 	public removeConnection(conn: Connection) {
@@ -42,7 +42,7 @@ export class Room {
 			? this.connections[index % this.connections.length]
 			: null;
 
-		this.broadcast(global._('$[1] disconnected', conn.nickname));
+		this.broadcast('info', global._('$[1] disconnected', conn.nickname));
 	}
 
 	public sendStateMessages() {
@@ -56,7 +56,8 @@ export class Room {
 			type: 'ROOM_STATE',
 			users: this.connections.map(conn => ({id: conn.id, nickname: conn.nickname})),
 			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
-			turnUserId: this.turn!.id
+			turnUserId: this.turn!.id,
+			nickname: ''
 		};
 	}
 
@@ -66,8 +67,8 @@ export class Room {
 		}
 	}
 
-	public broadcast(text: string) {
-		const msg: SystemMessage = {type: 'SYSTEM', message: text};
+	public broadcast(severity: Severity, message: string) {
+		const msg: SystemMessage = {type: 'SYSTEM', message, severity};
 		this.broadcastMessage(msg);
 	}
 }
