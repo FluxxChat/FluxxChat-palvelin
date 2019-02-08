@@ -40,5 +40,11 @@
     },
     "MarkDown Formatting": {
         "fi": "MarkDown-muotoilu"
-    }
+	},
+	"Pseudonymes": {
+		"fi": "Salanimet"
+	},
+	"Give all players pseudonymes.": {
+		"fi": "Anna pelaajille salanimet"
+	}
 }
