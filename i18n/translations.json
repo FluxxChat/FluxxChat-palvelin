@@ -11,6 +11,9 @@
     "$[1] disconnected": {
         "fi": "$[1] poistui huoneesta"
     },
+    "New rule: $[1]": {
+        "fi": "Uusi sääntö: $[1]"
+    },
     "Anonymity": {
         "fi": "Nimettömyys"
     },

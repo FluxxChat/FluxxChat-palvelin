@@ -34,11 +34,11 @@ export interface Rule {
 }
 
 export class RuleBase {
-	public ruleCategories;
-	public title;
-	public description;
-	public ruleName;
-	public parameterTypes = {};
+	public ruleCategories: Set<RuleCategory>;
+	public title: string;
+	public description: string;
+	public ruleName: string;
+	public parameterTypes: RuleParameterTypes = {};
 
 	public ruleEnabled(_room: Room) {
 		// Nothing
