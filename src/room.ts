@@ -3,6 +3,7 @@ import {Connection} from './connection';
 import {RoomStateMessage, TextMessage, Message, RuleParameters} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
 import {intersection} from './util';
+import {RULES} from './rules/active-rules';
 
 export class Room {
 	public id = uuid.v4();
@@ -18,6 +19,7 @@ export class Room {
 		// Push to front so new players get their turn last
 		this.connections.unshift(conn);
 		conn.room = this;
+		this.getCards(conn, 5);
 
 		const msg: TextMessage = {type: 'TEXT', textContent: global._('$[1] connected', conn.nickname)};
 		this.broadcastMessage(msg);
@@ -65,6 +67,14 @@ export class Room {
 	public broadcastMessage(msg: Message) {
 		for (const conn of this.connections) {
 			conn.sendMessage(msg);
+		}
+	}
+
+	public getCards(conn: Connection, n = 1) {
+		for (let i = 0; i < n; i++) {
+			const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
+			const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
+			conn.hand.push(newRuleKey);
 		}
 	}
 }

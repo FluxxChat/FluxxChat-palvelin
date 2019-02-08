@@ -135,7 +135,7 @@ export class FluxxChatServer {
 			conn.nickname = requestedNickname;
 			room.addConnection(conn);
 			room.sendStateMessages();
-			Object.keys(RULES).forEach(key => {
+			conn.hand.forEach(key => {
 				conn.sendMessage({type: 'CARD', card: RULES[key].toJSON()});
 			});
 		} else {
