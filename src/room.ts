@@ -51,24 +51,25 @@ export class Room {
 		this.broadcastMessage(msg);
 	}
 
-	public sendStateMessages() {
-		if (this.connections.length > 0) {
-			this.broadcastMessage(this.getStateMessage());
-		}
-	}
-
-	public getStateMessage(): RoomStateMessage {
-		return {
-			type: 'ROOM_STATE',
-			users: this.connections.map(conn => ({id: conn.id, nickname: conn.nickname})),
-			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
-			turnUserId: this.turn!.id
-		};
-	}
-
 	public broadcastMessage(msg: Message) {
 		for (const conn of this.connections) {
 			conn.sendMessage(msg);
 		}
+	}
+
+	public sendStateMessages() {
+		for (const conn of this.connections) {
+			this.broadcastMessage({...this.getStateMessage(), nickname: conn.visibleNickname});
+		}
+	}
+
+	private getStateMessage(): RoomStateMessage {
+		return {
+			type: 'ROOM_STATE',
+			users: this.connections.map(conn => ({id: conn.id, nickname: conn.visibleNickname})),
+			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
+			turnUserId: this.turn!.id,
+			nickname: ''
+		};
 	}
 }
