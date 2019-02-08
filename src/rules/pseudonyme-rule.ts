@@ -1,32 +1,15 @@
-import {Rule, RuleCategory, RuleBase} from './rule';
-import {FluxxChatServer} from '../server';
-import {Message, RuleParameterTypes, TextMessage} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 import {firstnames, lastnames} from './pseudonyme-names';
+import {NicknameRule} from './nickname-rule';
 
-interface PseudonymeMapping {
-	[id: string]: string;
-}
-
-export class PseudonymeRule extends RuleBase implements Rule {
-	public ruleCategories: Set<RuleCategory> = new Set([RuleCategory.ANONYMITY] as RuleCategory[]);
+export class PseudonymeRule extends NicknameRule {
 	public title = global._('Pseudonymes');
 	public description = global._('Give all players pseudonymes.');
 	public ruleName = 'pseudonymes';
-	public parameterTypes = {} as RuleParameterTypes;
-	public takenNames: PseudonymeMapping = {};
 
-	public applyMessage(_server: FluxxChatServer, message: Message, parameter: any, sender: Connection): Message {
-		if (this.takenNames[sender.id]) {
-			return {...message, senderNickname: this.takenNames[sender.id]} as TextMessage;
-		}
+	protected createNickname(_conn: Connection) {
 		const firstname = firstnames[Math.floor(Math.random() * Math.floor(firstnames.length))];
 		const lastname = lastnames[Math.floor(Math.random() * Math.floor(lastnames.length))];
-		this.takenNames[sender.id] = firstname + ' ' + lastname;
-		return {...message, senderNickname: this.takenNames[sender.id]} as TextMessage;
-	}
-
-	public ruleEnabled() {
-		this.takenNames = {};
+		return `${firstname} ${lastname}`;
 	}
 }

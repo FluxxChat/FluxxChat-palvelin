@@ -24,8 +24,12 @@ export class Room {
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
-		rule.ruleEnabled();
-		this.enabledRules = this.enabledRules.filter(r => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0);
+		const filter = (r: EnabledRule) => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0;
+		
+		this.enabledRules.filter(r => !filter(r)).forEach(r => r.rule.ruleDisabled(this));
+		rule.ruleEnabled(this);
+
+		this.enabledRules = this.enabledRules.filter(filter);
 		this.enabledRules.push(new EnabledRule(rule, parameters));
 
 		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
