@@ -25,7 +25,9 @@ export class Connection {
 				try {
 					handler(this, message);
 				} catch (err) {
-					this.sendMessage({type: 'ERROR', message: err.message});
+					if(err.internal === false) {
+						this.sendMessage({type: 'ERROR', message: err.message});
+					}
 					console.error(err.message); // tslint:disable-line:no-console
 				}
 			}
