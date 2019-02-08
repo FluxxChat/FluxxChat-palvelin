@@ -76,5 +76,6 @@ export class DisablingRule extends RuleBase implements Rule {
 export enum RuleCategory {
 	ANONYMITY = 'ANONYMITY',
 	MESSAGELENGTH = 'MESSAGE-LENGTH',
-	MUTE = 'MUTE'
+	MUTE = 'MUTE',
+	FORMATTING = 'FORMATTING'
 }
