@@ -925,7 +925,7 @@ findup-sync@0.4.2:
 
 "fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git":
   version "1.0.0"
-  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#edaa5129780d29ab8d1f4a61b8f3aa81063f62fa"
+  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#165b198be1f0dad6f143c4c44e7367b4ded6e0d0"
 
 for-in@^1.0.1:
   version "1.0.2"
