@@ -17,10 +17,8 @@ export class PseudonymeRule extends RuleBase implements Rule {
 	public takenNames: PseudonymeMapping = {};
 
 	public applyMessage(_server: FluxxChatServer, message: Message, parameter: any, sender: Connection): Message {
-		for (const id in this.takenNames) {
-			if (id === sender.id) {
-				return {...message, senderNickname: this.takenNames[id]} as TextMessage;
-			}
+		if (this.takenNames[sender.id]) {
+			return {...message, senderNickname: this.takenNames[sender.id]} as TextMessage;
 		}
 		const firstname = firstnames[Math.floor(Math.random() * Math.floor(firstnames.length))];
 		const lastname = lastnames[Math.floor(Math.random() * Math.floor(lastnames.length))];
