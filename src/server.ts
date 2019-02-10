@@ -124,7 +124,6 @@ export class FluxxChatServer {
 
 		if (room) {
 			if (room.connections.find(c => c.nickname === requestedNickname)) {
-				// Someone else already has the requested nickname in this room
 				throw new Error(`Nickname taken: ${requestedNickname}`);
 			}
 

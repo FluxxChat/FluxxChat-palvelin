@@ -20,11 +20,17 @@
     "Hides the identity of players.": {
         "fi": "Piilottaa pelaajien identiteetin."
     },
-    "Message Length Limit": {
+    "Message minimum length limit": {
         "fi": "Rajoitettu viestipituus"
     },
-    "Restricts message length.": {
-        "fi": "Rajoittaa viestin pituuden."
+    "Message maximum length limit": {
+        "fi": "Rajoitettu viestipituus"
+    },
+    "Restricts message minimum length.": {
+        "fi": "Rajoittaa viestin minimi pituuden."
+    },
+    "Restricts message maximum length.": {
+        "fi": "Rajoittaa viestin maksimi pituuden."
     },
     "Mute Player": {
         "fi": "Hiljennä pelaaja"
