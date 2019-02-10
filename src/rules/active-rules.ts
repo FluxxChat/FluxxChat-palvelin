@@ -26,5 +26,5 @@ export const RULES: {[key: string]: Rule} = {
 	pseudonymes: PSEUDONYMES,
 	no_pseudonymes: new DisablingRule([PSEUDONYMES], 'no_pseudonymes'),
 	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting'),
-	disable_all: new DisablingRule([ANONYMITY, MESSAGE_MAX_LENGTH, MESSAGE_MIN_LENGTH, MUTE, MARKDOWN, PSEUDONYMES], 'disable_all'),
+	disable_all: new DisablingRule([ANONYMITY, MESSAGE_MAX_LENGTH, MESSAGE_MIN_LENGTH, MUTE, MARKDOWN, PSEUDONYMES], 'disable_all')
 };

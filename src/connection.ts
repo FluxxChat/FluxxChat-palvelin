@@ -1,7 +1,7 @@
 import * as WebSocket from 'ws';
 import uuid from 'uuid';
-import { Message } from 'fluxxchat-protokolla';
-import { Room } from './room';
+import {Message} from 'fluxxchat-protokolla';
+import {Room} from './room';
 
 type MessageHandler = (conn: Connection, msg: Message) => void;
 type CloseHandler = () => void;
@@ -27,7 +27,7 @@ export class Connection {
 					handler(this, message);
 				} catch (err) {
 					if (err.internal === false) {
-						this.sendMessage({ type: 'ERROR', message: err.message });
+						this.sendMessage({type: 'ERROR', message: err.message});
 					}
 					console.error(err.message); // tslint:disable-line:no-console
 				}
