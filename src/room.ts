@@ -19,7 +19,7 @@ export class Room {
 		// Push to front so new players get their turn last
 		this.connections.unshift(conn);
 		conn.room = this;
-		this.getCards(conn, 5);
+		this.getStartingCards(conn);
 
 		const msg: TextMessage = {type: 'TEXT', textContent: global._('$[1] connected', conn.nickname)};
 		this.broadcastMessage(msg);
@@ -33,6 +33,27 @@ export class Room {
 		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
 		const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
 		this.turn = this.connections[nextTurnIndex];
+
+		const user = this.connections[currentTurnIndex];
+		user.sendMessage({type: 'CARD', card: {
+			name: 'emptyHand',
+			description: '',
+			ruleName: '',
+			parameterTypes: {'': ''},
+			parameters: ['']
+		}});
+		let cardReplaced = false;
+		user.hand.forEach(key => {
+			if (cardReplaced === false && RULES[key] === rule) {
+				const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
+				const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
+				user.hand[user.hand.indexOf(key)] = newRuleKey;
+				cardReplaced = true;
+			}
+		});
+		user.hand.forEach(key => {
+			user.sendMessage({type: 'CARD', card: RULES[key].toJSON()});
+		});
 
 		this.sendStateMessages();
 	}
@@ -70,8 +91,8 @@ export class Room {
 		}
 	}
 
-	public getCards(conn: Connection, n = 1) {
-		for (let i = 0; i < n; i++) {
+	public getStartingCards(conn: Connection) {
+		for (let i = 0; i < 5; i++) {
 			const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
 			const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
 			conn.hand.push(newRuleKey);
