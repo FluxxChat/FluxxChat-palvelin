@@ -3,6 +3,7 @@ import {Connection} from './connection';
 import {RoomStateMessage, Message, RuleParameters, SystemMessage, Severity} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
 import {intersection} from './util';
+import {RULES} from './rules/active-rules';
 
 export class Room {
 	public id = uuid.v4();
@@ -18,6 +19,7 @@ export class Room {
 		// Push to front so new players get their turn last
 		this.connections.unshift(conn);
 		conn.room = this;
+		this.getStartingCards(conn);
 
 		this.broadcast('info', global._('$[1] connected', conn.nickname));
 	}
@@ -34,6 +36,21 @@ export class Room {
 		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
 		const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
 		this.turn = this.connections[nextTurnIndex];
+
+		const user = this.connections[currentTurnIndex];
+		user.sendMessage({type: 'EMPTY_HAND'});
+		let cardReplaced = false;
+		user.hand.forEach(key => {
+			if (cardReplaced === false && RULES[key] === rule) {
+				const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
+				const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
+				user.hand[user.hand.indexOf(key)] = newRuleKey;
+				cardReplaced = true;
+			}
+		});
+		user.hand.forEach(key => {
+			user.sendMessage({type: 'CARD', card: RULES[key].toJSON()});
+		});
 
 		this.sendStateMessages();
 		this.broadcast('info', global._('New rule: $[1]', rule.title));
@@ -75,5 +92,13 @@ export class Room {
 			turnUserId: this.turn!.id,
 			nickname: ''
 		};
+	}
+
+	public getStartingCards(conn: Connection) {
+		for (let i = 0; i < 5; i++) {
+			const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
+			const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
+			conn.hand.push(newRuleKey);
+		}
 	}
 }
