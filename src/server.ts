@@ -28,7 +28,7 @@ export class FluxxChatServer {
 		}
 
 		if (message.type === 'TEXT') {
-			message.senderNickname = conn.nickname;
+			message.senderNickname = conn.visibleNickname;
 		}
 
 		for (const rule of conn.room.enabledRules) {
@@ -133,6 +133,7 @@ export class FluxxChatServer {
 			}
 
 			conn.nickname = requestedNickname;
+			conn.visibleNickname = requestedNickname;
 			room.addConnection(conn);
 			room.sendStateMessages();
 			conn.hand.forEach(key => {

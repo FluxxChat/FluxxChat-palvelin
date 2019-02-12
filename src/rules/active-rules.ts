@@ -3,7 +3,7 @@ import {AnonymityRule} from './anonymity-rule';
 import {MessageLengthRule} from './message-length-rule';
 import {MuteRule} from './mute-rule';
 import {MarkdownRule} from './formatting-rule';
-import {PseudonymeRule} from './pseudonymes';
+import {PseudonymeRule} from './pseudonyme-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_LENGTH = new MessageLengthRule();

@@ -1,6 +1,7 @@
 import {Message, Card, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
 import {FluxxChatServer} from '../server';
 import {Connection} from '../connection';
+import {Room} from '../room';
 
 export class EnabledRule {
 	public rule: Rule;
@@ -26,24 +27,24 @@ export interface Rule {
 	description: string;
 	ruleName: string;
 	parameterTypes: RuleParameterTypes;
-	ruleEnabled: () => void;
-	ruleDisabled: () => void;
+	ruleEnabled: (room: Room) => void;
+	ruleDisabled: (room: Room) => void;
 	applyMessage: (server: FluxxChatServer, message: Message, parameter: RuleParameters, sender: Connection) => Message | null;
 	toJSON: () => Card;
 }
 
 export class RuleBase {
-	public ruleCategories;
-	public title;
-	public description;
-	public ruleName;
-	public parameterTypes = {};
+	public ruleCategories: Set<RuleCategory>;
+	public title: string;
+	public description: string;
+	public ruleName: string;
+	public parameterTypes: RuleParameterTypes = {};
 
-	public ruleEnabled() {
+	public ruleEnabled(_room: Room) {
 		// Nothing
 	}
 
-	public ruleDisabled() {
+	public ruleDisabled(_room: Room) {
 		// Nothing
 	}
 
