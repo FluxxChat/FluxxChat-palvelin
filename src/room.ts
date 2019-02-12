@@ -84,6 +84,14 @@ export class Room {
 		}
 	}
 
+	public getStartingCards(conn: Connection) {
+		for (let i = 0; i < 5; i++) {
+			const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
+			const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
+			conn.hand.push(newRuleKey);
+		}
+	}
+
 	private getStateMessage(): RoomStateMessage {
 		return {
 			type: 'ROOM_STATE',
@@ -92,13 +100,5 @@ export class Room {
 			turnUserId: this.turn!.id,
 			nickname: ''
 		};
-	}
-
-	public getStartingCards(conn: Connection) {
-		for (let i = 0; i < 5; i++) {
-			const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
-			const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
-			conn.hand.push(newRuleKey);
-		}
 	}
 }
