@@ -11,6 +11,7 @@ export class Connection {
 	public closed = false;
 	public room?: Room;
 	public nickname: string = this.id;
+	public visibleNickname: string = this.nickname;
 	public hand: string[] = [];
 
 	private socket: WebSocket;

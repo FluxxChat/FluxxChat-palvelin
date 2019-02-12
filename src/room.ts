@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import {Connection} from './connection';
-import {RoomStateMessage, TextMessage, Message, RuleParameters} from 'fluxxchat-protokolla';
+import {RoomStateMessage, Message, RuleParameters, SystemMessage, Severity} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
 import {intersection} from './util';
 import {RULES} from './rules/active-rules';
@@ -21,13 +21,16 @@ export class Room {
 		conn.room = this;
 		this.getStartingCards(conn);
 
-		const msg: TextMessage = {type: 'TEXT', textContent: global._('$[1] connected', conn.nickname)};
-		this.broadcastMessage(msg);
+		this.broadcast('info', global._('$[1] connected', conn.nickname));
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
-		rule.ruleEnabled();
-		this.enabledRules = this.enabledRules.filter(r => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0);
+		const filter = (r: EnabledRule) => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0;
+		
+		this.enabledRules.filter(r => !filter(r)).forEach(r => r.rule.ruleDisabled(this));
+		rule.ruleEnabled(this);
+
+		this.enabledRules = this.enabledRules.filter(filter);
 		this.enabledRules.push(new EnabledRule(rule, parameters));
 
 		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
@@ -35,13 +38,6 @@ export class Room {
 		this.turn = this.connections[nextTurnIndex];
 
 		const user = this.connections[currentTurnIndex];
-		user.sendMessage({type: 'CARD', card: {
-			name: 'emptyHand',
-			description: '',
-			ruleName: '',
-			parameterTypes: {'': ''},
-			parameters: ['']
-		}});
 		let cardReplaced = false;
 		user.hand.forEach(key => {
 			if (cardReplaced === false && RULES[key] === rule) {
@@ -51,11 +47,13 @@ export class Room {
 				cardReplaced = true;
 			}
 		});
+		user.sendMessage({type: 'EMPTY_HAND'});
 		user.hand.forEach(key => {
 			user.sendMessage({type: 'CARD', card: RULES[key].toJSON()});
 		});
 
 		this.sendStateMessages();
+		this.broadcast('info', global._('New rule: $[1]', rule.title));
 	}
 
 	public removeConnection(conn: Connection) {
@@ -66,29 +64,34 @@ export class Room {
 			? this.connections[index % this.connections.length]
 			: null;
 
-		const msg: TextMessage = {type: 'TEXT', textContent: global._('$[1] disconnected', conn.nickname)};
-		this.broadcastMessage(msg);
-	}
-
-	public sendStateMessages() {
-		if (this.connections.length > 0) {
-			this.broadcastMessage(this.getStateMessage());
-		}
-	}
-
-	public getStateMessage(): RoomStateMessage {
-		return {
-			type: 'ROOM_STATE',
-			users: this.connections.map(conn => ({id: conn.id, nickname: conn.nickname})),
-			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
-			turnUserId: this.turn!.id
-		};
+		this.broadcast('info', global._('$[1] disconnected', conn.nickname));
 	}
 
 	public broadcastMessage(msg: Message) {
 		for (const conn of this.connections) {
 			conn.sendMessage(msg);
 		}
+	}
+
+	public broadcast(severity: Severity, message: string) {
+		const msg: SystemMessage = {type: 'SYSTEM', message, severity};
+		this.broadcastMessage(msg);
+	}
+
+	public sendStateMessages() {
+		for (const conn of this.connections) {
+			this.broadcastMessage({...this.getStateMessage(), nickname: conn.visibleNickname});
+		}
+	}
+
+	private getStateMessage(): RoomStateMessage {
+		return {
+			type: 'ROOM_STATE',
+			users: this.connections.map(conn => ({id: conn.id, nickname: conn.visibleNickname})),
+			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
+			turnUserId: this.turn!.id,
+			nickname: ''
+		};
 	}
 
 	public getStartingCards(conn: Connection) {
