@@ -35,13 +35,7 @@ export class Room {
 		this.turn = this.connections[nextTurnIndex];
 
 		const user = this.connections[currentTurnIndex];
-		user.sendMessage({type: 'CARD', card: {
-			name: 'emptyHand',
-			description: '',
-			ruleName: '',
-			parameterTypes: {'': ''},
-			parameters: ['']
-		}});
+		user.sendMessage({type: 'EMPTY_HAND'});
 		let cardReplaced = false;
 		user.hand.forEach(key => {
 			if (cardReplaced === false && RULES[key] === rule) {
