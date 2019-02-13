@@ -45,7 +45,7 @@ export class Connection {
 	}
 
 	public handleError(error: ErrorMessage) {
-		if(error.internal === false) {
+		if (error.internal === false) {
 			this.sendMessage({type: 'ERROR', message: error.message});
 		}
 		console.error(error.message); // tslint:disable-line:no-console

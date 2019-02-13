@@ -125,7 +125,7 @@ export class FluxxChatServer {
 
 		if (room) {
 			if (room.connections.find(c => c.nickname === requestedNickname)) {
-				throw new ErrorMessage({internal: true, message: `Nickname taken: ${requestedNickname}`});
+				throw new ErrorMessage({internal: false, message: `Nickname taken: ${requestedNickname}`});
 			}
 
 			if (conn.room) {
