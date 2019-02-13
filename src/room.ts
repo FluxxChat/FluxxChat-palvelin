@@ -10,10 +10,12 @@ export class Room {
 	public connections: Connection[] = [];
 	public enabledRules: EnabledRule[] = [];
 	public turn: Connection | null;
+	public turnEndTime: number;
 
 	public addConnection(conn: Connection) {
 		if (this.connections.length === 0) {
 			this.turn = conn;
+			this.setTimer();
 		}
 
 		// Push to front so new players get their turn last
@@ -33,11 +35,7 @@ export class Room {
 		this.enabledRules = this.enabledRules.filter(filter);
 		this.enabledRules.push(new EnabledRule(rule, parameters));
 
-		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
-		const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
-		this.turn = this.connections[nextTurnIndex];
-
-		const user = this.connections[currentTurnIndex];
+		const user = this.connections[this.connections.findIndex(conn => conn.id === this.turn!.id)];
 		let cardReplaced = false;
 		user.hand.forEach(key => {
 			if (cardReplaced === false && RULES[key] === rule) {
@@ -92,12 +90,30 @@ export class Room {
 		}
 	}
 
+	public setTimer() {
+		const startTime = Date.now();
+		this.turnEndTime = startTime + 120000;
+		let counter: number = 120;
+		const interval = setInterval(() => {
+			counter--;
+			if (counter < 0) {
+				clearInterval(interval);
+				const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
+				const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
+				this.turn = this.connections[nextTurnIndex];
+				this.setTimer();
+				this.sendStateMessages();
+			}
+		}, 1000);
+	}
+
 	private getStateMessage(): RoomStateMessage {
 		return {
 			type: 'ROOM_STATE',
 			users: this.connections.map(conn => ({id: conn.id, nickname: conn.visibleNickname})),
 			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
 			turnUserId: this.turn!.id,
+			turnEndTime: this.turnEndTime,
 			nickname: ''
 		};
 	}
