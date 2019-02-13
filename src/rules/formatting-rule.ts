@@ -10,7 +10,7 @@ export class MarkdownRule extends RuleBase implements Rule {
 	public ruleName = 'markdown_formatting';
 	public parameterTypes = {} as RuleParameterTypes;
 
-	public applyMessage(_server: FluxxChatServer, message: TextMessage, parameter: any, _sender: Connection): TextMessage {
+	public applyMessage(_server: FluxxChatServer, message: TextMessage, _parameter: any, _sender: Connection) {
 		message.markdown = true;
 		return message;
 	}
