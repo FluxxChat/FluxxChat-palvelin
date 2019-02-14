@@ -10,10 +10,7 @@ export class MuteRule extends RuleBase implements Rule {
 	public ruleName = 'mute';
 	public parameterTypes = {target: 'player'} as RuleParameterTypes;
 
-	public applyMessage(_server: FluxxChatServer, message: Message, parameter: any, sender: Connection): Message | null {
-		if (sender.id === parameter.target) {
-			return null;
-		}
-		return message;
+	public isValidMessage(_server: FluxxChatServer, _message: Message, parameter: any, sender: Connection) {
+		return sender.id !== parameter.target;
 	}
 }

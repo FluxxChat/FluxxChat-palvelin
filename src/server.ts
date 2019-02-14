@@ -27,11 +27,32 @@ export class FluxxChatServer {
 			this.enactRule(conn, message.ruleName, message.ruleParameters);
 		}
 
+		if (message.type === 'VALIDATE_TEXT') {
+			for (const rule of conn.room.enabledRules) {
+				if (!rule.isValidMessage(this, message, conn)) {
+					return conn.sendMessage({
+						type: 'VALIDATE_TEXT_RESPONSE',
+						valid: false,
+						invalidReason: rule.rule.title
+					});
+				}
+			}
+
+			return conn.sendMessage({
+				type: 'VALIDATE_TEXT_RESPONSE',
+				valid: true
+			});
+		}
+
 		if (message.type === 'TEXT') {
 			message.senderNickname = conn.visibleNickname;
 		}
 
 		for (const rule of conn.room.enabledRules) {
+			if (!rule.isValidMessage(this, message, conn)) {
+				throw new Error('Message disallowed by rules');
+			}
+
 			const newMessage = rule.applyMessage(this, message, conn);
 			if (!newMessage) {
 				return; // message removed
