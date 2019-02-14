@@ -15,11 +15,8 @@ export class VerbLimitRule extends RuleBase implements Rule {
 
 	private voikko?: libvoikko.Voikko;
 
-	public applyMessage(_server: FluxxChatServer, message: TextMessage, parameter: any, _sender: Connection): TextMessage | null {
-		if (this.getNumberOfVerbs(message.textContent) < parameter.number) {
-			return null;
-		}
-		return message;
+	public isValidMessage(_server: FluxxChatServer, message: TextMessage, parameter: any, _sender: Connection) {
+		return this.getNumberOfVerbs(message.textContent) >= parameter.number;
 	}
 
 	private getNumberOfVerbs(message: string): number {
