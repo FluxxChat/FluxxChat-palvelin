@@ -26,6 +26,12 @@
     "Restricts message length.": {
         "fi": "Rajoittaa viestin pituuden."
     },
+    "Minumum Verb Number": {
+        "fi": "Minimiverbimäärä"
+    },
+    "Sets the minumum number of verbs in message.": {
+        "fi": "Asettaa minimimäärän verbejä viestissä."
+    },
     "Mute Player": {
         "fi": "Hiljennä pelaaja"
     },
