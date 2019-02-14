@@ -12,8 +12,12 @@ export class EnabledRule {
 		this.parameter = parameter;
 	}
 
-	public applyMessage(server: FluxxChatServer, message: Message, sender: Connection): Message | null {
+	public applyMessage(server: FluxxChatServer, message: Message, sender: Connection) {
 		return this.rule.applyMessage(server, message, this.parameter, sender);
+	}
+
+	public isValidMessage(server: FluxxChatServer, message: Message, sender: Connection) {
+		return this.rule.isValidMessage(server, message, this.parameter, sender);
 	}
 
 	public toJSON() {
@@ -30,6 +34,7 @@ export interface Rule {
 	ruleEnabled: (room: Room) => void;
 	ruleDisabled: (room: Room) => void;
 	applyMessage: (server: FluxxChatServer, message: Message, parameter: RuleParameters, sender: Connection) => Message | null;
+	isValidMessage: (server: FluxxChatServer, message: Message, parameter: RuleParameters, sender: Connection) => boolean;
 	toJSON: () => Card;
 }
 
@@ -48,8 +53,12 @@ export class RuleBase {
 		// Nothing
 	}
 
-	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: RuleParameters, _sender: Connection): Message | null {
+	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: RuleParameters, _sender: Connection) {
 		return message;
+	}
+
+	public isValidMessage(_server: FluxxChatServer, _message: Message, _parameter: RuleParameters, _sender: Connection) {
+		return true;
 	}
 
 	public toJSON(): Card {

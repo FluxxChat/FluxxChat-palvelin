@@ -10,10 +10,7 @@ export class MessageLengthRule extends RuleBase implements Rule {
 	public ruleName = 'message_length';
 	public parameterTypes = {length: 'number'} as RuleParameterTypes;
 
-	public applyMessage(_server: FluxxChatServer, message: TextMessage, parameter: any, _sender: Connection): TextMessage {
-		if (message.textContent.length > parameter.length) {
-			return {...message, textContent: message.textContent.substring(0, parameter.length)};
-		}
-		return message;
+	public isValidMessage(_server: FluxxChatServer, message: TextMessage, parameter: any, _sender: Connection) {
+		return message.textContent.length <= parameter.length;
 	}
 }
