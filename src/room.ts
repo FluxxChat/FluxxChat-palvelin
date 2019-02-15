@@ -1,23 +1,44 @@
+/* FluxxChat-palvelin
+ * Copyright (C) 2019 Helsingin yliopisto
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import uuid from 'uuid';
 import {Connection} from './connection';
 import {RoomStateMessage, Message, RuleParameters, SystemMessage, Severity} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
 import {intersection} from './util';
+import {RULES} from './rules/active-rules';
 
 export class Room {
 	public id = uuid.v4();
 	public connections: Connection[] = [];
 	public enabledRules: EnabledRule[] = [];
 	public turn: Connection | null;
+	public turnEndTime: number;
 
 	public addConnection(conn: Connection) {
 		if (this.connections.length === 0) {
 			this.turn = conn;
+			this.setTimer();
 		}
 
 		// Push to front so new players get their turn last
 		this.connections.unshift(conn);
 		conn.room = this;
+		this.getStartingCards(conn);
 
 		this.broadcast('info', global._('$[1] connected', conn.nickname));
 	}
@@ -31,9 +52,20 @@ export class Room {
 		this.enabledRules = this.enabledRules.filter(filter);
 		this.enabledRules.push(new EnabledRule(rule, parameters));
 
-		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
-		const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
-		this.turn = this.connections[nextTurnIndex];
+		const user = this.connections[this.connections.findIndex(conn => conn.id === this.turn!.id)];
+		let cardReplaced = false;
+		user.hand.forEach(key => {
+			if (cardReplaced === false && RULES[key] === rule) {
+				const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
+				const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
+				user.hand[user.hand.indexOf(key)] = newRuleKey;
+				cardReplaced = true;
+			}
+		});
+		user.sendMessage({type: 'EMPTY_HAND'});
+		user.hand.forEach(key => {
+			user.sendMessage({type: 'CARD', card: RULES[key].toJSON()});
+		});
 
 		this.sendStateMessages();
 		this.broadcast('info', global._('New rule: $[1]', rule.title));
@@ -67,12 +99,38 @@ export class Room {
 		}
 	}
 
+	public getStartingCards(conn: Connection) {
+		for (let i = 0; i < 5; i++) {
+			const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
+			const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
+			conn.hand.push(newRuleKey);
+		}
+	}
+
+	public setTimer() {
+		const startTime = Date.now();
+		this.turnEndTime = startTime + 120000;
+		let counter: number = 120;
+		const interval = setInterval(() => {
+			counter--;
+			if (counter < 0) {
+				clearInterval(interval);
+				const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
+				const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
+				this.turn = this.connections[nextTurnIndex];
+				this.setTimer();
+				this.sendStateMessages();
+			}
+		}, 1000);
+	}
+
 	private getStateMessage(): RoomStateMessage {
 		return {
 			type: 'ROOM_STATE',
 			users: this.connections.map(conn => ({id: conn.id, nickname: conn.visibleNickname})),
 			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
 			turnUserId: this.turn!.id,
+			turnEndTime: this.turnEndTime,
 			nickname: ''
 		};
 	}
