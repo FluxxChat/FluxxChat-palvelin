@@ -16,17 +16,16 @@ const POS_MIN_LIMIT = new PosMinLimitRule();
 
 export const RULES: {[key: string]: Rule} = {
 	anonymity: ANONYMITY,
-	no_anonymity: new DisablingRule([ANONYMITY], 'no_anonymity'),
 	message_length: MESSAGE_LENGTH,
-	no_message_length: new DisablingRule([MESSAGE_LENGTH], 'no_message_length'),
+	no_message_length: new DisablingRule([MESSAGE_LENGTH], 'no_message_length', global._('Disable message length')),
 	pos_max_limit: POS_MAX_LIMIT,
 	pos_min_limit: POS_MIN_LIMIT,
-	no_pos_limit: new DisablingRule([POS_MAX_LIMIT, POS_MIN_LIMIT], 'no_pos_limit'),
+	no_pos_limit: new DisablingRule([POS_MAX_LIMIT, POS_MIN_LIMIT], 'no_pos_limit', global._('Disable POS limit')),
 	mute: MUTE,
-	unmute_all: new DisablingRule([MUTE], 'unmute_all'),
+	unmute_all: new DisablingRule([MUTE], 'unmute_all', global._('Unmute')),
 	markdown_formatting: MARKDOWN,
 	pseudonymes: PSEUDONYMES,
-	no_pseudonymes: new DisablingRule([PSEUDONYMES], 'no_pseudonymes'),
-	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting'),
-	disable_all: new DisablingRule([ANONYMITY, MESSAGE_LENGTH, MUTE, MARKDOWN, PSEUDONYMES], 'disable_all')
+	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting', global._('Disable MarkDown formatting')),
+	return_names: new DisablingRule([ANONYMITY, PSEUDONYMES], 'return_names', global._('Return original names')),
+	disable_all: new DisablingRule([ANONYMITY, MESSAGE_LENGTH, MUTE, MARKDOWN, PSEUDONYMES], 'disable_all', global._('Disable all'))
 };

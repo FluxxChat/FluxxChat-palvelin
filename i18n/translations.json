@@ -44,8 +44,23 @@
     "Mutes a specific player.": {
         "fi": "Hiljentää valitun pelaajan."
     },
-    "Disable": {
-        "fi": "Kumoa sääntö"
+    "Disable message length": {
+        "fi": "Kumoa viestipituus"
+    },
+    "Unmute": {
+        "fi": "Kumoa hiljennys"
+    },
+    "Disable MarkDown formatting": {
+        "fi": "Kumoa MarkDown-muotoilu"
+    },
+    "Return original names": {
+        "fi": "Palauta alkuperäiset nimet"
+    },
+    "Disable POS limit": {
+        "fi": "Kumoa sanaluokkarajoitus"
+    },
+    "Disable all": {
+        "fi": "Kumoa kaikki"
     },
     "Disables the following rules: $[1].": {
         "fi": "Kumoaa seuraavat säännöt: $[1]."
