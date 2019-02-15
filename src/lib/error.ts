@@ -27,7 +27,7 @@ export default class ErrorMessage extends Error {
 	}
 }
 
-export interface ErrorMessageOpts {
+interface ErrorMessageOpts {
 	internal: boolean;
 	message: string;
 }
