@@ -19,10 +19,15 @@ export default class ErrorMessage extends Error {
 	public internal: boolean;
 	public message: string;
 
-	constructor(opts) {
-		super(opts);
+	constructor(opts: ErrorMessageOpts) {
+		super(opts.message);
 		this.internal = opts.internal;
 		this.message = opts.message;
 		this.stack = new Error().stack;
 	}
+}
+
+export interface ErrorMessageOpts {
+	internal: boolean;
+	message: string;
 }
