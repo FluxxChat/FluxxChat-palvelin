@@ -26,11 +26,17 @@
     "Restricts message length.": {
         "fi": "Rajoittaa viestin pituuden."
     },
-    "Minumum Verb Number": {
-        "fi": "Minimiverbimäärä"
+    "Minumum Number of Verbs/Nouns/Adjectives": {
+        "fi": "Minimirajoitus sanaluokalle"
     },
-    "Sets the minumum number of verbs in message.": {
-        "fi": "Asettaa minimimäärän verbejä viestissä."
+    "Sets the minumum number of verbs/nouns/adjectives in message.": {
+        "fi": "Asettaa vähimmäismäärän verbejä/substantiiveja/adjektiiveja viestissä."
+    },
+    "Maximum Number of Verbs/Nouns/Adjectives": {
+        "fi": "Maksimirajoitus sanaluokalle"
+    },
+    "Sets the maximum number of verbs/nouns/adjectives in message.": {
+        "fi": "Asettaa enimmäismäärän verbejä/substantiiveja/adjektiiveja viestissä."
     },
     "Mute Player": {
         "fi": "Hiljennä pelaaja"
