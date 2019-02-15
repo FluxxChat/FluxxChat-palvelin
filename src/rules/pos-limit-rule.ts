@@ -13,7 +13,7 @@ const VOIKKO_POS_IDS: {[pos: string]: string[]} = {
 	adjective: ['laatusana', 'nimisana_laatusana']
 };
 
-const POSJS_POS_ID: {[pos: string]: posjs.POS[]} = {
+const POSJS_POS_IDS: {[pos: string]: posjs.POS[]} = {
 	verb: ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ'],
 	noun: ['NN', 'NNS'],
 	adjective: ['JJ', 'JJR', 'JJS']
@@ -26,7 +26,7 @@ class BasePosLimitRule extends RuleBase {
 	private lexer = new posjs.Lexer();
 	private tagger = new posjs.Tagger();
 
-	protected getNumberOfWordsWithPos(message: string, pos: keyof typeof VOIKKO_POS_IDS | keyof typeof POSJS_POS_ID): number {
+	protected getNumberOfWordsWithPos(message: string, pos: keyof typeof VOIKKO_POS_IDS | keyof typeof POSJS_POS_IDS): number {
 		return this.tagWithVoikko(message, pos) + this.tagWithPosjs(message, pos);
 	}
 
@@ -49,8 +49,8 @@ class BasePosLimitRule extends RuleBase {
 		return words;
 	}
 
-	private tagWithPosjs(message: string, pos: keyof typeof POSJS_POS_ID): number {
-		const posjspos = VOIKKO_POS_IDS[pos];
+	private tagWithPosjs(message: string, pos: keyof typeof POSJS_POS_IDS): number {
+		const posjspos = POSJS_POS_IDS[pos];
 		const tokens = this.tagger.tag(this.lexer.lex(message));
 		let words = 0;
 		for (const token of tokens) {
