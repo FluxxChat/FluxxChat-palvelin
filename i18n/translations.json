@@ -26,6 +26,18 @@
     "Restricts message length.": {
         "fi": "Rajoittaa viestin pituuden."
     },
+    "Minumum Number of Verbs/Nouns/Adjectives": {
+        "fi": "Minimirajoitus sanaluokalle"
+    },
+    "Sets the minumum number of verbs/nouns/adjectives in message.": {
+        "fi": "Asettaa vähimmäismäärän verbejä/substantiiveja/adjektiiveja viestissä."
+    },
+    "Maximum Number of Verbs/Nouns/Adjectives": {
+        "fi": "Maksimirajoitus sanaluokalle"
+    },
+    "Sets the maximum number of verbs/nouns/adjectives in message.": {
+        "fi": "Asettaa enimmäismäärän verbejä/substantiiveja/adjektiiveja viestissä."
+    },
     "Mute Player": {
         "fi": "Hiljennä pelaaja"
     },
@@ -43,6 +55,9 @@
     },
     "Return original names": {
         "fi": "Palauta alkuperäiset nimet"
+    },
+    "Disable POS limit": {
+        "fi": "Kumoa sanaluokkarajoitus"
     },
     "Disable all": {
         "fi": "Kumoa kaikki"
