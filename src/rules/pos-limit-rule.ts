@@ -2,38 +2,63 @@ import {Rule, RuleCategory, RuleBase} from './rule';
 import {FluxxChatServer} from '../server';
 import {TextMessage, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
+import posjs from 'pos';
 import libvoikko from '../../lib/libvoikko';
 
 const Libvoikko = libvoikko();
 
-const VOIKKO_POS_IDS = {
+const VOIKKO_POS_IDS: {[pos: string]: string[]} = {
 	verb: ['teonsana'],
 	noun: ['nimisana'],
 	adjective: ['laatusana', 'nimisana_laatusana']
+};
+
+const POSJS_POS_ID: {[pos: string]: posjs.POS[]} = {
+	verb: ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ'],
+	noun: ['NN', 'NNS'],
+	adjective: ['JJ', 'JJR', 'JJS']
 };
 
 class BasePosLimitRule extends RuleBase {
 	public ruleCategories = new Set([RuleCategory.POS_LIMIT]);
 
 	private voikko?: libvoikko.Voikko;
+	private lexer = new posjs.Lexer();
+	private tagger = new posjs.Tagger();
 
-	protected getNumberOfWordsWithPos(message: string, pos: keyof typeof VOIKKO_POS_IDS): number {
+	protected getNumberOfWordsWithPos(message: string, pos: keyof typeof VOIKKO_POS_IDS | keyof typeof POSJS_POS_ID): number {
+		return this.tagWithVoikko(message, pos) + this.tagWithPosjs(message, pos);
+	}
+
+	private tagWithVoikko(message: string, pos: keyof typeof VOIKKO_POS_IDS): number {
 		if (!this.voikko) {
 			this.voikko = Libvoikko.init('fi');
 		}
 		const voikkopos = VOIKKO_POS_IDS[pos];
 		const tokens = this.voikko.tokens(message);
-		let verbs = 0;
+		let words = 0;
 		for (const token of tokens) {
 			if (token.type === 'WORD') {
 				const a = this.voikko.analyze(token.text);
 				const isVerb = a.some(info => voikkopos.includes(info.CLASS));
 				if (isVerb) {
-					verbs++;
+					words++;
 				}
 			}
 		}
-		return verbs;
+		return words;
+	}
+
+	private tagWithPosjs(message: string, pos: keyof typeof POSJS_POS_ID): number {
+		const posjspos = VOIKKO_POS_IDS[pos];
+		const tokens = this.tagger.tag(this.lexer.lex(message));
+		let words = 0;
+		for (const token of tokens) {
+			if (posjspos.includes(token[1])) {
+				words++;
+			}
+		}
+		return words;
 	}
 }
 
