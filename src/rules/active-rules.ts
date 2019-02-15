@@ -4,7 +4,7 @@ import {MessageLengthRule} from './message-length-rule';
 import {MuteRule} from './mute-rule';
 import {MarkdownRule} from './formatting-rule';
 import {PseudonymeRule} from './pseudonyme-rule';
-import {PosMaxLimitRule, PosMinLimitRule} from './verb-limit-rule';
+import {PosMaxLimitRule, PosMinLimitRule} from './pos-limit-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_LENGTH = new MessageLengthRule();
