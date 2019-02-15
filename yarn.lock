@@ -930,11 +930,7 @@ findup-sync@0.4.2:
 
 "fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git":
   version "1.0.0"
-<<<<<<< HEAD
-  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#e1286df11cbbb909127e3cc9b0b0e36288e334c5"
-=======
   resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#c7de41836fb57f342c369698032b1ebf545f1cb4"
->>>>>>> origin/master
 
 for-in@^1.0.1:
   version "1.0.2"
