@@ -178,7 +178,7 @@ export class FluxxChatServer {
 				conn.sendMessage({type: 'CARD', card: RULES[key].toJSON()});
 			});
 		} else {
-			throw new ErrorMessage({internal: true, message: `Room does not exist: ${roomId}`});
+			throw new ErrorMessage({internal: false, message: `Room does not exist, id: ${roomId}`});
 		}
 	}
 }

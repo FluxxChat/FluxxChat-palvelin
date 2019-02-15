@@ -24,7 +24,7 @@ export class MessageLengthRule extends RuleBase implements Rule {
 	public ruleCategories = new Set([RuleCategory.MESSAGELENGTH]);
 	public title = global._('Message maximum length limit');
 	public description = global._('Restricts message maximum length.');
-	public ruleName = 'message_max_length';
+	public ruleName = 'message_length';
 	public parameterTypes = {length: 'number'} as RuleParameterTypes;
 
 	public isValidMessage(_server: FluxxChatServer, message: TextMessage, parameter: any, _sender: Connection) {
