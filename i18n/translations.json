@@ -20,17 +20,17 @@
     "Hides the identity of players.": {
         "fi": "Piilottaa pelaajien identiteetin."
     },
-    "Message minimum length limit": {
-        "fi": "Rajoitettu viestipituus"
+    "Message Minimum Length Limit": {
+        "fi": "Viestin minimipituus"
     },
-    "Message maximum length limit": {
-        "fi": "Rajoitettu viestipituus"
+    "Message Maximum Length Limit": {
+        "fi": "Viestin maksimipituus"
     },
     "Restricts message minimum length.": {
-        "fi": "Rajoittaa viestin minimi pituuden."
+        "fi": "Asettaa viesteille minimipituuden."
     },
     "Restricts message maximum length.": {
-        "fi": "Rajoittaa viestin maksimi pituuden."
+        "fi": "Asettaa viesteille maksimipituuden."
     },
     "Minumum Number of Verbs/Nouns/Adjectives": {
         "fi": "Minimirajoitus sanaluokalle"
