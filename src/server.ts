@@ -20,6 +20,7 @@ import {Connection} from './connection';
 import {Room} from './room';
 import {RULES} from './rules/active-rules';
 import {Rule} from './rules/rule';
+import ErrorMessage from './lib/error';
 
 export class FluxxChatServer {
 	private connections: Connection[] = [];
@@ -35,7 +36,7 @@ export class FluxxChatServer {
 				return this.removeConnection(conn);
 			default:
 				if (!conn.room) {
-					throw new Error('Must be connected to a room');
+					throw new ErrorMessage({internal: true, message: 'Must be connected to a room'});
 				}
 				break;
 		}
@@ -109,18 +110,18 @@ export class FluxxChatServer {
 			const value = ruleParameters[key];
 
 			if (!value) {
-				throw new Error(`Required parameter: ${key}`);
+				throw new ErrorMessage({internal: true, message: `Required parameter: ${key}`});
 			}
 
 			if (type === 'number') {
 				if (isNaN(Number(value))) {
-					throw new Error(`Parameter ${key} must be numeric`);
+					throw new ErrorMessage({internal: true, message: `Parameter ${key} must be numeric`});
 				}
 
 				params[key] = Number(value);
 			} else if (type === 'player') {
 				if (!conn.room || !conn.room.connections.find(c => c.id === value)) {
-					throw new Error('Invalid target');
+					throw new ErrorMessage({internal: true, message: 'Invalid target'});
 				}
 
 				params[key] = value;
@@ -134,16 +135,16 @@ export class FluxxChatServer {
 
 	private enactRule(conn: Connection, ruleName: string, ruleParameters: RuleParameters) {
 		if (!conn.room) {
-			throw new Error('Must be connected to a room');
+			throw new ErrorMessage({internal: true, message: 'Must be connected to a room'});
 		}
 
 		if (!conn.room.turn || conn.room.turn.id !== conn.id) {
-			throw new Error('You can only play cards on your turn');
+			throw new ErrorMessage({internal: true, message: 'You can only play cards on your turn'});
 		}
 
 		const rule = RULES[ruleName];
 		if (!rule) {
-			throw new Error(`No such rule: ${ruleName}`);
+			throw new ErrorMessage({internal: true, message: `No such rule: ${ruleName}`});
 		}
 
 		const parameters = this.validateRuleParameters(conn, rule, ruleParameters);
@@ -162,8 +163,7 @@ export class FluxxChatServer {
 
 		if (room) {
 			if (room.connections.find(c => c.nickname === requestedNickname)) {
-				// Someone else already has the requested nickname in this room
-				throw new Error(`Nickname taken: ${requestedNickname}`);
+				throw new ErrorMessage({internal: false, message: `Nickname taken: ${requestedNickname}`});
 			}
 
 			if (conn.room) {
@@ -178,7 +178,7 @@ export class FluxxChatServer {
 				conn.sendMessage({type: 'CARD', card: RULES[key].toJSON()});
 			});
 		} else {
-			throw new Error(`Room does not exist: ${roomId}`);
+			throw new ErrorMessage({internal: false, message: `Room does not exist, id: ${roomId}`});
 		}
 	}
 }

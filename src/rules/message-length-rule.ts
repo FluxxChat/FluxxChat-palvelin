@@ -22,8 +22,8 @@ import {Connection} from '../connection';
 
 export class MessageLengthRule extends RuleBase implements Rule {
 	public ruleCategories = new Set([RuleCategory.MESSAGELENGTH]);
-	public title = global._('Message Length Limit');
-	public description = global._('Restricts message length.');
+	public title = global._('Message Maximum Length Limit');
+	public description = global._('Restricts message maximum length.');
 	public ruleName = 'message_length';
 	public parameterTypes = {length: 'number'} as RuleParameterTypes;
 
