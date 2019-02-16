@@ -45,7 +45,7 @@ export class Room {
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
 		const filter = (r: EnabledRule) => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0;
-		
+
 		this.enabledRules.filter(r => !filter(r)).forEach(r => r.rule.ruleDisabled(this));
 		rule.ruleEnabled(this);
 
@@ -95,7 +95,7 @@ export class Room {
 
 	public sendStateMessages() {
 		for (const conn of this.connections) {
-			this.broadcastMessage({...this.getStateMessage(), nickname: conn.visibleNickname});
+			conn.sendMessage({...this.getStateMessage(), nickname: conn.visibleNickname});
 		}
 	}
 
