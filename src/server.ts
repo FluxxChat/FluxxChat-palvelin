@@ -63,6 +63,7 @@ export class FluxxChatServer {
 
 		if (message.type === 'TEXT') {
 			message.senderNickname = conn.visibleNickname;
+			message.senderId = conn.id;
 		}
 
 		for (const rule of conn.room.enabledRules) {
@@ -174,9 +175,6 @@ export class FluxxChatServer {
 			conn.visibleNickname = requestedNickname;
 			room.addConnection(conn);
 			room.sendStateMessages();
-			conn.hand.forEach(key => {
-				conn.sendMessage({type: 'CARD', card: RULES[key].toJSON()});
-			});
 		} else {
 			throw new Error(`Room does not exist: ${roomId}`);
 		}
