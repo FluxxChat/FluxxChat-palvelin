@@ -17,8 +17,9 @@
 
 import * as WebSocket from 'ws';
 import uuid from 'uuid';
-import {Message} from 'fluxxchat-protokolla';
+import {Message, Card} from 'fluxxchat-protokolla';
 import {Room} from './room';
+import {RULES} from './rules/active-rules';
 import ErrorMessage from './lib/error';
 
 type MessageHandler = (conn: Connection, msg: Message) => void;
@@ -83,5 +84,9 @@ export class Connection {
 
 	public onClose(handler: CloseHandler): void {
 		this.closeHandlers.push(handler);
+	}
+
+	public getCardsInHand(): Card[] {
+		return this.hand.map(key => RULES[key].toJSON());
 	}
 }
