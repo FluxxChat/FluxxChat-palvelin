@@ -35,10 +35,10 @@ const POS_MIN_LIMIT = new PosMinLimitRule();
 
 export const RULES: {[key: string]: Rule} = {
 	anonymity: ANONYMITY,
-	message_max_length: MESSAGE_MAX_LENGTH,
-	no_message_min_length: new DisablingRule([MESSAGE_MAX_LENGTH], 'no_message_max_length', global._('Disable message maximum length')),
 	message_min_length: MESSAGE_MIN_LENGTH,
-	no_message_max_length: new DisablingRule([MESSAGE_MIN_LENGTH], 'no_message_min_length', global._('Disable message minimum length')),
+	no_message_min_length: new DisablingRule([MESSAGE_MIN_LENGTH], 'no_message_min_length', global._('Disable message minimum length')),
+	message_max_length: MESSAGE_MAX_LENGTH,
+	no_message_max_length: new DisablingRule([MESSAGE_MAX_LENGTH], 'no_message_max_length', global._('Disable message maximum length')),
 	pos_max_limit: POS_MAX_LIMIT,
 	pos_min_limit: POS_MIN_LIMIT,
 	no_pos_limit: new DisablingRule([POS_MAX_LIMIT, POS_MIN_LIMIT], 'no_pos_limit', global._('Disable POS limit')),
