@@ -20,6 +20,7 @@ import uuid from 'uuid';
 import {Message, Card} from 'fluxxchat-protokolla';
 import {Room} from './room';
 import {RULES} from './rules/active-rules';
+import ErrorMessage from './lib/error';
 
 type MessageHandler = (conn: Connection, msg: Message) => void;
 type CloseHandler = () => void;
@@ -45,7 +46,7 @@ export class Connection {
 				try {
 					handler(this, message);
 				} catch (err) {
-					console.error(err.message); // tslint:disable-line:no-console
+					this.handleError(err);
 				}
 			}
 		});
@@ -56,10 +57,17 @@ export class Connection {
 				try {
 					handler();
 				} catch (err) {
-					console.error(err); // tslint:disable-line:no-console
+					this.handleError(err);
 				}
 			}
 		});
+	}
+
+	public handleError(error: ErrorMessage) {
+		if (error.internal === false) {
+			this.sendMessage({type: 'ERROR', message: error.message});
+		}
+		console.error(error.message); // tslint:disable-line:no-console
 	}
 
 	public sendMessage(message: Message): void {
