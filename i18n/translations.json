@@ -50,8 +50,11 @@
     "Mutes a specific player.": {
         "fi": "Hiljentää valitun pelaajan."
     },
-    "Disable message length": {
-        "fi": "Kumoa viestipituus"
+    "Disable message maximum length": {
+        "fi": "Kumoa maksimi viestipituus"
+    },
+    "Disable message minimum length": {
+        "fi": "Kumoa minimi viestipituus"
     },
     "Unmute": {
         "fi": "Kumoa hiljennys"
