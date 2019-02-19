@@ -62,10 +62,6 @@ export class Room {
 				cardReplaced = true;
 			}
 		});
-		user.sendMessage({type: 'EMPTY_HAND'});
-		user.hand.forEach(key => {
-			user.sendMessage({type: 'CARD', card: RULES[key].toJSON()});
-		});
 
 		this.sendStateMessages();
 		this.broadcast('info', global._('New rule: $[1]', rule.title));
@@ -93,12 +89,6 @@ export class Room {
 		this.broadcastMessage(msg);
 	}
 
-	public sendStateMessages() {
-		for (const conn of this.connections) {
-			conn.sendMessage({...this.getStateMessage(), nickname: conn.visibleNickname});
-		}
-	}
-
 	public getStartingCards(conn: Connection) {
 		for (let i = 0; i < 5; i++) {
 			const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
@@ -124,6 +114,12 @@ export class Room {
 		}, 1000);
 	}
 
+	public sendStateMessages() {
+		for (const conn of this.connections) {
+			conn.sendMessage({...this.getStateMessage(), nickname: conn.visibleNickname, userId: conn.id, hand: conn.getCardsInHand()});
+		}
+	}
+
 	private getStateMessage(): RoomStateMessage {
 		return {
 			type: 'ROOM_STATE',
@@ -131,7 +127,9 @@ export class Room {
 			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
 			turnUserId: this.turn!.id,
 			turnEndTime: this.turnEndTime,
-			nickname: ''
+			hand: [],
+			nickname: '',
+			userId: ''
 		};
 	}
 }
