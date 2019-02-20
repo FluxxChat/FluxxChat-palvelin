@@ -36,6 +36,7 @@ export class Connection {
 	private socket: WebSocket;
 	private messageHandlers: MessageHandler[] = [];
 	private closeHandlers: CloseHandler[] = [];
+	private timer: any;
 
 	constructor(socket: WebSocket) {
 		this.socket = socket;
@@ -60,7 +61,12 @@ export class Connection {
 					this.handleError(err);
 				}
 			}
+			clearInterval(this.timer);
 		});
+
+		this.timer = setInterval(() => {
+			this.sendMessage({type: 'KEEP_ALIVE'});
+		}, 5000);
 	}
 
 	public handleError(error: ErrorMessage) {
