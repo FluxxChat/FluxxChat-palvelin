@@ -44,7 +44,7 @@ export class Room {
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
-		if(!EnabledRule.isValidateParameters(parameters)){
+		if (!EnabledRule.isValidateParameters(parameters)) {
 			return;
 		}
 

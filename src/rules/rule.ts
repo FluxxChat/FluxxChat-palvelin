@@ -21,6 +21,16 @@ import {Connection} from '../connection';
 import {Room} from '../room';
 
 export class EnabledRule {
+
+	public static isValidateParameters(parameters: RuleParameters) {
+		if (parameters['number' as keyof RuleParameterType] !== undefined) {
+			return parameters['number' as keyof RuleParameterType] >= 0;
+		}
+		if (parameters['player' as keyof RuleParameterType] !== undefined) {
+			return parameters['player' as keyof RuleParameterType] !== null;
+		}
+		return true;
+	}
 	public rule: Rule;
 	public parameter: RuleParameters;
 
@@ -39,16 +49,6 @@ export class EnabledRule {
 
 	public toJSON() {
 		return {...this.rule.toJSON(), parameters: this.parameter};
-	}
-
-	public static isValidateParameters(parameters: RuleParameters) {
-		if(parameters['number' as keyof RuleParameterType] !== undefined) {
-			return parameters['number' as keyof RuleParameterType] >= 0;
-		}
-		if(parameters['player' as keyof RuleParameterType] !== undefined) {
-			return parameters['player' as keyof RuleParameterType] !== null;
-		}
-		return true;
 	}
 
 }
