@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Message, Card, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
+import {Message, Card, RuleParameterTypes, RuleParameters, RuleParameterType} from 'fluxxchat-protokolla';
 import {FluxxChatServer} from '../server';
 import {Connection} from '../connection';
 import {Room} from '../room';
@@ -40,6 +40,17 @@ export class EnabledRule {
 	public toJSON() {
 		return {...this.rule.toJSON(), parameters: this.parameter};
 	}
+
+	public static isValidateParameters(parameters: RuleParameters) {
+		if(parameters['number' as keyof RuleParameterType] !== undefined) {
+			return parameters['number' as keyof RuleParameterType] >= 0;
+		}
+		if(parameters['player' as keyof RuleParameterType] !== undefined) {
+			return parameters['player' as keyof RuleParameterType] !== null;
+		}
+		return true;
+	}
+
 }
 
 export interface Rule {

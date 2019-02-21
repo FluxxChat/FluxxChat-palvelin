@@ -44,6 +44,10 @@ export class Room {
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
+		if(!EnabledRule.isValidateParameters(parameters)){
+			return;
+		}
+
 		const filter = (r: EnabledRule) => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0;
 
 		this.enabledRules.filter(r => !filter(r)).forEach(r => r.rule.ruleDisabled(this));

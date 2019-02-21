@@ -25,7 +25,7 @@ export class MessageMinLengthRule extends RuleBase implements Rule {
 	public title = global._('Message Minimum Length Limit');
 	public description = global._('Restricts message minimum length.');
 	public ruleName = 'message_min_length';
-	public parameterTypes = {length: 'number'} as RuleParameterTypes;
+	public parameterTypes = {number: 'number'} as RuleParameterTypes;
 
 	public isValidMessage(_server: FluxxChatServer, message: TextMessage, parameter: any, _sender: Connection) {
 		return message.textContent.length >= parameter.length;
