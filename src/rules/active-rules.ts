@@ -23,11 +23,13 @@ import {MuteRule} from './mute-rule';
 import {MarkdownRule} from './formatting-rule';
 import {PseudonymeRule} from './pseudonyme-rule';
 import {PosMaxLimitRule, PosMinLimitRule} from './pos-limit-rule';
+import {ChatTurnsRule} from './chat-turns-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_MIN_LENGTH = new MessageMinLengthRule();
 const MESSAGE_MAX_LENGTH = new MessageMaxLengthRule();
 const MUTE = new MuteRule();
+const CHAT_TURNS = new ChatTurnsRule();
 const MARKDOWN = new MarkdownRule();
 const PSEUDONYMES = new PseudonymeRule();
 const POS_MAX_LIMIT = new PosMaxLimitRule();
@@ -43,9 +45,11 @@ export const RULES: {[key: string]: Rule} = {
 	no_pos_limit: new DisablingRule([POS_MAX_LIMIT, POS_MIN_LIMIT], 'no_pos_limit', global._('Disable POS limit')),
 	mute: MUTE,
 	unmute_all: new DisablingRule([MUTE], 'unmute_all', global._('Unmute')),
+	chat_turns: CHAT_TURNS,
+	no_chat_turns: new DisablingRule([CHAT_TURNS], 'no_chat_turns', global._('Disable Chat Turns')),
 	markdown_formatting: MARKDOWN,
 	pseudonymes: PSEUDONYMES,
 	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting', global._('Disable MarkDown formatting')),
 	return_names: new DisablingRule([ANONYMITY, PSEUDONYMES], 'return_names', global._('Return original names')),
-	disable_all: new DisablingRule([ANONYMITY, MESSAGE_MAX_LENGTH, MESSAGE_MIN_LENGTH, MUTE, MARKDOWN, PSEUDONYMES], 'disable_all', global._('Disable all'))
+	disable_all: new DisablingRule([ANONYMITY, MESSAGE_MAX_LENGTH, MESSAGE_MIN_LENGTH, MUTE, MARKDOWN, PSEUDONYMES, POS_MAX_LIMIT, POS_MIN_LIMIT, CHAT_TURNS], 'disable_all', global._('Disable all'))
 };

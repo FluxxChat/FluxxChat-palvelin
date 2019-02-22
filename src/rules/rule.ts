@@ -90,8 +90,6 @@ export class RuleBase {
 }
 
 export class DisablingRule extends RuleBase implements Rule {
-	public title;
-
 	constructor(rules: Rule[], ruleName: string, ruleTitle: string) {
 		super();
 		this.title = ruleTitle;
@@ -106,5 +104,6 @@ export enum RuleCategory {
 	MESSAGELENGTH = 'MESSAGE-LENGTH',
 	MUTE = 'MUTE',
 	FORMATTING = 'FORMATTING',
-	POS_LIMIT = 'POS_LIMIT'
+	POS_LIMIT = 'POS_LIMIT',
+	TURNS = 'TURN'
 }
