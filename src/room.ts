@@ -33,12 +33,13 @@ export class Room {
 		if (this.connections.length === 0) {
 			this.turn = conn;
 			this.setTimer();
+			this.dealHand(conn, 3);
 		}
 
 		// Push to front so new players get their turn last
 		this.connections.unshift(conn);
 		conn.room = this;
-		this.getStartingCards(conn);
+		this.dealHand(conn, 5);
 
 		this.broadcast('info', global._('$[1] connected', conn.nickname));
 	}
@@ -80,14 +81,6 @@ export class Room {
 		this.broadcastMessage(msg);
 	}
 
-	public getStartingCards(conn: Connection) {
-		for (let i = 0; i < 5; i++) {
-			const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
-			const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
-			conn.hand.push(newRuleKey);
-		}
-	}
-
 	public setTimer() {
 		const startTime = Date.now();
 		this.turnEndTime = startTime + 120000;
@@ -99,7 +92,7 @@ export class Room {
 				const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
 				const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
 				this.turn = this.connections[nextTurnIndex];
-				this.dealHand();
+				this.dealHand(this.turn!, 3);
 				this.setTimer();
 				this.sendStateMessages();
 			}
@@ -125,9 +118,9 @@ export class Room {
 		};
 	}
 
-	private dealHand() {
-		for (let i = 0; i < 3; i++) {
-			this.turn!.hand.push(this.getRandomRuleName());
+	private dealHand(conn: Connection, numCards: number) {
+		for (let i = 0; i < numCards; i++) {
+			conn.hand.push(this.getRandomRuleName());
 		}
 	}
 
