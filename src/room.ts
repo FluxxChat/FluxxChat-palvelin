@@ -52,16 +52,7 @@ export class Room {
 		this.enabledRules = this.enabledRules.filter(filter);
 		this.enabledRules.push(new EnabledRule(rule, parameters));
 
-		const user = this.connections[this.connections.findIndex(conn => conn.id === this.turn!.id)];
-		let cardReplaced = false;
-		user.hand.forEach(key => {
-			if (cardReplaced === false && RULES[key] === rule) {
-				const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
-				const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
-				user.hand[user.hand.indexOf(key)] = newRuleKey;
-				cardReplaced = true;
-			}
-		});
+		this.turn!.hand.splice(this.turn!.hand.findIndex(ruleName => ruleName === rule.ruleName), 1);
 
 		this.sendStateMessages();
 		this.broadcast('info', global._('New rule: $[1]', rule.title));
@@ -108,6 +99,7 @@ export class Room {
 				const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
 				const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
 				this.turn = this.connections[nextTurnIndex];
+				this.dealHand();
 				this.setTimer();
 				this.sendStateMessages();
 			}
@@ -131,5 +123,16 @@ export class Room {
 			nickname: '',
 			userId: ''
 		};
+	}
+
+	private dealHand() {
+		for (let i = 0; i < 3; i++) {
+			this.turn!.hand.push(this.getRandomRuleName());
+		}
+	}
+
+	private getRandomRuleName() {
+		const randomNumber = Math.floor(Math.random() * Object.keys(RULES).length);
+		return Object.keys(RULES)[randomNumber];
 	}
 }
