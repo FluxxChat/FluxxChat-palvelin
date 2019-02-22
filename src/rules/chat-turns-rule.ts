@@ -30,6 +30,6 @@ export class ChatTurnsRule extends RuleBase implements Rule {
 		if (!sender.room || !sender.room.turn) {
 			return true;
 		}
-		return sender.id !== sender.room.turn.id;
+		return sender.id === sender.room.turn.id;
 	}
 }
