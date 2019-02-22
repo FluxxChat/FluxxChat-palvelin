@@ -50,6 +50,15 @@
     "Mutes a specific player.": {
         "fi": "Hiljentää valitun pelaajan."
     },
+    "Chat Turns": {
+        "fi": "Keskusteluvuorot"
+    },
+    "Players can only speak during their turn.": {
+        "fi": "Pelaajat voivat puhua vain omalla vuorollaan."
+    },
+    "Disable Chat Turns": {
+        "fi": "Kumoa keskusteluvuorot"
+    },
     "Disable message length": {
         "fi": "Kumoa viestipituus"
     },
