@@ -25,12 +25,14 @@ export abstract class NicknameRule extends RuleBase implements Rule {
 	public ruleEnabled(room: Room) {
 		for (const conn of room.connections) {
 			conn.visibleNickname = this.createNickname(conn);
+			conn.visibleProfileImg = 'default';
 		}
 	}
 
 	public ruleDisabled(room: Room) {
 		for (const conn of room.connections) {
 			conn.visibleNickname = conn.nickname;
+			conn.visibleProfileImg = conn.profileImg;
 		}
 	}
 
