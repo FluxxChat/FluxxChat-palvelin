@@ -27,6 +27,17 @@ export class FluxxChatServer {
 	private rooms: {[id: string]: Room} = {};
 
 	public handleMessage(conn: Connection, message: Message) {
+		if (message.type === 'PROFILE_IMG_CHANGE') {
+			conn.profileImg = message.profileImg;
+			if (conn.nickname === conn.visibleNickname) {
+				conn.visibleProfileImg = message.profileImg;
+			}
+			if (conn.room) {
+				conn.room.sendStateMessages();
+			}
+			return;
+		}
+
 		switch (message.type) {
 			case 'JOIN_ROOM':
 				return this.joinRoom(conn, message.roomId, message.nickname);
