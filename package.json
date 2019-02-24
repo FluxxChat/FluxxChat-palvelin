@@ -11,6 +11,7 @@
     "start": "node ./dist/index.js",
     "start:watch": "node ./dist/index.js",
     "commit": "git-cz",
+    "test": "ava",
     "lint": "tslint --fix \"src/**/*.ts\"",
     "heroku-postbuild": "yarn build"
   },
@@ -21,6 +22,8 @@
     "@types/node": "^10.12.18",
     "@types/uuid": "^3.4.4",
     "@types/ws": "^6.0.1",
+    "ava": "^1.2.1",
+    "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "3.1"
@@ -46,6 +49,17 @@
       "pre-commit": "yarn lint",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
+  },
+  "ava": {
+    "files": [
+      "test/**/*.ts"
+    ],
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
   },
   "commitlint": {
     "extends": [
