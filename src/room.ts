@@ -119,7 +119,7 @@ export class Room {
 	private getStateMessage(): RoomStateMessage {
 		return {
 			type: 'ROOM_STATE',
-			users: this.connections.map(conn => ({id: conn.id, nickname: conn.visibleNickname})),
+			users: this.connections.map(conn => ({id: conn.id, nickname: conn.visibleNickname, profileImg: conn.visibleProfileImg})),
 			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
 			turnUserId: this.turn!.id,
 			turnEndTime: this.turnEndTime,

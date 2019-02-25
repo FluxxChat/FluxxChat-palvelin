@@ -31,6 +31,8 @@ export class Connection {
 	public room?: Room;
 	public nickname: string = this.id;
 	public visibleNickname: string = this.nickname;
+	public profileImg: string = 'default';
+	public visibleProfileImg: string = this.profileImg;
 	public hand: string[] = [];
 	public nCardsPlayed: number;
 

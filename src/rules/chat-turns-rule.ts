@@ -16,25 +16,20 @@
  */
 
 import {Rule, RuleCategory, RuleBase} from './rule';
+import {FluxxChatServer} from '../server';
+import {Message} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
-import {Room} from '../room';
 
-export abstract class NicknameRule extends RuleBase implements Rule {
-	public ruleCategories: Set<RuleCategory> = new Set([RuleCategory.ANONYMITY] as RuleCategory[]);
+export class ChatTurnsRule extends RuleBase implements Rule {
+	public ruleCategories: Set<RuleCategory> = new Set([RuleCategory.TURNS] as RuleCategory[]);
+	public title = global._('Chat Turns');
+	public description = global._('Players can only speak during their turn.');
+	public ruleName = 'chat_turns';
 
-	public ruleEnabled(room: Room) {
-		for (const conn of room.connections) {
-			conn.visibleNickname = this.createNickname(conn);
-			conn.visibleProfileImg = 'default';
+	public isValidMessage(_server: FluxxChatServer, _message: Message, _parameter: any, sender: Connection) {
+		if (!sender.room || !sender.room.turn) {
+			return true;
 		}
+		return sender.id === sender.room.turn.id;
 	}
-
-	public ruleDisabled(room: Room) {
-		for (const conn of room.connections) {
-			conn.visibleNickname = conn.nickname;
-			conn.visibleProfileImg = conn.profileImg;
-		}
-	}
-
-	protected abstract createNickname(conn: Connection): string;
 }
