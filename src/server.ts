@@ -65,7 +65,7 @@ export class FluxxChatServer {
 		}
 
 		if (message.type === 'TEXT') {
-			message.senderNickname = conn.visibleNickname;
+			message.senderNickname = conn.nickname;
 			message.senderId = conn.id;
 			message.timestamp = new Date().toISOString();
 		}
@@ -175,7 +175,6 @@ export class FluxxChatServer {
 			}
 
 			conn.nickname = requestedNickname;
-			conn.visibleNickname = requestedNickname;
 			room.addConnection(conn);
 			room.sendStateMessages();
 		} else {
@@ -185,9 +184,6 @@ export class FluxxChatServer {
 
 	private changeProfileImage(conn: Connection, profileImg: string) {
 		conn.profileImg = profileImg;
-		if (conn.nickname === conn.visibleNickname) {
-			conn.visibleProfileImg = profileImg;
-		}
 		if (conn.room) {
 			conn.room.sendStateMessages();
 		}

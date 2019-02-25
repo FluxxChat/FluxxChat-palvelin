@@ -16,8 +16,7 @@
  */
 
 import {Rule, RuleCategory, RuleBase} from './rule';
-import {FluxxChatServer} from '../server';
-import {Message} from 'fluxxchat-protokolla';
+import {Message, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 
 export class ChatTurnsRule extends RuleBase implements Rule {
@@ -26,7 +25,7 @@ export class ChatTurnsRule extends RuleBase implements Rule {
 	public description = global._('Players can only speak during their turn.');
 	public ruleName = 'chat_turns';
 
-	public isValidMessage(_server: FluxxChatServer, _message: Message, _parameter: any, sender: Connection) {
+	public isValidMessage(_parameters: RuleParameters, _message: Message, sender: Connection) {
 		if (!sender.room || !sender.room.turn) {
 			return true;
 		}

@@ -16,8 +16,7 @@
  */
 
 import {Rule, RuleCategory, RuleBase} from './rule';
-import {FluxxChatServer} from '../server';
-import {TextMessage, RuleParameterTypes} from 'fluxxchat-protokolla';
+import {TextMessage, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 
 export class MessageMinLengthRule extends RuleBase implements Rule {
@@ -27,7 +26,7 @@ export class MessageMinLengthRule extends RuleBase implements Rule {
 	public ruleName = 'message_min_length';
 	public parameterTypes = {length: 'number'} as RuleParameterTypes;
 
-	public isValidMessage(_server: FluxxChatServer, message: TextMessage, parameter: any, _sender: Connection) {
-		return message.textContent.length >= parameter.length;
+	public isValidMessage(parameters: RuleParameters, message: TextMessage, _sender: Connection) {
+		return message.textContent.length >= parameters.length;
 	}
 }
