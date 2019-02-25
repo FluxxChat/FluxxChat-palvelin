@@ -21,6 +21,11 @@ import {RoomStateMessage, Message, RuleParameters, SystemMessage, Severity} from
 import {EnabledRule, Rule} from './rules/rule';
 import {intersection} from './util';
 import {RULES} from './rules/active-rules';
+import ErrorMessage from './lib/error';
+
+const N_TAKE = 3;
+const N_PLAY = 3;
+const N_FIRST_HAND = 5;
 
 export class Room {
 	public id = uuid.v4();
@@ -33,18 +38,22 @@ export class Room {
 		if (this.connections.length === 0) {
 			this.turn = conn;
 			this.setTimer();
-			this.dealHand(conn, 3);
+			this.dealHand(conn, N_TAKE);
 		}
 
 		// Push to front so new players get their turn last
 		this.connections.unshift(conn);
 		conn.room = this;
-		this.dealHand(conn, 5);
+		this.dealHand(conn, N_FIRST_HAND);
 
 		this.broadcast('info', global._('$[1] connected', conn.nickname));
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
+		if (this.turn!.nCardsPlayed === N_PLAY) {
+			throw new ErrorMessage({message: 'Play limit reached', internal: false});
+		}
+
 		const filter = (r: EnabledRule) => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0;
 
 		this.enabledRules.filter(r => !filter(r)).forEach(r => r.rule.ruleDisabled(this));
@@ -54,6 +63,7 @@ export class Room {
 		this.enabledRules.push(new EnabledRule(rule, parameters));
 
 		this.turn!.hand.splice(this.turn!.hand.findIndex(ruleName => ruleName === rule.ruleName), 1);
+		this.turn!.nCardsPlayed += 1;
 
 		this.sendStateMessages();
 		this.broadcast('info', global._('New rule: $[1]', rule.title));
@@ -92,7 +102,8 @@ export class Room {
 				const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
 				const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
 				this.turn = this.connections[nextTurnIndex];
-				this.dealHand(this.turn!, 3);
+				this.dealHand(this.turn!, N_TAKE);
+				this.turn!.nCardsPlayed = 0;
 				this.setTimer();
 				this.sendStateMessages();
 			}

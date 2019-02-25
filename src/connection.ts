@@ -32,6 +32,7 @@ export class Connection {
 	public nickname: string = this.id;
 	public visibleNickname: string = this.nickname;
 	public hand: string[] = [];
+	public nCardsPlayed: number;
 
 	private socket: WebSocket;
 	private messageHandlers: MessageHandler[] = [];
