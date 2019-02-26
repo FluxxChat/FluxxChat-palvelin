@@ -16,8 +16,7 @@
  */
 
 import {Rule, RuleCategory, RuleBase} from './rule';
-import {FluxxChatServer} from '../server';
-import {Message, RuleParameterTypes} from 'fluxxchat-protokolla';
+import {Message, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 
 export class MuteRule extends RuleBase implements Rule {
@@ -27,7 +26,7 @@ export class MuteRule extends RuleBase implements Rule {
 	public ruleName = 'mute';
 	public parameterTypes = {target: 'player'} as RuleParameterTypes;
 
-	public isValidMessage(_server: FluxxChatServer, _message: Message, parameter: any, sender: Connection) {
+	public isValidMessage(parameter: RuleParameters, _message: Message, sender: Connection) {
 		return sender.id !== parameter.target;
 	}
 }

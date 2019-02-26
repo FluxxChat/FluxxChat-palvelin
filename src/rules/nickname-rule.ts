@@ -18,23 +18,40 @@
 import {Rule, RuleCategory, RuleBase} from './rule';
 import {Connection} from '../connection';
 import {Room} from '../room';
+import {RuleParameters, TextMessage, RoomStateMessage} from 'fluxxchat-protokolla';
 
 export abstract class NicknameRule extends RuleBase implements Rule {
 	public ruleCategories: Set<RuleCategory> = new Set([RuleCategory.ANONYMITY] as RuleCategory[]);
+	private nicknameStore: {[roomId: string]: {[connId: string]: string} | undefined} = {};
 
 	public ruleEnabled(room: Room) {
-		for (const conn of room.connections) {
-			conn.visibleNickname = this.createNickname(conn);
-			conn.visibleProfileImg = 'default';
-		}
+		this.nicknameStore[room.id] = {};
 	}
 
 	public ruleDisabled(room: Room) {
-		for (const conn of room.connections) {
-			conn.visibleNickname = conn.nickname;
-			conn.visibleProfileImg = conn.profileImg;
-		}
+		this.nicknameStore[room.id] = undefined;
+	}
+
+	public applyTextMessage(_parameters: RuleParameters, message: TextMessage, conn: Connection): TextMessage {
+		const nickname = this.getNickname(conn);
+		return {...message, senderNickname: nickname};
+	}
+
+	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, conn: Connection): RoomStateMessage {
+		return {
+			...message,
+			nickname: this.getNickname(conn),
+			users: message.users.map(user => ({...user, nickname: this.getNickname(conn.room!.connections.find(c => c.id === user.id)!)}))
+		};
 	}
 
 	protected abstract createNickname(conn: Connection): string;
+
+	private getNickname(conn: Connection): string {
+		const store = this.nicknameStore[conn.room!.id]!;
+		if (!store[conn.id]) {
+			store[conn.id] = this.createNickname(conn);
+		}
+		return store[conn.id];
+	}
 }

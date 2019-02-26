@@ -115,15 +115,21 @@ export class Room {
 	}
 
 	public sendStateMessages() {
-		for (const conn of this.connections) {
-			conn.sendMessage({...this.getStateMessage(), nickname: conn.visibleNickname, userId: conn.id, hand: conn.getCardsInHand()});
+		outer: for (const conn of this.connections) {
+			let msg: RoomStateMessage = {...this.getStateMessage(), nickname: conn.nickname, userId: conn.id, hand: conn.getCardsInHand()};
+			for (const rule of this.enabledRules) {
+				const newMsg = rule.applyRoomStateMessage(msg, conn);
+				if (!newMsg) { continue outer; }
+				msg = newMsg;
+			}
+			conn.sendMessage(msg);
 		}
 	}
 
 	private getStateMessage(): RoomStateMessage {
 		return {
 			type: 'ROOM_STATE',
-			users: this.connections.map(conn => ({id: conn.id, nickname: conn.visibleNickname, profileImg: conn.visibleProfileImg})),
+			users: this.connections.map(conn => ({id: conn.id, nickname: conn.nickname, profileImg: conn.profileImg})),
 			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
 			turnUserId: this.turn!.id,
 			turnEndTime: this.turnEndTime,

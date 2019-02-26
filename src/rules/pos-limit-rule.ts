@@ -16,7 +16,6 @@
  */
 
 import {Rule, RuleCategory, RuleBase} from './rule';
-import {FluxxChatServer} from '../server';
 import {TextMessage, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 import posjs from 'pos';
@@ -85,8 +84,8 @@ export class PosMinLimitRule extends BasePosLimitRule implements Rule {
 	public ruleName = 'pos_min_limit';
 	public parameterTypes = {pos: Object.keys(VOIKKO_POS_IDS), number: 'number'} as RuleParameterTypes;
 
-	public isValidMessage(_server: FluxxChatServer, message: TextMessage, parameter: RuleParameters, _sender: Connection) {
-		return this.getNumberOfWordsWithPos(message.textContent, parameter.pos) >= parameter.number;
+	public isValidMessage(parameters: RuleParameters, message: TextMessage, _sender: Connection) {
+		return this.getNumberOfWordsWithPos(message.textContent, parameters.pos) >= parameters.number;
 	}
 }
 
@@ -96,7 +95,7 @@ export class PosMaxLimitRule extends BasePosLimitRule implements Rule {
 	public ruleName = 'pos_max_limit';
 	public parameterTypes = {pos: Object.keys(VOIKKO_POS_IDS), number: 'number'} as RuleParameterTypes;
 
-	public isValidMessage(_server: FluxxChatServer, message: TextMessage, parameter: RuleParameters, _sender: Connection) {
-		return this.getNumberOfWordsWithPos(message.textContent, parameter.pos) <= parameter.number;
+	public isValidMessage(parameters: RuleParameters, message: TextMessage, _sender: Connection) {
+		return this.getNumberOfWordsWithPos(message.textContent, parameters.pos) <= parameters.number;
 	}
 }

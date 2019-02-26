@@ -15,30 +15,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Message, Card, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
-import {FluxxChatServer} from '../server';
+import {Card, RuleParameterTypes, RuleParameters, RoomStateMessage, TextMessage} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 import {Room} from '../room';
 
 export class EnabledRule {
 	public rule: Rule;
-	public parameter: RuleParameters;
+	public parameters: RuleParameters;
 
 	constructor(rule: Rule, parameter: RuleParameters) {
 		this.rule = rule;
-		this.parameter = parameter;
+		this.parameters = parameter;
 	}
 
-	public applyMessage(server: FluxxChatServer, message: Message, sender: Connection) {
-		return this.rule.applyMessage(server, message, this.parameter, sender);
+	public applyTextMessage(message: TextMessage, sender: Connection) {
+		return this.rule.applyTextMessage(this.parameters, message, sender);
 	}
 
-	public isValidMessage(server: FluxxChatServer, message: Message, sender: Connection) {
-		return this.rule.isValidMessage(server, message, this.parameter, sender);
+	public applyRoomStateMessage(message: RoomStateMessage, receiver: Connection) {
+		return this.rule.applyRoomStateMessage(this.parameters, message, receiver);
+	}
+
+	public isValidMessage(message: TextMessage, sender: Connection) {
+		return this.rule.isValidMessage(this.parameters, message, sender);
 	}
 
 	public toJSON() {
-		return {...this.rule.toJSON(), parameters: this.parameter};
+		return {...this.rule.toJSON(), parameters: this.parameters};
 	}
 }
 
@@ -50,8 +53,9 @@ export interface Rule {
 	parameterTypes: RuleParameterTypes;
 	ruleEnabled: (room: Room) => void;
 	ruleDisabled: (room: Room) => void;
-	applyMessage: (server: FluxxChatServer, message: Message, parameter: RuleParameters, sender: Connection) => Message | null;
-	isValidMessage: (server: FluxxChatServer, message: Message, parameter: RuleParameters, sender: Connection) => boolean;
+	applyTextMessage: (parameter: RuleParameters, message: TextMessage, sender: Connection) => TextMessage | null;
+	applyRoomStateMessage: (parameter: RuleParameters, message: RoomStateMessage, receiver: Connection) => RoomStateMessage | null;
+	isValidMessage: (parameter: RuleParameters, message: TextMessage, sender: Connection) => boolean;
 	toJSON: () => Card;
 }
 
@@ -70,11 +74,15 @@ export class RuleBase {
 		// Nothing
 	}
 
-	public applyMessage(_server: FluxxChatServer, message: Message, _parameter: RuleParameters, _sender: Connection) {
+	public applyTextMessage(_parameter: RuleParameters, message: TextMessage, _sender: Connection) {
 		return message;
 	}
 
-	public isValidMessage(_server: FluxxChatServer, _message: Message, _parameter: RuleParameters, _sender: Connection) {
+	public applyRoomStateMessage(_parameter: RuleParameters, message: RoomStateMessage, _receiver: Connection) {
+		return message;
+	}
+
+	public isValidMessage(_parameter: RuleParameters, _message: TextMessage, _sender: Connection) {
 		return true;
 	}
 
