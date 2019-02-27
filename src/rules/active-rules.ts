@@ -24,7 +24,7 @@ import {MarkdownRule} from './formatting-rule';
 import {PseudonymeRule} from './pseudonyme-rule';
 import {PosMaxLimitRule, PosMinLimitRule} from './pos-limit-rule';
 import {ChatTurnsRule} from './chat-turns-rule';
-import { HaikuRule } from './haiku-rule';
+import {HaikuRule} from './haiku-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_MIN_LENGTH = new MessageMinLengthRule();
