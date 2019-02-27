@@ -48,14 +48,19 @@ export class FluxxChatServer {
 		}
 
 		if (message.type === 'VALIDATE_TEXT') {
+			const blockingRules: string[] = [];
 			for (const rule of conn.room.enabledRules) {
-				if (!rule.isValidMessage(this, message, conn)) {
-					return conn.sendMessage({
-						type: 'VALIDATE_TEXT_RESPONSE',
-						valid: false,
-						invalidReason: rule.rule.title
-					});
+				if (!rule.isValidMessage(message, conn)) {
+					blockingRules.push(rule.rule.title);
 				}
+			}
+
+			if (blockingRules.length > 0) {
+				return conn.sendMessage({
+					type: 'VALIDATE_TEXT_RESPONSE',
+					valid: false,
+					invalidReason: blockingRules
+				});
 			}
 
 			return conn.sendMessage({
@@ -71,11 +76,11 @@ export class FluxxChatServer {
 		}
 
 		for (const rule of conn.room.enabledRules) {
-			if (!rule.isValidMessage(this, message, conn)) {
+			if (!rule.isValidMessage(message, conn)) {
 				throw new Error('Message disallowed by rules');
 			}
 
-			const newMessage = rule.applyMessage(this, message, conn);
+			const newMessage = rule.applyTextMessage(message, conn);
 			if (!newMessage) {
 				return; // message removed
 			} else {
