@@ -38,13 +38,13 @@ export class Room {
 		if (this.connections.length === 0) {
 			this.turn = conn;
 			this.setTimer();
-			this.dealHand(conn, N_TAKE);
+			this.dealCards(conn, N_TAKE);
 		}
 
 		// Push to front so new players get their turn last
 		this.connections.unshift(conn);
 		conn.room = this;
-		this.dealHand(conn, N_FIRST_HAND);
+		this.dealCards(conn, N_FIRST_HAND);
 
 		this.broadcast('info', global._('$[1] connected', conn.nickname));
 	}
@@ -102,7 +102,7 @@ export class Room {
 				const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
 				const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
 				this.turn = this.connections[nextTurnIndex];
-				this.dealHand(this.turn!, N_TAKE);
+				this.dealCards(this.turn!, N_TAKE);
 				this.turn!.nCardsPlayed = 0;
 				this.setTimer();
 				this.sendStateMessages();
@@ -129,7 +129,7 @@ export class Room {
 		};
 	}
 
-	private dealHand(conn: Connection, numCards: number) {
+	private dealCards(conn: Connection, numCards: number) {
 		for (let i = 0; i < numCards; i++) {
 			conn.hand.push(this.getRandomRuleName());
 		}
