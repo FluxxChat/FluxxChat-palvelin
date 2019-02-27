@@ -21,6 +21,11 @@ import {RoomStateMessage, Message, RuleParameters, SystemMessage, Severity} from
 import {EnabledRule, Rule} from './rules/rule';
 import {intersection} from './util';
 import {RULES} from './rules/active-rules';
+import ErrorMessage from './lib/error';
+
+const N_TAKE = 3;
+const N_PLAY = 3;
+const N_FIRST_HAND = 5;
 
 export class Room {
 	public id = uuid.v4();
@@ -33,17 +38,22 @@ export class Room {
 		if (this.connections.length === 0) {
 			this.turn = conn;
 			this.setTimer();
+			this.dealCards(conn, N_TAKE);
 		}
 
 		// Push to front so new players get their turn last
 		this.connections.unshift(conn);
 		conn.room = this;
-		this.getStartingCards(conn);
+		this.dealCards(conn, N_FIRST_HAND);
 
 		this.broadcast('info', global._('$[1] connected', conn.nickname));
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
+		if (this.turn!.nCardsPlayed === N_PLAY) {
+			throw new ErrorMessage({message: 'Play limit reached', internal: false});
+		}
+
 		const filter = (r: EnabledRule) => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0;
 
 		this.enabledRules.filter(r => !filter(r)).forEach(r => r.rule.ruleDisabled(this));
@@ -52,16 +62,8 @@ export class Room {
 		this.enabledRules = this.enabledRules.filter(filter);
 		this.enabledRules.push(new EnabledRule(rule, parameters));
 
-		const user = this.connections[this.connections.findIndex(conn => conn.id === this.turn!.id)];
-		let cardReplaced = false;
-		user.hand.forEach(key => {
-			if (cardReplaced === false && RULES[key] === rule) {
-				const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
-				const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
-				user.hand[user.hand.indexOf(key)] = newRuleKey;
-				cardReplaced = true;
-			}
-		});
+		this.turn!.hand.splice(this.turn!.hand.findIndex(ruleName => ruleName === rule.ruleName), 1);
+		this.turn!.nCardsPlayed += 1;
 
 		this.sendStateMessages();
 		this.broadcast('info', global._('New rule: $[1]', rule.title));
@@ -89,14 +91,6 @@ export class Room {
 		this.broadcastMessage(msg);
 	}
 
-	public getStartingCards(conn: Connection) {
-		for (let i = 0; i < 5; i++) {
-			const randomNumber = Math.floor(Math.random() * Math.floor(Object.keys(RULES).length));
-			const newRuleKey = Object.keys(RULES).slice(randomNumber, randomNumber + 1)[0];
-			conn.hand.push(newRuleKey);
-		}
-	}
-
 	public setTimer() {
 		const startTime = Date.now();
 		this.turnEndTime = startTime + 120000;
@@ -108,6 +102,8 @@ export class Room {
 				const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
 				const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
 				this.turn = this.connections[nextTurnIndex];
+				this.dealCards(this.turn!, N_TAKE);
+				this.turn!.nCardsPlayed = 0;
 				this.setTimer();
 				this.sendStateMessages();
 			}
@@ -137,5 +133,16 @@ export class Room {
 			nickname: '',
 			userId: ''
 		};
+	}
+
+	private dealCards(conn: Connection, numCards: number) {
+		for (let i = 0; i < numCards; i++) {
+			conn.hand.push(this.getRandomRuleName());
+		}
+	}
+
+	private getRandomRuleName() {
+		const randomNumber = Math.floor(Math.random() * Object.keys(RULES).length);
+		return Object.keys(RULES)[randomNumber];
 	}
 }
