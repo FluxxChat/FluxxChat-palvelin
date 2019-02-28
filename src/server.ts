@@ -27,17 +27,6 @@ export class FluxxChatServer {
 	private rooms: {[id: string]: Room} = {};
 
 	public handleMessage(conn: Connection, message: Message) {
-		if (message.type === 'PROFILE_IMG_CHANGE') {
-			conn.profileImg = message.profileImg;
-			if (conn.nickname === conn.visibleNickname) {
-				conn.visibleProfileImg = message.profileImg;
-			}
-			if (conn.room) {
-				conn.room.sendStateMessages();
-			}
-			return;
-		}
-
 		switch (message.type) {
 			case 'JOIN_ROOM':
 				return this.joinRoom(conn, message.roomId, message.nickname);
@@ -45,6 +34,8 @@ export class FluxxChatServer {
 				return this.createRoom(conn);
 			case 'LEAVE_ROOM':
 				return this.removeConnection(conn);
+			case 'PROFILE_IMG_CHANGE':
+				return this.changeProfileImage(conn, message.profileImg);
 			default:
 				if (!conn.room) {
 					throw new ErrorMessage({internal: true, message: 'Must be connected to a room'});
@@ -57,14 +48,19 @@ export class FluxxChatServer {
 		}
 
 		if (message.type === 'VALIDATE_TEXT') {
+			const blockingRules: string[] = [];
 			for (const rule of conn.room.enabledRules) {
-				if (!rule.isValidMessage(this, message, conn)) {
-					return conn.sendMessage({
-						type: 'VALIDATE_TEXT_RESPONSE',
-						valid: false,
-						invalidReason: rule.rule.title
-					});
+				if (!rule.isValidMessage(message, conn)) {
+					blockingRules.push(rule.rule.title);
 				}
+			}
+
+			if (blockingRules.length > 0) {
+				return conn.sendMessage({
+					type: 'VALIDATE_TEXT_RESPONSE',
+					valid: false,
+					invalidReason: blockingRules
+				});
 			}
 
 			return conn.sendMessage({
@@ -74,17 +70,17 @@ export class FluxxChatServer {
 		}
 
 		if (message.type === 'TEXT') {
-			message.senderNickname = conn.visibleNickname;
+			message.senderNickname = conn.nickname;
 			message.senderId = conn.id;
 			message.timestamp = new Date().toISOString();
 		}
 
 		for (const rule of conn.room.enabledRules) {
-			if (!rule.isValidMessage(this, message, conn)) {
+			if (!rule.isValidMessage(message, conn)) {
 				throw new Error('Message disallowed by rules');
 			}
 
-			const newMessage = rule.applyMessage(this, message, conn);
+			const newMessage = rule.applyTextMessage(message, conn);
 			if (!newMessage) {
 				return; // message removed
 			} else {
@@ -184,11 +180,17 @@ export class FluxxChatServer {
 			}
 
 			conn.nickname = requestedNickname;
-			conn.visibleNickname = requestedNickname;
 			room.addConnection(conn);
 			room.sendStateMessages();
 		} else {
 			throw new ErrorMessage({internal: false, message: `Room does not exist, id: ${roomId}`});
+		}
+	}
+
+	private changeProfileImage(conn: Connection, profileImg: string) {
+		conn.profileImg = profileImg;
+		if (conn.room) {
+			conn.room.sendStateMessages();
 		}
 	}
 }

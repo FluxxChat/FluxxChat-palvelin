@@ -30,10 +30,9 @@ export class Connection {
 	public closed = false;
 	public room?: Room;
 	public nickname: string = this.id;
-	public visibleNickname: string = this.nickname;
 	public profileImg: string = 'default';
-	public visibleProfileImg: string = this.profileImg;
 	public hand: string[] = [];
+	public nCardsPlayed: number;
 
 	private socket: WebSocket;
 	private messageHandlers: MessageHandler[] = [];
