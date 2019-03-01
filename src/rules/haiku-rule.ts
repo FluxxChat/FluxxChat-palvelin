@@ -37,17 +37,22 @@ export class HaikuRule extends RuleBase implements Rule {
 }
 
 function splitSyllables(text: string): string[] {
+	text = text.toLowerCase();
 	const vowels = 'aeiouyäöå';
-	const consontants = 'bcdfghjklmnpqrstvwxz';
+	const consontants = 'bcdfghjklmnpqrstvwxz\'';
+	const firstSyllableDiphtongs = ['ie', 'uo', 'yö'];
+	const vowelsNotEndingDiphtong = ['a', 'ä'];
 	const ans: string[] = [];
 	let i: number;
 	let j = 0;
+	let firstSyllable = true;
 	const split = () => {
 		const word = text.substring(j, i).trim();
 		if (word) { ans.push(word); }
 		j = i;
+		firstSyllable = false;
 	};
-	for (i = 0; i < text.length; i++) {
+	outer: for (i = 0; i < text.length; i++) {
 		const before = text.substring(0, i);
 		const after = text.substring(i);
 		if (before.length >= 1 && after.length >= 2) {
@@ -59,17 +64,25 @@ function splitSyllables(text: string): string[] {
 		}
 		if (before.length >= 1 && after.length >= 1) {
 			const b1 = before.charAt(before.length - 1);
-			if (vowels.includes(b1) && b1 !== 'a' && after.charAt(0) === 'a') {
-				split();
-				continue;
+			const a1 = after.charAt(0);
+			for (const vowel of vowelsNotEndingDiphtong) {
+				if (vowels.includes(b1) && b1 !== vowel && a1 === vowel) {
+					split();
+					continue outer;
+				}
 			}
-			if (vowels.includes(b1) && b1 !== 'o' && after.charAt(0) === 'o') {
-				split();
-				continue;
+			if (!firstSyllable) {
+				for (const diphtong of firstSyllableDiphtongs) {
+					if (b1 === diphtong[0] && a1 === diphtong[1]) {
+						split();
+						continue outer;
+					}
+				}
 			}
 		}
-		if (after && after.charAt(0).match(/[\s–\-']/)) {
+		if (after && after.charAt(0).match(/[\s–\-]/)) {
 			split();
+			firstSyllable = true;
 			continue;
 		}
 	}
