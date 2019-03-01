@@ -21,7 +21,7 @@ import {Connection} from '../connection';
 
 export class HaikuRule extends RuleBase implements Rule {
 	public ruleCategories = new Set([RuleCategory.METRE]);
-	public title = global._('Messages must be Haikus');
+	public title = global._('Haiku Messages');
 	public description = global._('All messages must have 3 verses (separated by / or new line) with 5, 7, and 5 syllables.');
 	public ruleName = 'haiku';
 

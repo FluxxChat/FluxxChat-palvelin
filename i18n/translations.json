@@ -44,8 +44,8 @@
     "Sets the maximum number of verbs/nouns/adjectives in message.": {
         "fi": "Asettaa enimmäismäärän verbejä/substantiiveja/adjektiiveja viestissä."
     },
-    "Messages must be Haikus": {
-        "fi": "Viestin on oltava haikuja"
+    "Haiku Messages": {
+        "fi": "Viestien oltava haikuja"
     },
     "All messages must have 3 verses (separated by / or new line) with 5, 7, and 5 syllables.": {
         "fi": "Jokaisessa viestissä on oltava 3 säettä (erotettuna /-merkillä tai uudellarivillä), joissa on 5, 7 ja 5 tavua."

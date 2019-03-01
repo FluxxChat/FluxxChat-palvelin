@@ -97,7 +97,7 @@ export class Room {
 		let counter: number = 120;
 		const interval = setInterval(() => {
 			counter--;
-			if (counter < 0) {
+			if (counter < 0 && this.connections.length > 0) {
 				clearInterval(interval);
 				const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
 				const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
