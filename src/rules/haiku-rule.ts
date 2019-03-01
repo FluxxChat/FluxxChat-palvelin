@@ -32,7 +32,7 @@ export class HaikuRule extends RuleBase implements Rule {
 			.map(splitSyllables)
 			.map(verse => verse.length);
 		
-		return syllableCounts === [5, 7, 5];
+		return syllableCounts.length === 3 && [5, 7, 5].every((v, i) => v === syllableCounts[i]);
 	}
 }
 
@@ -68,10 +68,11 @@ function splitSyllables(text: string): string[] {
 				continue;
 			}
 		}
-		if (after && after.charAt(0).match(/[\s–-']/)) {
+		if (after && after.charAt(0).match(/[\s–\-']/)) {
 			split();
 			continue;
 		}
 	}
+	split();
 	return ans;
 }
