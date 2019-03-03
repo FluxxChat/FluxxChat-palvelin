@@ -11,18 +11,18 @@
     "start": "node ./dist/index.js",
     "start:watch": "node ./dist/index.js",
     "commit": "git-cz",
-    "test": "ava",
+    "test": "tsc && ava",
     "lint": "tslint --fix \"src/**/*.ts\"",
     "heroku-postbuild": "yarn build"
   },
   "devDependencies": {
+    "ava": "^1.2.1",
     "@commitlint/cli": "^7.3.2",
     "@commitlint/config-conventional": "^7.3.1",
     "@types/express": "^4.16.0",
     "@types/node": "^10.12.18",
     "@types/uuid": "^3.4.4",
     "@types/ws": "^6.0.1",
-    "ava": "^1.2.1",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "tslint-eslint-rules": "^5.4.0",
@@ -52,15 +52,9 @@
   },
   "ava": {
     "files": [
-      "test/**/*.ts"
-    ],
-    "extensions": [
-      "ts"
-    ],
-    "require": [
-      "ts-node/register"
+      "test/**/*.js"
     ]
-  },
+},
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
