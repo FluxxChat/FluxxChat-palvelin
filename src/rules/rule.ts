@@ -113,5 +113,6 @@ export enum RuleCategory {
 	MUTE = 'MUTE',
 	FORMATTING = 'FORMATTING',
 	POS_LIMIT = 'POS_LIMIT',
-	TURNS = 'TURN'
+	TURNS = 'TURN',
+	METRE = 'METRE'
 }

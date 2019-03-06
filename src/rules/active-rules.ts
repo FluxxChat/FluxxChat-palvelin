@@ -24,6 +24,7 @@ import {MarkdownRule} from './formatting-rule';
 import {PseudonymeRule} from './pseudonyme-rule';
 import {PosMaxLimitRule, PosMinLimitRule} from './pos-limit-rule';
 import {ChatTurnsRule} from './chat-turns-rule';
+import {HaikuRule} from './haiku-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_MIN_LENGTH = new MessageMinLengthRule();
@@ -34,6 +35,7 @@ const MARKDOWN = new MarkdownRule();
 const PSEUDONYMES = new PseudonymeRule();
 const POS_MAX_LIMIT = new PosMaxLimitRule();
 const POS_MIN_LIMIT = new PosMinLimitRule();
+const HAIKU = new HaikuRule();
 
 export const RULES: {[key: string]: Rule} = {
 	anonymity: ANONYMITY,
@@ -43,6 +45,8 @@ export const RULES: {[key: string]: Rule} = {
 	pos_max_limit: POS_MAX_LIMIT,
 	pos_min_limit: POS_MIN_LIMIT,
 	no_pos_limit: new DisablingRule([POS_MAX_LIMIT, POS_MIN_LIMIT], 'no_pos_limit', global._('Disable POS limit')),
+	haiku: HAIKU,
+	no_metre: new DisablingRule([HAIKU], 'no_metre', global._('No Metre')),
 	mute: MUTE,
 	unmute_all: new DisablingRule([MUTE], 'unmute_all', global._('Unmute')),
 	chat_turns: CHAT_TURNS,
