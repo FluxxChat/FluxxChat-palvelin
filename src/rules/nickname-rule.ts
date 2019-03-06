@@ -41,7 +41,11 @@ export abstract class NicknameRule extends RuleBase implements Rule {
 		return {
 			...message,
 			nickname: this.getNickname(conn),
-			users: message.users.map(user => ({...user, nickname: this.getNickname(conn.room!.connections.find(c => c.id === user.id)!)}))
+			users: message.users.map(user => ({
+				...user,
+				nickname: this.getNickname(conn.room!.connections.find(c => c.id === user.id)!),
+				profileImg: 'default'
+			}))
 		};
 	}
 
