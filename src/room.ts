@@ -131,7 +131,8 @@ export class Room {
 			turnEndTime: this.turnEndTime,
 			hand: [],
 			nickname: '',
-			userId: ''
+			userId: '',
+			playableCardsLeft: N_PLAY - this.turn!.nCardsPlayed
 		};
 	}
 
