@@ -15,9 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Card, RuleParameterTypes, RuleParameters, RoomStateMessage, TextMessage} from 'fluxxchat-protokolla';
-import {Connection} from '../connection';
-import {Room} from '../room';
+import { Card, RuleParameterTypes, RuleParameters, RoomStateMessage, TextMessage } from 'fluxxchat-protokolla';
+import { Connection } from '../connection';
+import { Room } from '../room';
 
 export class EnabledRule {
 	public rule: Rule;
@@ -41,7 +41,7 @@ export class EnabledRule {
 	}
 
 	public toJSON() {
-		return {...this.rule.toJSON(), parameters: this.parameters};
+		return { ...this.rule.toJSON(), parameters: this.parameters };
 	}
 }
 
@@ -51,6 +51,7 @@ export interface Rule {
 	description: string;
 	ruleName: string;
 	parameterTypes: RuleParameterTypes;
+	values?: object;
 	ruleEnabled: (room: Room) => void;
 	ruleDisabled: (room: Room) => void;
 	applyTextMessage: (parameter: RuleParameters, message: TextMessage, sender: Connection) => TextMessage | null;
@@ -65,6 +66,7 @@ export class RuleBase {
 	public description: string;
 	public ruleName: string;
 	public parameterTypes: RuleParameterTypes = {};
+	public values?: object;
 
 	public ruleEnabled(_room: Room) {
 		// Nothing
@@ -87,12 +89,23 @@ export class RuleBase {
 	}
 
 	public toJSON(): Card {
-		return {
-			name: this.title,
-			description: this.description,
-			ruleName: this.ruleName,
-			parameterTypes: this.parameterTypes,
-			parameters: {}
+		if (this.values) {
+			return {
+				name: this.title,
+				description: this.description,
+				ruleName: this.ruleName,
+				parameterTypes: this.parameterTypes,
+				parameters: {},
+				values: this.values
+			}
+		} else {
+			return {
+				name: this.title,
+				description: this.description,
+				ruleName: this.ruleName,
+				parameterTypes: this.parameterTypes,
+				parameters: {}
+			}
 		};
 	}
 }
@@ -102,7 +115,8 @@ export class DisablingRule extends RuleBase implements Rule {
 		super();
 		this.title = ruleTitle;
 		this.ruleCategories = new Set(rules.reduce((acc, rule) => acc.concat(Array.from(rule.ruleCategories)), [] as RuleCategory[]));
-		this.description = global._('Disables the following rules: $[1].', rules.map(rule => rule.title).join(', '));
+		this.description = 'rule.disablingRule.description';
+		this.values = {titles: rules.map(rule => rule.title).join(', ')};
 		this.ruleName = ruleName;
 	}
 }

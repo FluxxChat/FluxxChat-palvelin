@@ -21,8 +21,8 @@ import {Connection} from '../connection';
 
 export class MarkdownRule extends RuleBase implements Rule {
 	public ruleCategories = new Set([RuleCategory.FORMATTING]);
-	public title = global._('MarkDown Formatting');
-	public description = global._('All messages are rendered as MarkDown.');
+	public title = 'rule.markdownFormatting.title';
+	public description = 'rule.markdownFormatting.description';
 	public ruleName = 'markdown_formatting';
 	public parameterTypes = {} as RuleParameterTypes;
 

@@ -1047,9 +1047,9 @@ findup-sync@^3.0.0:
     micromatch "^3.0.4"
     resolve-dir "^1.0.1"
 
-"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git":
+"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git#e1f3e454c6fd64ae9203245ed4f5760e5d889835":
   version "1.0.0"
-  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#cd0f250c698eac9ce42c4a0b9989c50c12b426fc"
+  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#e1f3e454c6fd64ae9203245ed4f5760e5d889835"
 
 for-in@^1.0.2:
   version "1.0.2"

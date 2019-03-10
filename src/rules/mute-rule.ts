@@ -21,8 +21,8 @@ import {Connection} from '../connection';
 
 export class MuteRule extends RuleBase implements Rule {
 	public ruleCategories: Set<RuleCategory> = new Set([RuleCategory.MUTE] as RuleCategory[]);
-	public title = global._('Mute Player');
-	public description = global._('Mutes a specific player.');
+	public title = 'rule.mute.title';
+	public description = 'rule.mute.description';
 	public ruleName = 'mute';
 	public parameterTypes = {target: 'player'} as RuleParameterTypes;
 
