@@ -565,11 +565,6 @@ commander@^2.12.1:
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.19.0.tgz#f6198aa84e5b83c46054b94ddedbfed5ee9ff12a"
   integrity sha512-6tvAOO+D6OENvRAh524Dh9jcfKTYDQAqvqezbCW82xj5X0pSrcpxtvRKHLG0yBY6SD7PSDrJaj+0AiOcKVd1Xg==
 
-commander@~2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.1.0.tgz#d121bbae860d9992a3d517ba96f56588e47c6781"
-  integrity sha1-0SG7roYNmZKj1Re6lvVliOR8Z4E=
-
 commitizen@^3.0.5:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/commitizen/-/commitizen-3.0.7.tgz#d87b742a5b1a72e06e183fa33e0e5136d296037a"
@@ -1047,9 +1042,9 @@ findup-sync@^3.0.0:
     micromatch "^3.0.4"
     resolve-dir "^1.0.1"
 
-"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git#e1f3e454c6fd64ae9203245ed4f5760e5d889835":
+"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git#d2b1b2519fbbc55b9208130701b203c211d642d4":
   version "1.0.0"
-  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#e1f3e454c6fd64ae9203245ed4f5760e5d889835"
+  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#d2b1b2519fbbc55b9208130701b203c211d642d4"
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -1565,13 +1560,6 @@ load-json-file@^4.0.0:
     parse-json "^4.0.0"
     pify "^3.0.0"
     strip-bom "^3.0.0"
-
-localize@^0.4.7:
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/localize/-/localize-0.4.7.tgz#e3b69e5ac1ee47fe211ff07a02b8f2e969bf9cfa"
-  integrity sha1-47aeWsHuR/4hH/B6Arjy6Wm/nPo=
-  dependencies:
-    commander "~2.1.0"
 
 locate-path@^2.0.0:
   version "2.0.0"

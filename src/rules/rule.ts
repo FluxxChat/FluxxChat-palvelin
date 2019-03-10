@@ -51,7 +51,7 @@ export interface Rule {
 	description: string;
 	ruleName: string;
 	parameterTypes: RuleParameterTypes;
-	values?: object;
+	values?: { [key: string]: string };
 	ruleEnabled: (room: Room) => void;
 	ruleDisabled: (room: Room) => void;
 	applyTextMessage: (parameter: RuleParameters, message: TextMessage, sender: Connection) => TextMessage | null;
@@ -66,7 +66,7 @@ export class RuleBase {
 	public description: string;
 	public ruleName: string;
 	public parameterTypes: RuleParameterTypes = {};
-	public values?: object;
+	public values?: { [key: string]: string };
 
 	public ruleEnabled(_room: Room) {
 		// Nothing
@@ -89,23 +89,13 @@ export class RuleBase {
 	}
 
 	public toJSON(): Card {
-		if (this.values) {
-			return {
-				name: this.title,
-				description: this.description,
-				ruleName: this.ruleName,
-				parameterTypes: this.parameterTypes,
-				parameters: {},
-				values: this.values
-			}
-		} else {
-			return {
-				name: this.title,
-				description: this.description,
-				ruleName: this.ruleName,
-				parameterTypes: this.parameterTypes,
-				parameters: {}
-			}
+		return {
+			name: this.title,
+			description: this.description,
+			ruleName: this.ruleName,
+			parameterTypes: this.parameterTypes,
+			parameters: {},
+			values: this.values
 		};
 	}
 }
@@ -116,7 +106,7 @@ export class DisablingRule extends RuleBase implements Rule {
 		this.title = ruleTitle;
 		this.ruleCategories = new Set(rules.reduce((acc, rule) => acc.concat(Array.from(rule.ruleCategories)), [] as RuleCategory[]));
 		this.description = 'rule.disablingRule.description';
-		this.values = {titles: rules.map(rule => rule.title).join(', ')};
+		this.values = { titles: rules.map(rule => rule.title).join(', ') };
 		this.ruleName = ruleName;
 	}
 }
