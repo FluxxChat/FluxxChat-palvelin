@@ -43,7 +43,7 @@ class BasePosLimitRule extends RuleBase {
 
 	public ruleEnabled(room: Room, enabledRule: EnabledRule): void {
 		room.enabledRules
-			.filter(r => r.rule === this && r.parameters.pos === enabledRule.parameters.pos)
+			.filter(r => r.rule === this && r.parameters.pos === enabledRule.parameters.pos && r !== enabledRule)
 			.forEach(room.removeRule.bind(room));
 	}
 
