@@ -44,6 +44,7 @@ export class Room {
 		// Push to front so new players get their turn last
 		this.connections.unshift(conn);
 		conn.room = this;
+		conn.nCardsPlayed = 0;
 		this.dealCards(conn, N_FIRST_HAND);
 
 		this.broadcast('info', global._('$[1] connected', conn.nickname));
@@ -131,7 +132,8 @@ export class Room {
 			turnEndTime: this.turnEndTime,
 			hand: [],
 			nickname: '',
-			userId: ''
+			userId: '',
+			playableCardsLeft: N_PLAY - this.turn!.nCardsPlayed
 		};
 	}
 
