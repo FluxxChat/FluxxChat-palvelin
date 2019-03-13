@@ -111,9 +111,9 @@ export class DisablingRule extends RuleBase implements Rule {
 		}
 	}
 
-	public ruleEnabled(room: Room, _enabledRule: EnabledRule): void {
+	public ruleEnabled(room: Room, enabledRule: EnabledRule): void {
 		room.enabledRules
-			.filter(this.filter)
+			.filter(r => r === enabledRule || this.filter(r))
 			.forEach(room.removeRule.bind(room));
 	}
 }
