@@ -46,13 +46,12 @@ export class EnabledRule {
 }
 
 export interface Rule {
-	ruleCategories: Set<RuleCategory>;
 	title: string;
 	description: string;
 	ruleName: string;
 	parameterTypes: RuleParameterTypes;
-	ruleEnabled: (room: Room) => void;
-	ruleDisabled: (room: Room) => void;
+	ruleEnabled: (room: Room, enabledRule: EnabledRule) => void;
+	ruleDisabled: (room: Room, enabledRule: EnabledRule) => void;
 	applyTextMessage: (parameter: RuleParameters, message: TextMessage, sender: Connection) => TextMessage | null;
 	applyRoomStateMessage: (parameter: RuleParameters, message: RoomStateMessage, receiver: Connection) => RoomStateMessage | null;
 	isValidMessage: (parameter: RuleParameters, message: TextMessage, sender: Connection) => boolean;
@@ -60,17 +59,16 @@ export interface Rule {
 }
 
 export class RuleBase {
-	public ruleCategories: Set<RuleCategory>;
 	public title: string;
 	public description: string;
 	public ruleName: string;
 	public parameterTypes: RuleParameterTypes = {};
 
-	public ruleEnabled(_room: Room) {
-		// Nothing
+	public ruleEnabled(room: Room, enabledRule: EnabledRule) {
+		room.enabledRules.filter(r => r.rule === this && r !== enabledRule).forEach(room.removeRule);
 	}
 
-	public ruleDisabled(_room: Room) {
+	public ruleDisabled(_room: Room, _enabledRule: EnabledRule) {
 		// Nothing
 	}
 
@@ -98,21 +96,22 @@ export class RuleBase {
 }
 
 export class DisablingRule extends RuleBase implements Rule {
-	constructor(rules: Rule[], ruleName: string, ruleTitle: string) {
+	public filter: (r: EnabledRule) => boolean;
+
+	constructor(filter: Rule[] | ((r: EnabledRule) => boolean), ruleName: string, ruleTitle: string, ruleDesc?: string) {
 		super();
 		this.title = ruleTitle;
-		this.ruleCategories = new Set(rules.reduce((acc, rule) => acc.concat(Array.from(rule.ruleCategories)), [] as RuleCategory[]));
-		this.description = global._('Disables the following rules: $[1].', rules.map(rule => rule.title).join(', '));
 		this.ruleName = ruleName;
+		if (Array.isArray(filter)) {
+			this.filter = r => filter.includes(r.rule);
+			this.description = ruleDesc || global._('Disables the following rules: $[1].', filter.map(rule => rule.title).join(', '));
+		} else {
+			this.filter = filter;
+			this.description = ruleDesc || '';
+		}
 	}
-}
 
-export enum RuleCategory {
-	ANONYMITY = 'ANONYMITY',
-	MESSAGELENGTH = 'MESSAGE-LENGTH',
-	MUTE = 'MUTE',
-	FORMATTING = 'FORMATTING',
-	POS_LIMIT = 'POS_LIMIT',
-	TURNS = 'TURN',
-	METRE = 'METRE'
+	public ruleEnabled(room: Room, _enabledRule: EnabledRule): void {
+		room.enabledRules.filter(this.filter).forEach(room.removeRule);
+	}
 }

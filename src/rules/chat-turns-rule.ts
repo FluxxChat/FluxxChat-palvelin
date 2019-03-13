@@ -15,12 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Rule, RuleCategory, RuleBase} from './rule';
+import {Rule, RuleBase} from './rule';
 import {Message, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 
 export class ChatTurnsRule extends RuleBase implements Rule {
-	public ruleCategories: Set<RuleCategory> = new Set([RuleCategory.TURNS] as RuleCategory[]);
 	public title = global._('Chat Turns');
 	public description = global._('Players can only speak during their turn.');
 	public ruleName = 'chat_turns';

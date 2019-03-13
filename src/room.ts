@@ -19,7 +19,6 @@ import uuid from 'uuid';
 import {Connection} from './connection';
 import {RoomStateMessage, Message, RuleParameters, SystemMessage, Severity} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
-import {intersection} from './util';
 import {RULES} from './rules/active-rules';
 import ErrorMessage from './lib/error';
 
@@ -55,19 +54,20 @@ export class Room {
 			throw new ErrorMessage({message: 'Play limit reached', internal: false});
 		}
 
-		const filter = (r: EnabledRule) => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0;
-
-		this.enabledRules.filter(r => !filter(r)).forEach(r => r.rule.ruleDisabled(this));
-		rule.ruleEnabled(this);
-
-		this.enabledRules = this.enabledRules.filter(filter);
-		this.enabledRules.push(new EnabledRule(rule, parameters));
+		const enabledRule = new EnabledRule(rule, parameters);
+		this.enabledRules.push(enabledRule);
+		rule.ruleEnabled(this, enabledRule);
 
 		this.turn!.hand.splice(this.turn!.hand.findIndex(ruleName => ruleName === rule.ruleName), 1);
 		this.turn!.nCardsPlayed += 1;
 
 		this.sendStateMessages();
 		this.broadcast('info', global._('New rule: $[1]', rule.title));
+	}
+
+	public removeRule(rule: EnabledRule) {
+		rule.rule.ruleDisabled(this, rule);
+		this.enabledRules.splice(this.enabledRules.indexOf(rule), 1);
 	}
 
 	public removeConnection(conn: Connection) {
