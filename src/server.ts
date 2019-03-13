@@ -21,10 +21,16 @@ import {Room} from './room';
 import {RULES} from './rules/active-rules';
 import {Rule} from './rules/rule';
 import ErrorMessage from './lib/error';
+import * as events from './event-models';
 
 export class FluxxChatServer {
 	private connections: Connection[] = [];
 	private rooms: {[id: string]: Room} = {};
+
+	public constructor() {
+		// Flush events every 5 seconds
+		setInterval(events.flushEvents, 5 * 1000);
+	}
 
 	public handleMessage(conn: Connection, message: Message) {
 		switch (message.type) {
@@ -164,6 +170,12 @@ export class FluxxChatServer {
 	private createRoom(conn: Connection) {
 		const room = new Room();
 		this.rooms[room.id] = room;
+
+		events.RoomEvent.insert({
+			id: room.id,
+			timestamp: new Date().toISOString()
+		});
+
 		conn.sendMessage({type: 'ROOM_CREATED', roomId: room.id} as RoomCreatedMessage);
 	}
 
