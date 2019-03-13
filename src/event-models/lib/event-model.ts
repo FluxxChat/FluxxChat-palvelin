@@ -35,7 +35,7 @@ abstract class EventModel<T extends ModelProperties> {
 			console.log(`Flushing ${buffer.length} entries`); // tslint:disable-line:no-console
 
 			const data = buffer.map(serializeEntry).join('\n');
-			fs.writeFileSync(filePath, data, {flag: 'a'});
+			fs.writeFileSync(filePath, `${data}\n`, {flag: 'a'});
 			buffer = [];
 		}
 	}
