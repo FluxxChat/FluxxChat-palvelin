@@ -37,7 +37,7 @@ export class MessageMaxLengthRule extends MessageLengthRule implements Rule {
 		super.ruleEnabled(room, enabledRule);
 		room.enabledRules
 			.filter(r => r.rule.ruleName === 'message_min_length' && r.parameters.length > enabledRule.parameters.length)
-			.forEach(room.removeRule);
+			.forEach(room.removeRule.bind(room));
 	}
 }
 
@@ -54,6 +54,6 @@ export class MessageMinLengthRule extends MessageLengthRule implements Rule {
 		super.ruleEnabled(room, enabledRule);
 		room.enabledRules
 			.filter(r => r.rule.ruleName === 'message_max_length' && r.parameters.length < enabledRule.parameters.length)
-			.forEach(room.removeRule);
+			.forEach(room.removeRule.bind(room));
 	}
 }

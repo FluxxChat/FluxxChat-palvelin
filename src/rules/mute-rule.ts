@@ -31,6 +31,8 @@ export class MuteRule extends RuleBase implements Rule {
 	}
 
 	public ruleEnabled(room: Room, enabledRule: EnabledRule): void {
-		room.enabledRules.filter(r => r.rule === this && r.parameters.target === enabledRule.parameters.target).forEach(room.removeRule);
+		room.enabledRules
+			.filter(r => r.rule === this && r.parameters.target === enabledRule.parameters.target)
+			.forEach(room.removeRule.bind(room));
 	}
 }

@@ -65,7 +65,7 @@ export class RuleBase {
 	public parameterTypes: RuleParameterTypes = {};
 
 	public ruleEnabled(room: Room, enabledRule: EnabledRule) {
-		room.enabledRules.filter(r => r.rule === this && r !== enabledRule).forEach(room.removeRule);
+		room.enabledRules.filter(r => r.rule === this && r !== enabledRule).forEach(room.removeRule.bind(room));
 	}
 
 	public ruleDisabled(_room: Room, _enabledRule: EnabledRule) {
@@ -112,6 +112,8 @@ export class DisablingRule extends RuleBase implements Rule {
 	}
 
 	public ruleEnabled(room: Room, _enabledRule: EnabledRule): void {
-		room.enabledRules.filter(this.filter).forEach(room.removeRule);
+		room.enabledRules
+			.filter(this.filter)
+			.forEach(room.removeRule.bind(room));
 	}
 }

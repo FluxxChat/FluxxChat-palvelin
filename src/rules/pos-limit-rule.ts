@@ -42,7 +42,9 @@ class BasePosLimitRule extends RuleBase {
 	private tagger = new posjs.Tagger();
 
 	public ruleEnabled(room: Room, enabledRule: EnabledRule): void {
-		room.enabledRules.filter(r => r.rule === this && r.parameters.pos === enabledRule.parameters.pos).forEach(room.removeRule);
+		room.enabledRules
+			.filter(r => r.rule === this && r.parameters.pos === enabledRule.parameters.pos)
+			.forEach(room.removeRule.bind(room));
 	}
 
 	protected getNumberOfWordsWithPos(message: string, pos: keyof typeof VOIKKO_POS_IDS | keyof typeof POSJS_POS_IDS): number {
