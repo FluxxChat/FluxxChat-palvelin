@@ -87,7 +87,7 @@ export class Room {
 	}
 
 	public broadcast(severity: Severity, message: string, values: { [key: string]: string } | undefined) {
-		const msg: SystemMessage = (values) ? {type: 'SYSTEM', message, severity, values} : {type: 'SYSTEM', message, severity};
+		const msg: SystemMessage = {type: 'SYSTEM', message, severity, values};
 		this.broadcastMessage(msg);
 	}
 
