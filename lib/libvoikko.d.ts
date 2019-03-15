@@ -12,7 +12,6 @@ declare namespace libvoikko {
 	export interface Voikko {
 		tokens(text: string): VoikkoToken[];
 		analyze(word: string): VoikkoWord[];
-		hyphenate(text: string): string;
 	}
 
 	export interface VoikkoToken {
