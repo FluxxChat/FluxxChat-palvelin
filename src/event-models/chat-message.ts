@@ -6,9 +6,7 @@ class ChatMessage extends EventModel<{
 	content: string;
 	draft: boolean;
 	userId: string;
-	timestamp: string;
-}> {
-	public readonly name = 'User';
-}
+	userVisibleName: string;
+}> {}
 
 export default new ChatMessage();

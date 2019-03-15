@@ -15,7 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Message, RoomCreatedMessage, RuleParameters} from 'fluxxchat-protokolla';
+import uuid from 'uuid';
+import {Message, RoomCreatedMessage, RuleParameters, TextMessage} from 'fluxxchat-protokolla';
 import {Connection} from './connection';
 import {Room} from './room';
 import {RULES} from './rules/active-rules';
@@ -23,13 +24,19 @@ import {Rule} from './rules/rule';
 import ErrorMessage from './lib/error';
 import * as events from './event-models';
 
+const EVENT_FLUSH_INTERVAL_MS = 10 * 1000;
+
 export class FluxxChatServer {
 	private connections: Connection[] = [];
 	private rooms: {[id: string]: Room} = {};
 
 	public constructor() {
-		// Flush events every 5 seconds
-		setInterval(events.flushEvents, 5 * 1000);
+		setInterval(events.flushEvents, EVENT_FLUSH_INTERVAL_MS);
+
+		// Log available rules
+		for (const rule of Object.values(RULES)) {
+			events.RuleEvent.insert({name: rule.ruleName});
+		}
 	}
 
 	public handleMessage(conn: Connection, message: Message) {
@@ -53,45 +60,55 @@ export class FluxxChatServer {
 			this.enactRule(conn, message.ruleName, message.ruleParameters);
 		}
 
-		if (message.type === 'VALIDATE_TEXT') {
-			const blockingRules: string[] = [];
-			for (const rule of conn.room.enabledRules) {
-				if (!rule.isValidMessage(message, conn)) {
-					blockingRules.push(rule.rule.title);
-				}
-			}
-
-			if (blockingRules.length > 0) {
-				return conn.sendMessage({
-					type: 'VALIDATE_TEXT_RESPONSE',
-					valid: false,
-					invalidReason: blockingRules
-				});
-			}
-
-			return conn.sendMessage({
-				type: 'VALIDATE_TEXT_RESPONSE',
-				valid: true
-			});
-		}
-
 		if (message.type === 'TEXT') {
 			message.senderNickname = conn.nickname;
 			message.senderId = conn.id;
 			message.timestamp = new Date().toISOString();
-		}
 
-		for (const rule of conn.room.enabledRules) {
-			if (!rule.isValidMessage(message, conn)) {
+			const blockingRules: string[] = [];
+			const enabledRules = conn.room.enabledRules;
+
+			// Temporary message variable might be set to null, even though original message cannot be null
+			let newMessage: TextMessage | null = message;
+
+			// Check message validity and apply transforms
+			for (const rule of enabledRules) {
+				if (!rule.isValidMessage(message, conn)) {
+					blockingRules.push(rule.rule.title);
+				}
+
+				newMessage = rule.applyTextMessage(message, conn);
+				if (newMessage === null) {
+					break;
+				}
+			}
+
+			const isMessageValid = blockingRules.length === 0 && newMessage !== null;
+
+			events.ChatMessageEvent.insert({
+				id: uuid.v4(),
+				roomStateId: conn.room!.stateId,
+				userId: conn.id,
+				userVisibleName: conn.nickname,
+				content: message.textContent,
+				draft: message.validateOnly
+			});
+
+			if (message.validateOnly) {
+				// This message is a draft. Return validity response to client.
+				return conn.sendMessage({
+					type: 'VALIDATE_TEXT_RESPONSE',
+					invalidReason: isMessageValid ? undefined : blockingRules,
+					valid: isMessageValid
+				});
+			}
+
+			if (!isMessageValid) {
 				throw new Error('Message disallowed by rules');
 			}
 
-			const newMessage = rule.applyTextMessage(message, conn);
-			if (!newMessage) {
-				return; // message removed
-			} else {
-				message = newMessage;
-			}
+			// Assign temporary message variable to the original message. We know `newMessage` is not null.
+			message = newMessage!;
 		}
 
 		for (const connection of conn.room.connections) {
@@ -157,6 +174,8 @@ export class FluxxChatServer {
 			throw new ErrorMessage({internal: true, message: 'You can only play cards on your turn'});
 		}
 
+		events.PlayedCardEvent.insert({roomStateId: conn.room.stateId, ruleName, userId: conn.id});
+
 		const rule = RULES[ruleName];
 		if (!rule) {
 			throw new ErrorMessage({internal: true, message: `No such rule: ${ruleName}`});
@@ -171,10 +190,7 @@ export class FluxxChatServer {
 		const room = new Room();
 		this.rooms[room.id] = room;
 
-		events.RoomEvent.insert({
-			id: room.id,
-			timestamp: new Date().toISOString()
-		});
+		events.RoomEvent.insert({id: room.id});
 
 		conn.sendMessage({type: 'ROOM_CREATED', roomId: room.id} as RoomCreatedMessage);
 	}
@@ -192,6 +208,7 @@ export class FluxxChatServer {
 			}
 
 			conn.nickname = requestedNickname;
+
 			room.addConnection(conn);
 			room.sendStateMessages();
 		} else {

@@ -4,9 +4,6 @@ import EventModel from './lib/event-model';
 class RoomStateUser extends EventModel<{
 	roomStateId: string;
 	userId: string;
-	timestamp: string;
-}> {
-	public readonly name = 'RoomStateUser';
-}
+}> {}
 
 export default new RoomStateUser();
