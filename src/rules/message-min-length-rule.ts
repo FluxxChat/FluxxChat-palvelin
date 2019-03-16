@@ -21,8 +21,8 @@ import {Connection} from '../connection';
 
 export class MessageMinLengthRule extends RuleBase implements Rule {
 	public ruleCategories = new Set([RuleCategory.MESSAGELENGTH]);
-	public title = global._('Message Minimum Length Limit');
-	public description = global._('Restricts message minimum length.');
+	public title = 'rule.messageMinLength.title';
+	public description = 'rule.messageMinLength.description';
 	public ruleName = 'message_min_length';
 	public parameterTypes = {length: 'number'} as RuleParameterTypes;
 
