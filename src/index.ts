@@ -19,12 +19,7 @@ import path from 'path';
 import http from 'http';
 import express from 'express';
 import * as WebSocket from 'ws';
-import Localize = require('localize');
 import * as events from './event-models';
-
-const localize = new Localize('./i18n/');
-localize.setLocale('fi');
-global._ = localize.translate;
 
 import {FluxxChatServer} from './server';
 import {Connection} from './connection';
@@ -47,5 +42,5 @@ app.get('/', (_req, res) => {
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
 httpServer.listen(PORT, () => {
-	console.log(global._('Server listening on port $[1]', PORT)); // tslint:disable-line:no-console
+	console.log('Server listening on port ' + PORT); // tslint:disable-line:no-console
 });

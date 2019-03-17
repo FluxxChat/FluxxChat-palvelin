@@ -20,8 +20,8 @@ import {firstnames, lastnames} from './pseudonyme-names';
 import {NicknameRule} from './nickname-rule';
 
 export class PseudonymeRule extends NicknameRule {
-	public title = global._('Pseudonymes');
-	public description = global._('Give all players pseudonymes.');
+	public title = 'rule.pseudonyms.title';
+	public description = 'rule.pseudonyms.description';
 	public ruleName = 'pseudonymes';
 
 	protected createNickname(_conn: Connection) {

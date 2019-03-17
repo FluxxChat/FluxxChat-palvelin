@@ -49,8 +49,7 @@ export class Room {
 		conn.nCardsPlayed = 0;
 		this.dealCards(conn, N_FIRST_HAND);
 
-		this.broadcast('info', global._('$[1] connected', conn.nickname));
-
+		this.broadcast('info', 'server.userConnected', {nickname: conn.nickname});
 		events.UserEvent.insert({id: conn.id, name: conn.nickname, connected: true});
 	}
 
@@ -71,7 +70,7 @@ export class Room {
 		this.turn!.nCardsPlayed += 1;
 
 		this.sendStateMessages();
-		this.broadcast('info', global._('New rule: $[1]', rule.title));
+		this.broadcast('info', 'server.newRule', {title: rule.title});
 
 		events.ActiveRuleEvent.insert({
 			ruleName: rule.ruleName,
@@ -89,8 +88,7 @@ export class Room {
 			? this.connections[index % this.connections.length]
 			: null;
 
-		this.broadcast('info', global._('$[1] disconnected', conn.nickname));
-
+		this.broadcast('info', 'server.userDisconnected', {nickname: conn.nickname});
 		events.UserEvent.insert({id: conn.id, name: conn.nickname, connected: false});
 	}
 
@@ -100,8 +98,8 @@ export class Room {
 		}
 	}
 
-	public broadcast(severity: Severity, message: string) {
-		const msg: SystemMessage = {type: 'SYSTEM', message, severity};
+	public broadcast(severity: Severity, message: string, values: { [key: string]: string } | undefined) {
+		const msg: SystemMessage = {type: 'SYSTEM', message, severity, values};
 		this.broadcastMessage(msg);
 	}
 
