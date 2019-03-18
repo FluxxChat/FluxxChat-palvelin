@@ -1,7 +1,3 @@
-import {RuleBase} from './rule';
-import {RuleParameters, RoomStateMessage} from 'fluxxchat-protokolla';
-import {Connection} from '../connection';
-
 /* FluxxChat-palvelin
  * Copyright (C) 2019 Helsingin yliopisto
  * 
@@ -18,6 +14,10 @@ import {Connection} from '../connection';
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+import {RuleBase} from './rule';
+import {RuleParameters, RoomStateMessage} from 'fluxxchat-protokolla';
+import {Connection} from '../connection';
 
 export class ImageMessageRule extends RuleBase {
 	public title = 'rule.imageMessages.title';

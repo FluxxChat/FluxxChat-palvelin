@@ -1,8 +1,3 @@
-import {RuleBase, EnabledRule} from './rule';
-import {RuleParameters, RoomStateMessage, RuleParameterTypes} from 'fluxxchat-protokolla';
-import {Connection} from '../connection';
-import {Room} from '../room';
-
 /* FluxxChat-palvelin
  * Copyright (C) 2019 Helsingin yliopisto
  * 
@@ -19,6 +14,11 @@ import {Room} from '../room';
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+import {RuleBase, EnabledRule} from './rule';
+import {RuleParameters, RoomStateMessage, RuleParameterTypes} from 'fluxxchat-protokolla';
+import {Connection} from '../connection';
+import {Room} from '../room';
 
 export class InputMinHeight extends RuleBase {
 	public title = 'rule.inputMinHeight.title';
