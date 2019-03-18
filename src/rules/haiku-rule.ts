@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Rule, RuleCategory, RuleBase} from './rule';
+import {Rule, RuleBase} from './rule';
 import {TextMessage, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 import libvoikko from '../../lib/libvoikko';
@@ -23,7 +23,6 @@ import libvoikko from '../../lib/libvoikko';
 const Libvoikko = libvoikko();
 
 export class HaikuRule extends RuleBase implements Rule {
-	public ruleCategories = new Set([RuleCategory.METRE]);
 	public title = 'rule.haiku.title';
 	public description = 'rule.haiku.description';
 	public ruleName = 'haiku';

@@ -17,8 +17,7 @@
 
 import {DisablingRule, Rule} from './rule';
 import {AnonymityRule} from './anonymity-rule';
-import {MessageMinLengthRule} from './message-min-length-rule';
-import {MessageMaxLengthRule} from './message-max-length-rule';
+import {MessageMinLengthRule, MessageMaxLengthRule} from './message-length-rule';
 import {MuteRule} from './mute-rule';
 import {MarkdownRule} from './formatting-rule';
 import {PseudonymeRule} from './pseudonyme-rule';
@@ -55,5 +54,5 @@ export const RULES: {[key: string]: Rule} = {
 	pseudonymes: PSEUDONYMES,
 	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting', 'rule.disableFormatting.title'),
 	return_names: new DisablingRule([ANONYMITY, PSEUDONYMES], 'return_names', 'rule.returnNames.title'),
-	disable_all: new DisablingRule([ANONYMITY, MESSAGE_MAX_LENGTH, MESSAGE_MIN_LENGTH, MUTE, MARKDOWN, PSEUDONYMES, POS_MAX_LIMIT, POS_MIN_LIMIT, CHAT_TURNS], 'disable_all', 'rule.disableAll.title')
+	disable_all: new DisablingRule(_r => true, 'disable_all', 'rule.disableAll.title')
 };
