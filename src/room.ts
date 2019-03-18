@@ -154,7 +154,11 @@ export class Room {
 			hand: [],
 			nickname: '',
 			userId: '',
-			playableCardsLeft: N_PLAY - this.turn!.nCardsPlayed
+			playableCardsLeft: N_PLAY - this.turn!.nCardsPlayed,
+			variables: {
+				inputMinHeight: 1,
+				imageMessages: false
+			}
 		};
 	}
 
