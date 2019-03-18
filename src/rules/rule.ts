@@ -1,16 +1,16 @@
 /* FluxxChat-palvelin
  * Copyright (C) 2019 Helsingin yliopisto
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -50,6 +50,7 @@ export interface Rule {
 	description: string;
 	ruleName: string;
 	parameterTypes: RuleParameterTypes;
+	values?: { [key: string]: string };
 	ruleEnabled: (room: Room, enabledRule: EnabledRule) => void;
 	ruleDisabled: (room: Room, enabledRule: EnabledRule) => void;
 	applyTextMessage: (parameter: RuleParameters, message: TextMessage, sender: Connection) => TextMessage | null;
@@ -63,6 +64,7 @@ export class RuleBase {
 	public description: string;
 	public ruleName: string;
 	public parameterTypes: RuleParameterTypes = {};
+	public values?: { [key: string]: string };
 
 	public ruleEnabled(room: Room, enabledRule: EnabledRule) {
 		room.enabledRules.filter(r => r.rule === this && r !== enabledRule).forEach(room.removeRule.bind(room));
@@ -90,7 +92,8 @@ export class RuleBase {
 			description: this.description,
 			ruleName: this.ruleName,
 			parameterTypes: this.parameterTypes,
-			parameters: {}
+			parameters: {},
+			values: this.values
 		};
 	}
 }
@@ -104,7 +107,8 @@ export class DisablingRule extends RuleBase implements Rule {
 		this.ruleName = ruleName;
 		if (Array.isArray(filter)) {
 			this.filter = r => filter.includes(r.rule);
-			this.description = ruleDesc || global._('Disables the following rules: $[1].', filter.map(rule => rule.title).join(', '));
+			this.description = 'rule.disablingRule.description';
+			this.values = {titles: filter.map(rule => rule.title).join(', ')};
 		} else {
 			this.filter = filter;
 			this.description = ruleDesc || '';

@@ -25,8 +25,8 @@ class MessageLengthRule extends RuleBase {
 }
 
 export class MessageMaxLengthRule extends MessageLengthRule implements Rule {
-	public title = global._('Message Maximum Length Limit');
-	public description = global._('Restricts message maximum length.');
+	public title = 'rule.messageMaxLength.title';
+	public description = 'rule.messageMaxLength.description';
 	public ruleName = 'message_max_length';
 
 	public isValidMessage(parameters: RuleParameters, message: TextMessage, _sender: Connection) {
@@ -42,8 +42,8 @@ export class MessageMaxLengthRule extends MessageLengthRule implements Rule {
 }
 
 export class MessageMinLengthRule extends MessageLengthRule implements Rule {
-	public title = global._('Message Minimum Length Limit');
-	public description = global._('Restricts message minimum length.');
+	public title = 'rule.messageMinLength.title';
+	public description = 'rule.messageMinLength.description';
 	public ruleName = 'message_min_length';
 
 	public isValidMessage(parameters: RuleParameters, message: TextMessage, _sender: Connection) {

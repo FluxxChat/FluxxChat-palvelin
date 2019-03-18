@@ -88,8 +88,8 @@ class BasePosLimitRule extends RuleBase {
 }
 
 export class PosMinLimitRule extends BasePosLimitRule implements Rule {
-	public title = global._('Minumum Number of Verbs/Nouns/Adjectives');
-	public description = global._('Sets the minumum number of verbs/nouns/adjectives in message.');
+	public title = 'rule.posMinLimit.title';
+	public description = 'rule.posMinLimit.description';
 	public ruleName = 'pos_min_limit';
 	public parameterTypes = {pos: Object.keys(VOIKKO_POS_IDS), number: 'number'} as RuleParameterTypes;
 
@@ -99,8 +99,8 @@ export class PosMinLimitRule extends BasePosLimitRule implements Rule {
 }
 
 export class PosMaxLimitRule extends BasePosLimitRule implements Rule {
-	public title = global._('Maximum Number of Verbs/Nouns/Adjectives');
-	public description = global._('Sets the maximum number of verbs/nouns/adjectives in message.');
+	public title = 'rule.posMaxLimit.title';
+	public description = 'rule.posMaxLimit.description';
 	public ruleName = 'pos_max_limit';
 	public parameterTypes = {pos: Object.keys(VOIKKO_POS_IDS), number: 'number'} as RuleParameterTypes;
 

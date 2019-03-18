@@ -20,8 +20,8 @@ import {Message, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 
 export class ChatTurnsRule extends RuleBase implements Rule {
-	public title = global._('Chat Turns');
-	public description = global._('Players can only speak during their turn.');
+	public title = 'rule.chatTurns.title';
+	public description = 'rule.chatTurns.description';
 	public ruleName = 'chat_turns';
 
 	public isValidMessage(_parameters: RuleParameters, _message: Message, sender: Connection) {
