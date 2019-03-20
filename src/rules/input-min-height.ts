@@ -35,7 +35,7 @@ export class InputMinHeight extends RuleBase {
 		}
 	}
 
-	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, conn: Connection): RoomStateMessage {
-		return {...message, variables: {...message.variables, inputMinHeight: _parameters.height}};
+	public applyRoomStateMessage(parameters: RuleParameters, message: RoomStateMessage, conn: Connection): RoomStateMessage {
+		return {...message, variables: {...message.variables, inputMinHeight: parameters.height}};
 	}
 }
