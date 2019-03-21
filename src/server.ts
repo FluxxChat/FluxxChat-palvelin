@@ -21,6 +21,8 @@ import {Room} from './room';
 import {RULES} from './rules/active-rules';
 import {Rule} from './rules/rule';
 import ErrorMessage from './lib/error';
+import localeMessages from '../i18n/data.json';
+
 
 export class FluxxChatServer {
 	private connections: Connection[] = [];
@@ -109,6 +111,7 @@ export class FluxxChatServer {
 		this.connections.push(conn);
 		conn.onMessage((_, message) => this.handleMessage(conn, message));
 		conn.onClose(() => this.removeConnection(conn));
+		conn.sendMessage({type: 'LANGUAGE_DATA', messages: localeMessages})
 	}
 
 	private validateRuleParameters(conn: Connection, rule: Rule, ruleParameters: RuleParameters) {
