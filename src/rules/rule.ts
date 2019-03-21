@@ -1,23 +1,23 @@
 /* FluxxChat-palvelin
  * Copyright (C) 2019 Helsingin yliopisto
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Card, RuleParameterTypes, RuleParameters, RoomStateMessage, TextMessage } from 'fluxxchat-protokolla';
-import { Connection } from '../connection';
-import { Room } from '../room';
+import {Card, RuleParameterTypes, RuleParameters, RoomStateMessage, TextMessage} from 'fluxxchat-protokolla';
+import {Connection} from '../connection';
+import {Room} from '../room';
 
 export class EnabledRule {
 	public rule: Rule;
@@ -41,19 +41,18 @@ export class EnabledRule {
 	}
 
 	public toJSON() {
-		return { ...this.rule.toJSON(), parameters: this.parameters };
+		return {...this.rule.toJSON(), parameters: this.parameters};
 	}
 }
 
 export interface Rule {
-	ruleCategories: Set<RuleCategory>;
 	title: string;
 	description: string;
 	ruleName: string;
 	parameterTypes: RuleParameterTypes;
 	values?: { [key: string]: string };
-	ruleEnabled: (room: Room) => void;
-	ruleDisabled: (room: Room) => void;
+	ruleEnabled: (room: Room, enabledRule: EnabledRule) => void;
+	ruleDisabled: (room: Room, enabledRule: EnabledRule) => void;
 	applyTextMessage: (parameter: RuleParameters, message: TextMessage, sender: Connection) => TextMessage | null;
 	applyRoomStateMessage: (parameter: RuleParameters, message: RoomStateMessage, receiver: Connection) => RoomStateMessage | null;
 	isValidMessage: (parameter: RuleParameters, message: TextMessage, sender: Connection) => boolean;
@@ -61,18 +60,17 @@ export interface Rule {
 }
 
 export class RuleBase {
-	public ruleCategories: Set<RuleCategory>;
 	public title: string;
 	public description: string;
 	public ruleName: string;
 	public parameterTypes: RuleParameterTypes = {};
 	public values?: { [key: string]: string };
 
-	public ruleEnabled(_room: Room) {
-		// Nothing
+	public ruleEnabled(room: Room, enabledRule: EnabledRule) {
+		room.enabledRules.filter(r => r.rule === this && r !== enabledRule).forEach(room.removeRule.bind(room));
 	}
 
-	public ruleDisabled(_room: Room) {
+	public ruleDisabled(_room: Room, _enabledRule: EnabledRule) {
 		// Nothing
 	}
 
@@ -101,22 +99,25 @@ export class RuleBase {
 }
 
 export class DisablingRule extends RuleBase implements Rule {
-	constructor(rules: Rule[], ruleName: string, ruleTitle: string) {
+	public filter: (r: EnabledRule) => boolean;
+
+	constructor(filter: Rule[] | ((r: EnabledRule) => boolean), ruleName: string, ruleTitle: string, ruleDesc?: string) {
 		super();
 		this.title = ruleTitle;
-		this.ruleCategories = new Set(rules.reduce((acc, rule) => acc.concat(Array.from(rule.ruleCategories)), [] as RuleCategory[]));
-		this.description = 'rule.disablingRule.description';
-		this.values = { titles: rules.map(rule => rule.title).join(', ') };
 		this.ruleName = ruleName;
+		if (Array.isArray(filter)) {
+			this.filter = r => filter.includes(r.rule);
+			this.description = 'rule.disablingRule.description';
+			this.values = {titles: filter.map(rule => rule.title).join(', ')};
+		} else {
+			this.filter = filter;
+			this.description = ruleDesc || '';
+		}
 	}
-}
 
-export enum RuleCategory {
-	ANONYMITY = 'ANONYMITY',
-	MESSAGELENGTH = 'MESSAGE-LENGTH',
-	MUTE = 'MUTE',
-	FORMATTING = 'FORMATTING',
-	POS_LIMIT = 'POS_LIMIT',
-	TURNS = 'TURN',
-	METRE = 'METRE'
+	public ruleEnabled(room: Room, enabledRule: EnabledRule): void {
+		room.enabledRules
+			.filter(r => r === enabledRule || this.filter(r))
+			.forEach(room.removeRule.bind(room));
+	}
 }

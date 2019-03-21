@@ -15,12 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Rule, RuleCategory, RuleBase} from './rule';
+import {Rule, RuleBase, EnabledRule} from './rule';
 import {Message, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
+import {Room} from '../room';
 
 export class MuteRule extends RuleBase implements Rule {
-	public ruleCategories: Set<RuleCategory> = new Set([RuleCategory.MUTE] as RuleCategory[]);
 	public title = 'rule.mute.title';
 	public description = 'rule.mute.description';
 	public ruleName = 'mute';
@@ -28,5 +28,11 @@ export class MuteRule extends RuleBase implements Rule {
 
 	public isValidMessage(parameter: RuleParameters, _message: Message, sender: Connection) {
 		return sender.id !== parameter.target;
+	}
+
+	public ruleEnabled(room: Room, enabledRule: EnabledRule): void {
+		room.enabledRules
+			.filter(r => r.rule === this && r.parameters.target === enabledRule.parameters.target)
+			.forEach(room.removeRule.bind(room));
 	}
 }

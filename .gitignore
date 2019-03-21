@@ -3,6 +3,7 @@ node_modules/
 coverage
 .nyc_output
 xunit-test-results.xml
+package-lock.json
 
 # Project Development files
 *.log

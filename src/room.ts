@@ -1,16 +1,16 @@
 /* FluxxChat-palvelin
  * Copyright (C) 2019 Helsingin yliopisto
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,9 +19,9 @@ import uuid from 'uuid';
 import {Connection} from './connection';
 import {RoomStateMessage, Message, RuleParameters, SystemMessage, Severity} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
-import {intersection} from './util';
 import {RULES} from './rules/active-rules';
 import ErrorMessage from './lib/error';
+import * as events from './event-models';
 
 const N_TAKE = 3;
 const N_PLAY = 3;
@@ -29,6 +29,7 @@ const N_FIRST_HAND = 5;
 
 export class Room {
 	public id = uuid.v4();
+	public stateId = uuid.v4();
 	public connections: Connection[] = [];
 	public enabledRules: EnabledRule[] = [];
 	public turn: Connection | null;
@@ -48,6 +49,7 @@ export class Room {
 		this.dealCards(conn, N_FIRST_HAND);
 
 		this.broadcast('info', 'server.userConnected', {nickname: conn.nickname});
+		events.UserEvent.insert({id: conn.id, name: conn.nickname, connected: true});
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
@@ -55,19 +57,27 @@ export class Room {
 			throw new ErrorMessage({message: 'Play limit reached', internal: false});
 		}
 
-		const filter = (r: EnabledRule) => intersection(rule.ruleCategories, r.rule.ruleCategories).size === 0;
-
-		this.enabledRules.filter(r => !filter(r)).forEach(r => r.rule.ruleDisabled(this));
-		rule.ruleEnabled(this);
-
-		this.enabledRules = this.enabledRules.filter(filter);
-		this.enabledRules.push(new EnabledRule(rule, parameters));
+		const enabledRule = new EnabledRule(rule, parameters);
+		this.enabledRules.push(enabledRule);
+		rule.ruleEnabled(this, enabledRule);
 
 		this.turn!.hand.splice(this.turn!.hand.findIndex(ruleName => ruleName === rule.ruleName), 1);
 		this.turn!.nCardsPlayed += 1;
 
 		this.sendStateMessages();
 		this.broadcast('info', 'server.newRule', {title: rule.title});
+
+		events.ActiveRuleEvent.insert({
+			ruleName: rule.ruleName,
+			parameters: JSON.stringify(parameters),
+			roomStateId: this.stateId,
+			userId: this.turn!.id
+		});
+	}
+
+	public removeRule(rule: EnabledRule) {
+		rule.rule.ruleDisabled(this, rule);
+		this.enabledRules.splice(this.enabledRules.indexOf(rule), 1);
 	}
 
 	public removeConnection(conn: Connection) {
@@ -79,6 +89,7 @@ export class Room {
 			: null;
 
 		this.broadcast('info', 'server.userDisconnected', {nickname: conn.nickname});
+		events.UserEvent.insert({id: conn.id, name: conn.nickname, connected: false});
 	}
 
 	public broadcastMessage(msg: Message) {
@@ -112,14 +123,24 @@ export class Room {
 	}
 
 	public sendStateMessages() {
+		if (this.connections.length === 0) {
+			return;
+		}
+
+		this.stateId = uuid.v4();
+		const stateMessage = this.getStateMessage();
+
+		events.RoomStateEvent.insert({id: this.stateId, roomId: this.id, turnUserId: this.turn!.id});
+
 		outer: for (const conn of this.connections) {
-			let msg: RoomStateMessage = {...this.getStateMessage(), nickname: conn.nickname, userId: conn.id, hand: conn.getCardsInHand()};
+			let msg: RoomStateMessage = {...stateMessage, nickname: conn.nickname, userId: conn.id, hand: conn.getCardsInHand()};
 			for (const rule of this.enabledRules) {
 				const newMsg = rule.applyRoomStateMessage(msg, conn);
 				if (!newMsg) { continue outer; }
 				msg = newMsg;
 			}
 			conn.sendMessage(msg);
+			events.RoomStateUserEvent.insert({roomStateId: this.stateId, userId: conn.id});
 		}
 	}
 
@@ -133,7 +154,11 @@ export class Room {
 			hand: [],
 			nickname: '',
 			userId: '',
-			playableCardsLeft: N_PLAY - this.turn!.nCardsPlayed
+			playableCardsLeft: N_PLAY - this.turn!.nCardsPlayed,
+			variables: {
+				inputMinHeight: 1,
+				imageMessages: false
+			}
 		};
 	}
 

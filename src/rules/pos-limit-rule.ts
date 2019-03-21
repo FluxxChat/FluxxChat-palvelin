@@ -15,9 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Rule, RuleCategory, RuleBase} from './rule';
+import {Rule, RuleBase, EnabledRule} from './rule';
 import {TextMessage, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
+import {Room} from '../room';
 import posjs from 'pos';
 import libvoikko from '../../lib/libvoikko';
 
@@ -36,11 +37,19 @@ const POSJS_POS_IDS: {[pos: string]: posjs.POS[]} = {
 };
 
 class BasePosLimitRule extends RuleBase {
-	public ruleCategories = new Set([RuleCategory.POS_LIMIT]);
-
 	private voikko?: libvoikko.Voikko;
 	private lexer = new posjs.Lexer();
 	private tagger = new posjs.Tagger();
+
+	public ruleEnabled(room: Room, enabledRule: EnabledRule): void {
+		room.enabledRules
+			.filter(r => (
+					r.rule === this
+					|| r.rule.ruleName === 'pos_min_limit' && r.parameters.number > enabledRule.parameters.number
+					|| r.rule.ruleName === 'pos_max_limit' && r.parameters.number < enabledRule.parameters.number
+				) && r.parameters.pos === enabledRule.parameters.pos && r !== enabledRule)
+			.forEach(room.removeRule.bind(room));
+	}
 
 	protected getNumberOfWordsWithPos(message: string, pos: keyof typeof VOIKKO_POS_IDS | keyof typeof POSJS_POS_IDS): number {
 		return this.tagWithVoikko(message, pos) + this.tagWithPosjs(message, pos);

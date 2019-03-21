@@ -15,13 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Rule, RuleCategory, RuleBase} from './rule';
+import {Rule, RuleBase} from './rule';
 import {Connection} from '../connection';
 import {Room} from '../room';
 import {RuleParameters, TextMessage, RoomStateMessage} from 'fluxxchat-protokolla';
 
 export abstract class NicknameRule extends RuleBase implements Rule {
-	public ruleCategories: Set<RuleCategory> = new Set([RuleCategory.ANONYMITY] as RuleCategory[]);
 	private nicknameStore: {[roomId: string]: {[connId: string]: string} | undefined} = {};
 
 	public ruleEnabled(room: Room) {

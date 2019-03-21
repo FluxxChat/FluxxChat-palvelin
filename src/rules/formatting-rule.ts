@@ -15,12 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Rule, RuleCategory, RuleBase} from './rule';
+import {Rule, RuleBase} from './rule';
 import {TextMessage, RuleParameterTypes} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 
 export class MarkdownRule extends RuleBase implements Rule {
-	public ruleCategories = new Set([RuleCategory.FORMATTING]);
 	public title = 'rule.markdownFormatting.title';
 	public description = 'rule.markdownFormatting.description';
 	public ruleName = 'markdown_formatting';
