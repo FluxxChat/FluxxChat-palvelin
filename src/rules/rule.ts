@@ -108,7 +108,7 @@ export class DisablingRule extends RuleBase implements Rule {
 		if (Array.isArray(filter)) {
 			this.filter = r => filter.includes(r.rule);
 			this.description = 'rule.disablingRule.description';
-			this.values = {titles: filter.map(rule => rule.title).join(', ')};
+			this.values = {array: filter.map(rule => rule.title).join(', ')};
 		} else {
 			this.filter = filter;
 			this.description = ruleDesc || '';
