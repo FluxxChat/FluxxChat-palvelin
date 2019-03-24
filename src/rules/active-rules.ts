@@ -20,7 +20,7 @@ import {AnonymityRule} from './anonymity-rule';
 import {MessageMinLengthRule, MessageMaxLengthRule} from './message-length-rule';
 import {MuteRule} from './mute-rule';
 import {MarkdownRule} from './formatting-rule';
-import {PseudonymeRule} from './pseudonyme-rule';
+import {PseudonymRule} from './pseudonym-rule';
 import {PosMaxLimitRule, PosMinLimitRule} from './pos-limit-rule';
 import {ChatTurnsRule} from './chat-turns-rule';
 import {HaikuRule} from './haiku-rule';
@@ -33,7 +33,7 @@ const MESSAGE_MAX_LENGTH = new MessageMaxLengthRule();
 const MUTE = new MuteRule();
 const CHAT_TURNS = new ChatTurnsRule();
 const MARKDOWN = new MarkdownRule();
-const PSEUDONYMES = new PseudonymeRule();
+const PSEUDONYMS = new PseudonymRule();
 const POS_MAX_LIMIT = new PosMaxLimitRule();
 const POS_MIN_LIMIT = new PosMinLimitRule();
 const HAIKU = new HaikuRule();
@@ -55,12 +55,12 @@ export const RULES: {[key: string]: Rule} = {
 	chat_turns: CHAT_TURNS,
 	no_chat_turns: new DisablingRule([CHAT_TURNS], 'no_chat_turns', 'rule.noChatTurns.title'),
 	markdown_formatting: MARKDOWN,
-	pseudonymes: PSEUDONYMES,
+	pseudonyms: PSEUDONYMS,
 	image_messages: IMAGE_MESSAGES,
 	no_image_messages: new DisablingRule([IMAGE_MESSAGES], 'no_image_messages', 'rule.disableImageMessages.title'),
 	input_min_height: INPUT_MIN_HEIGHT,
 	no_input_min_height: new DisablingRule([INPUT_MIN_HEIGHT], 'no_input_min_height', 'rule.disableInputMinHeight.title'),
 	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting', 'rule.disableFormatting.title'),
-	return_names: new DisablingRule([ANONYMITY, PSEUDONYMES], 'return_names', 'rule.returnNames.title'),
+	return_names: new DisablingRule([ANONYMITY, PSEUDONYMS], 'return_names', 'rule.returnNames.title'),
 	disable_all: new DisablingRule(_r => true, 'disable_all', 'rule.disableAll.title')
 };
