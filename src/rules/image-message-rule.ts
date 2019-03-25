@@ -24,7 +24,7 @@ export class ImageMessageRule extends RuleBase {
 	public description = 'rule.imageMessages.description';
 	public ruleName = 'image_messages';
 
-	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, conn: Connection): RoomStateMessage {
+	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, _conn: Connection): RoomStateMessage {
 		return {...message, variables: {...message.variables, imageMessages: true}};
 	}
 }

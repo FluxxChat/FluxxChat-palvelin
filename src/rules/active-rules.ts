@@ -26,6 +26,7 @@ import {ChatTurnsRule} from './chat-turns-rule';
 import {HaikuRule} from './haiku-rule';
 import {ImageMessageRule} from './image-message-rule';
 import {InputMinHeight} from './input-min-height';
+import {NoEmojisRule} from './emoji-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_MIN_LENGTH = new MessageMinLengthRule();
@@ -39,6 +40,7 @@ const POS_MIN_LIMIT = new PosMinLimitRule();
 const HAIKU = new HaikuRule();
 const IMAGE_MESSAGES = new ImageMessageRule();
 const INPUT_MIN_HEIGHT = new InputMinHeight();
+const NO_EMOJIS = new NoEmojisRule();
 
 export const RULES: {[key: string]: Rule} = {
 	anonymity: ANONYMITY,
@@ -62,5 +64,7 @@ export const RULES: {[key: string]: Rule} = {
 	no_input_min_height: new DisablingRule([INPUT_MIN_HEIGHT], 'no_input_min_height', 'rule.disableInputMinHeight.title'),
 	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting', 'rule.disableFormatting.title'),
 	return_names: new DisablingRule([ANONYMITY, PSEUDONYMES], 'return_names', 'rule.returnNames.title'),
+	no_emojis: NO_EMOJIS,
+	allow_emojis: new DisablingRule([NO_EMOJIS], 'allow_emojis', 'rule.allowEmojis.title'),
 	disable_all: new DisablingRule(_r => true, 'disable_all', 'rule.disableAll.title')
 };
