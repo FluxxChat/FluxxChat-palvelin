@@ -19,6 +19,7 @@ import path from 'path';
 import http from 'http';
 import express from 'express';
 import * as WebSocket from 'ws';
+import {basicAuth} from './lib/auth-middleware';
 import * as events from './event-models';
 
 import {FluxxChatServer} from './server';
@@ -33,6 +34,25 @@ const wss = new WebSocket.Server({server: httpServer});
 
 wss.on('connection', function connection(ws: WebSocket) {
 	server.addConnection(new Connection(ws));
+});
+
+// User-pass map
+const users = new Map();
+
+// Add a user for local development
+if (!process.env.NODE_ENV) {
+	users.set('admin', 'admin');
+}
+
+// Populate user-pass map from environment
+const logins = (process.env.LOGINS || '').split(';').map(l => l.split(':'));
+for (const [user, pass] of logins) {
+	users.set(user, pass);
+}
+
+// Event logs endpoint with http basic auth
+app.get('/events', basicAuth(users), (_req, res) => {
+	return res.sendFile(path.resolve(__dirname, '../events.log'));
 });
 
 // Fallback to index.html
