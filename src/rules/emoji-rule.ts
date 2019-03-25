@@ -31,6 +31,6 @@ export class NoEmojisRule extends RuleBase implements Rule {
 	}
 
 	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, _conn: Connection): RoomStateMessage {
-		return {...message, variables: {...message.variables, emojiPicker: true}};
+		return {...message, variables: {...message.variables, emojiPicker: false}};
 	}
 }
