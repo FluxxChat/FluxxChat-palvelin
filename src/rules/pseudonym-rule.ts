@@ -16,13 +16,13 @@
  */
 
 import {Connection} from '../connection';
-import {firstnames, lastnames} from './pseudonyme-names';
+import {firstnames, lastnames} from './pseudonyms.json';
 import {NicknameRule} from './nickname-rule';
 
-export class PseudonymeRule extends NicknameRule {
+export class PseudonymRule extends NicknameRule {
 	public title = 'rule.pseudonyms.title';
 	public description = 'rule.pseudonyms.description';
-	public ruleName = 'pseudonymes';
+	public ruleName = 'pseudonyms';
 
 	protected createNickname(_conn: Connection) {
 		const firstname = firstnames[Math.floor(Math.random() * Math.floor(firstnames.length))];
