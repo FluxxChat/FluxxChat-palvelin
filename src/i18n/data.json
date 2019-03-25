@@ -34,7 +34,10 @@
         "rule.disableImageMessages.title": "Disable image messages",
         "rule.inputMinHeight.title": "Message Textfield Height",
         "rule.inputMinHeight.description": "Set the height of the message input field (between 1 and 25).",
-        "rule.disableInputMinHeight.title": "Return original textfield height"
+        "rule.disableInputMinHeight.title": "Return original textfield height",
+        "rule.noEmojis.title": "No Emojis",
+        "rule.noEmojis.description": "Disallow emojis in messages",
+        "rule.allowEmojis.title": "Allow Emojis"
     },
     "fi": {
         "rule.anonymity.title": "Nimettömyys",
@@ -71,6 +74,9 @@
         "rule.disableImageMessages.title": "Ei kuvaviestejä",
         "rule.inputMinHeight.title": "Viestikentän korkeus",
         "rule.inputMinHeight.description": "Aseta viestien kirjoituskentän korkeus (väliltä 1 ja 25).",
-        "rule.disableInputMinHeight.title": "Palauta alkuperäinen viestikentän korkeus"
+        "rule.disableInputMinHeight.title": "Palauta alkuperäinen viestikentän korkeus",
+        "rule.noEmojis.title": "Kiellä emojit",
+        "rule.noEmojis.description": "Kiellä emojit viesteissä",
+        "rule.allowEmojis.title": "Salli emojit"
     }
 }
