@@ -75,8 +75,8 @@
         "rule.inputMinHeight.title": "Viestikentän korkeus",
         "rule.inputMinHeight.description": "Aseta viestien kirjoituskentän korkeus (väliltä 1 ja 25).",
         "rule.disableInputMinHeight.title": "Palauta alkuperäinen viestikentän korkeus",
-        "rule.noEmojis.title": "Kiellä emojit",
-        "rule.noEmojis.description": "Kiellä emojit viesteissä",
-        "rule.allowEmojis.title": "Salli emojit"
+        "rule.noEmojis.title": "Kiellä kuvahymiöt",
+        "rule.noEmojis.description": "Kiellä kuvahymiöt viesteissä",
+        "rule.allowEmojis.title": "Salli kuvahymiöt"
     }
 }
