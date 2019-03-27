@@ -16,7 +16,7 @@
  */
 
 import {Rule, RuleBase} from './rule';
-import {TextMessage, RuleParameterTypes} from 'fluxxchat-protokolla';
+import {TextMessage, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 
 export class MarkdownRule extends RuleBase implements Rule {
@@ -25,7 +25,7 @@ export class MarkdownRule extends RuleBase implements Rule {
 	public ruleName = 'markdown_formatting';
 	public parameterTypes = {} as RuleParameterTypes;
 
-	public applyTextMessage(_parameter: any, message: TextMessage, _sender: Connection) {
+	public applyTextMessage(_parameters: RuleParameters, message: TextMessage, _sender: Connection): TextMessage {
 		return {...message, markdown: true};
 	}
 }
