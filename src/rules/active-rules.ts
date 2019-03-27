@@ -65,6 +65,6 @@ export const RULES: {[key: string]: Rule} = {
 	input_min_height: INPUT_MIN_HEIGHT,
 	no_input_min_height: new DisablingRule([INPUT_MIN_HEIGHT], 'no_input_min_height', 'rule.disableInputMinHeight.title'),
 	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting', 'rule.disableFormatting.title'),
-	return_names: new DisablingRule([ANONYMITY, PSEUDONYMES], 'return_names', 'rule.returnNames.title'),
+	return_names: new DisablingRule([ANONYMITY, PSEUDONYMS], 'return_names', 'rule.returnNames.title'),
 	disable_all: new DisablingRule(_r => true, 'disable_all', 'rule.disableAll.title', 'rule.disableAll.description')
 };
