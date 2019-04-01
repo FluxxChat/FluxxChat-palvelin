@@ -15,18 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Rule, RuleCategory, RuleBase} from './rule';
-import {TextMessage, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
+import {RuleBase} from './rule';
+import {RuleParameters, RoomStateMessage} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 
-export class MessageMaxLengthRule extends RuleBase implements Rule {
-	public ruleCategories = new Set([RuleCategory.MESSAGELENGTH]);
-	public title = global._('Message Maximum Length Limit');
-	public description = global._('Restricts message maximum length.');
-	public ruleName = 'message_max_length';
-	public parameterTypes = {length: 'number'} as RuleParameterTypes;
+export class ImageMessageRule extends RuleBase {
+	public title = 'rule.imageMessages.title';
+	public description = 'rule.imageMessages.description';
+	public ruleName = 'image_messages';
 
-	public isValidMessage(parameters: RuleParameters, message: TextMessage, _sender: Connection) {
-		return message.textContent.length <= parameters.length;
+	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, conn: Connection): RoomStateMessage {
+		return {...message, variables: {...message.variables, imageMessages: true}};
 	}
 }

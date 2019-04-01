@@ -17,13 +17,16 @@
 
 import {DisablingRule, Rule} from './rule';
 import {AnonymityRule} from './anonymity-rule';
-import {MessageMinLengthRule} from './message-min-length-rule';
-import {MessageMaxLengthRule} from './message-max-length-rule';
+import {MessageMinLengthRule, MessageMaxLengthRule} from './message-length-rule';
 import {MuteRule} from './mute-rule';
 import {MarkdownRule} from './formatting-rule';
-import {PseudonymeRule} from './pseudonyme-rule';
+import {PseudonymRule} from './pseudonym-rule';
 import {PosMaxLimitRule, PosMinLimitRule} from './pos-limit-rule';
 import {ChatTurnsRule} from './chat-turns-rule';
+import {HaikuRule} from './haiku-rule';
+import {ImageMessageRule} from './image-message-rule';
+import {AudioMessageRule} from './audio-message-rule';
+import {InputMinHeight} from './input-min-height';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_MIN_LENGTH = new MessageMinLengthRule();
@@ -31,25 +34,37 @@ const MESSAGE_MAX_LENGTH = new MessageMaxLengthRule();
 const MUTE = new MuteRule();
 const CHAT_TURNS = new ChatTurnsRule();
 const MARKDOWN = new MarkdownRule();
-const PSEUDONYMES = new PseudonymeRule();
+const PSEUDONYMS = new PseudonymRule();
 const POS_MAX_LIMIT = new PosMaxLimitRule();
 const POS_MIN_LIMIT = new PosMinLimitRule();
+const HAIKU = new HaikuRule();
+const IMAGE_MESSAGES = new ImageMessageRule();
+const AUDIO_MESSAGES = new AudioMessageRule();
+const INPUT_MIN_HEIGHT = new InputMinHeight();
 
 export const RULES: {[key: string]: Rule} = {
 	anonymity: ANONYMITY,
 	message_min_length: MESSAGE_MIN_LENGTH,
 	message_max_length: MESSAGE_MAX_LENGTH,
-	no_message_length: new DisablingRule([MESSAGE_MAX_LENGTH, MESSAGE_MIN_LENGTH], 'no_message_length', global._('Disable message length')),
+	no_message_length: new DisablingRule([MESSAGE_MAX_LENGTH, MESSAGE_MIN_LENGTH], 'no_message_length', 'rule.noMessageLength.title'),
 	pos_max_limit: POS_MAX_LIMIT,
 	pos_min_limit: POS_MIN_LIMIT,
-	no_pos_limit: new DisablingRule([POS_MAX_LIMIT, POS_MIN_LIMIT], 'no_pos_limit', global._('Disable POS limit')),
+	no_pos_limit: new DisablingRule([POS_MAX_LIMIT, POS_MIN_LIMIT], 'no_pos_limit', 'rule.noPosLimit.title'),
+	haiku: HAIKU,
+	no_metre: new DisablingRule([HAIKU], 'no_metre', 'rule.noMetre.title'),
 	mute: MUTE,
-	unmute_all: new DisablingRule([MUTE], 'unmute_all', global._('Unmute')),
+	unmute_all: new DisablingRule([MUTE], 'unmute_all', 'rule.unmute.title'),
 	chat_turns: CHAT_TURNS,
-	no_chat_turns: new DisablingRule([CHAT_TURNS], 'no_chat_turns', global._('Disable Chat Turns')),
+	no_chat_turns: new DisablingRule([CHAT_TURNS], 'no_chat_turns', 'rule.noChatTurns.title'),
 	markdown_formatting: MARKDOWN,
-	pseudonymes: PSEUDONYMES,
-	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting', global._('Disable MarkDown formatting')),
-	return_names: new DisablingRule([ANONYMITY, PSEUDONYMES], 'return_names', global._('Return original names')),
-	disable_all: new DisablingRule([ANONYMITY, MESSAGE_MAX_LENGTH, MESSAGE_MIN_LENGTH, MUTE, MARKDOWN, PSEUDONYMES, POS_MAX_LIMIT, POS_MIN_LIMIT, CHAT_TURNS], 'disable_all', global._('Disable all'))
+	pseudonyms: PSEUDONYMS,
+	image_messages: IMAGE_MESSAGES,
+	no_image_messages: new DisablingRule([IMAGE_MESSAGES], 'no_image_messages', 'rule.disableImageMessages.title'),
+	audio_messages: AUDIO_MESSAGES,
+	no_audio_messages: new DisablingRule([AUDIO_MESSAGES], 'no_audio_messages', 'rule.disableAudioMessages.title'),
+	input_min_height: INPUT_MIN_HEIGHT,
+	no_input_min_height: new DisablingRule([INPUT_MIN_HEIGHT], 'no_input_min_height', 'rule.disableInputMinHeight.title'),
+	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting', 'rule.disableFormatting.title'),
+	return_names: new DisablingRule([ANONYMITY, PSEUDONYMS], 'return_names', 'rule.returnNames.title'),
+	disable_all: new DisablingRule(_r => true, 'disable_all', 'rule.disableAll.title', 'rule.disableAll.description')
 };

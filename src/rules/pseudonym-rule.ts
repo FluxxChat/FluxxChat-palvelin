@@ -15,18 +15,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Rule, RuleCategory, RuleBase} from './rule';
-import {TextMessage, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
+import {firstnames, lastnames} from './pseudonyms.json';
+import {NicknameRule} from './nickname-rule';
 
-export class MessageMinLengthRule extends RuleBase implements Rule {
-	public ruleCategories = new Set([RuleCategory.MESSAGELENGTH]);
-	public title = global._('Message Minimum Length Limit');
-	public description = global._('Restricts message minimum length.');
-	public ruleName = 'message_min_length';
-	public parameterTypes = {length: 'number'} as RuleParameterTypes;
+export class PseudonymRule extends NicknameRule {
+	public title = 'rule.pseudonyms.title';
+	public description = 'rule.pseudonyms.description';
+	public ruleName = 'pseudonyms';
 
-	public isValidMessage(parameters: RuleParameters, message: TextMessage, _sender: Connection) {
-		return message.textContent.length >= parameters.length;
+	protected createNickname(_conn: Connection) {
+		const firstname = firstnames[Math.floor(Math.random() * Math.floor(firstnames.length))];
+		const lastname = lastnames[Math.floor(Math.random() * Math.floor(lastnames.length))];
+		return `${firstname} ${lastname}`;
 	}
 }

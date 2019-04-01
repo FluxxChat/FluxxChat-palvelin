@@ -16,18 +16,28 @@
  */
 
 import {Rule, RuleBase} from './rule';
-import {Message, RuleParameters} from 'fluxxchat-protokolla';
+import {TextMessage, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
+import libvoikko from '../../lib/libvoikko';
 
-export class ChatTurnsRule extends RuleBase implements Rule {
-	public title = 'rule.chatTurns.title';
-	public description = 'rule.chatTurns.description';
-	public ruleName = 'chat_turns';
+const Libvoikko = libvoikko();
 
-	public isValidMessage(_parameters: RuleParameters, _message: Message, sender: Connection) {
-		if (!sender.room || !sender.room.turn) {
-			return true;
+export class HaikuRule extends RuleBase implements Rule {
+	public title = 'rule.haiku.title';
+	public description = 'rule.haiku.description';
+	public ruleName = 'haiku';
+	private voikko?: libvoikko.Voikko;
+
+	public isValidMessage(_parameters: RuleParameters, message: TextMessage, _sender: Connection) {
+		if (!this.voikko) {
+			this.voikko = Libvoikko.init('fi');
 		}
-		return sender.id === sender.room.turn.id;
+		const syllableCounts = message.textContent
+			.split(/\/|\n/)
+			.map(verse => verse.trim())
+			.map(v => this.voikko!.hyphenate(v).split('-'))
+			.map(verse => verse.length);
+		
+		return syllableCounts.length === 3 && [5, 7, 5].every((v, i) => v === syllableCounts[i]);
 	}
 }
