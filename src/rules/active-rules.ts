@@ -28,7 +28,7 @@ import {ImageMessageRule} from './image-message-rule';
 import {AudioMessageRule} from './audio-message-rule';
 import {InputMinHeight} from './input-min-height';
 import {NoEmojisRule} from './emoji-rule';
-import { StatisticsRule } from './statistics-rule';
+import {StatisticsRule} from './statistics-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_MIN_LENGTH = new MessageMinLengthRule();
