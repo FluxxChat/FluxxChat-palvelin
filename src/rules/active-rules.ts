@@ -28,6 +28,7 @@ import {ImageMessageRule} from './image-message-rule';
 import {AudioMessageRule} from './audio-message-rule';
 import {InputMinHeight} from './input-min-height';
 import {NoEmojisRule} from './emoji-rule';
+import { StatisticsRule } from './statistics-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_MIN_LENGTH = new MessageMinLengthRule();
@@ -43,6 +44,7 @@ const IMAGE_MESSAGES = new ImageMessageRule();
 const AUDIO_MESSAGES = new AudioMessageRule();
 const INPUT_MIN_HEIGHT = new InputMinHeight();
 const NO_EMOJIS = new NoEmojisRule();
+const STATISTICS = new StatisticsRule();
 
 export const RULES: {[key: string]: Rule} = {
 	anonymity: ANONYMITY,
@@ -70,5 +72,7 @@ export const RULES: {[key: string]: Rule} = {
 	return_names: new DisablingRule([ANONYMITY, PSEUDONYMS], 'return_names', 'rule.returnNames.title'),
 	no_emojis: NO_EMOJIS,
 	allow_emojis: new DisablingRule([NO_EMOJIS], 'allow_emojis', 'rule.allowEmojis.title'),
+	statistics: STATISTICS,
+	no_statistics: new DisablingRule([STATISTICS], 'no_statistics', 'rule.noStatistics.title'),
 	disable_all: new DisablingRule(_r => true, 'disable_all', 'rule.disableAll.title', 'rule.disableAll.description')
 };

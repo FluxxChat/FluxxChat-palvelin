@@ -40,7 +40,11 @@
         "rule.disableInputMinHeight.title": "Return original textfield height",
         "rule.noEmojis.title": "No Emojis",
         "rule.noEmojis.description": "Disallow emojis in messages",
-        "rule.allowEmojis.title": "Allow Emojis"
+        "rule.allowEmojis.title": "Allow Emojis",
+        "rule.statistics.title": "Statistics",
+        "rule.noStatistics.title": "No Statistics",
+        "rule.statistics.description": "Display statistics",
+        "rule.statistics.statistics": "{statistics}"
     },
     "fi": {
         "rule.anonymity.title": "Nimettömyys",
@@ -83,6 +87,10 @@
         "rule.disableInputMinHeight.title": "Palauta alkuperäinen viestikentän korkeus",
         "rule.noEmojis.title": "Kiellä kuvahymiöt",
         "rule.noEmojis.description": "Kiellä kuvahymiöt viesteissä",
-        "rule.allowEmojis.title": "Salli kuvahymiöt"
+        "rule.allowEmojis.title": "Salli kuvahymiöt",
+        "rule.statistics.title": "Tilastot",
+        "rule.noStatistics.title": "Ei tilastoja",
+        "rule.statistics.description": "Näytä tilastoja",
+        "rule.statistics.statistics": "{statistics}"
     }
 }
