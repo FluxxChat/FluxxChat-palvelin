@@ -16,16 +16,22 @@
  */
 
 import {Rule, RuleBase} from './rule';
-import {TextMessage, RuleParameterTypes, RuleParameters} from 'fluxxchat-protokolla';
+import {TextMessage, RuleParameters, RoomStateMessage} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
+import emojiRegex from 'emoji-regex';
 
-export class MarkdownRule extends RuleBase implements Rule {
-	public title = 'rule.markdownFormatting.title';
-	public description = 'rule.markdownFormatting.description';
-	public ruleName = 'markdown_formatting';
-	public parameterTypes = {} as RuleParameterTypes;
+const EMOJI_REGEX = emojiRegex();
 
-	public applyTextMessage(_parameters: RuleParameters, message: TextMessage, _sender: Connection): TextMessage {
-		return {...message, markdown: true};
+export class NoEmojisRule extends RuleBase implements Rule {
+	public title = 'rule.noEmojis.title';
+	public description = 'rule.noEmojis.description';
+	public ruleName = 'no_emojis';
+
+	public isValidMessage(_parameters: RuleParameters, message: TextMessage, _sender: Connection) {
+		return !message.textContent.match(EMOJI_REGEX);
+	}
+
+	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, _conn: Connection): RoomStateMessage {
+		return {...message, variables: {...message.variables, emojiPicker: false}};
 	}
 }
