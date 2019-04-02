@@ -1,12 +1,7 @@
 import test from 'ava';
 
-const Localize = require("localize");
-const localize = new Localize('./i18n/');
-localize.setLocale('fi');
-global._ = localize.translate;
-
-const server = require("../dist/server");
-const rules = require("../dist/rules/active-rules");
+const server = require("../src/server");
+const rules = require("../src/rules/active-rules");
 
 test('A rule without parameters passes', t => {
     const s = new server.FluxxChatServer();

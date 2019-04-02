@@ -1,12 +1,7 @@
 import test from 'ava';
 
-const Localize = require("localize");
-const localize = new Localize('./i18n/');
-localize.setLocale('fi');
-global._ = localize.translate;
-
-const room = require("../dist/room");
-const anonymityRule = require("../dist/rules/anonymity-rule");
+const room = require("../src/room");
+const anonymityRule = require("../src/rules/anonymity-rule");
 
 test('Room initializes without rules', t => {
     const r = new room.Room();
