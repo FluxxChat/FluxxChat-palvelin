@@ -78,7 +78,7 @@ export class FluxxChatServer {
 					blockingRules.push(rule.rule.title);
 				}
 
-				newMessage = rule.applyTextMessage(message, conn);
+				newMessage = rule.applyTextMessage(newMessage, conn);
 				if (newMessage === null) {
 					break;
 				}
