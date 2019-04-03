@@ -33,6 +33,7 @@ export class Room {
 	public connections: Connection[] = [];
 	public enabledRules: EnabledRule[] = [];
 	public turn: Connection | null;
+	public turnTimer: NodeJS.Timeout;
 	public turnEndTime: number;
 
 	public addConnection(conn: Connection) {
@@ -82,6 +83,13 @@ export class Room {
 
 	public removeConnection(conn: Connection) {
 		const index = this.connections.findIndex(c => c.id === conn.id);
+		if (this.turn === conn) {
+			clearInterval(this.turnTimer);
+			this.turn = this.connections[(index + 1) % this.connections.length];
+			this.dealCards(this.turn!, N_TAKE);
+			this.turn!.nCardsPlayed = 0;
+			this.setTimer();
+		}
 		this.connections.splice(index, 1);
 
 		this.turn = this.connections.length > 0
@@ -107,10 +115,10 @@ export class Room {
 		const startTime = Date.now();
 		this.turnEndTime = startTime + 120000;
 		let counter: number = 120;
-		const interval = setInterval(() => {
+		this.turnTimer = setInterval(() => {
 			counter--;
 			if (counter < 0 && this.connections.length > 0) {
-				clearInterval(interval);
+				clearInterval(this.turnTimer);
 				const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
 				const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
 				this.turn = this.connections[nextTurnIndex];
