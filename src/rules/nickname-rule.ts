@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Rule, RuleBase} from './rule';
+import {Rule, RuleBase, EnabledRule} from './rule';
 import {Connection} from '../connection';
 import {Room} from '../room';
 import {RuleParameters, TextMessage, RoomStateMessage} from 'fluxxchat-protokolla';
@@ -23,7 +23,13 @@ import {RuleParameters, TextMessage, RoomStateMessage} from 'fluxxchat-protokoll
 export abstract class NicknameRule extends RuleBase implements Rule {
 	private nicknameStore: {[roomId: string]: {[connId: string]: string} | undefined} = {};
 
-	public ruleEnabled(room: Room) {
+	public ruleEnabled(room: Room, enabledRule: EnabledRule) {
+		room.enabledRules
+			.filter(r => (
+				r.rule === this
+				|| r.rule.ruleName === 'anonymity'
+				|| r.rule.ruleName === 'pseudonyms'
+			) && r !== enabledRule).forEach(room.removeRule.bind(room));
 		this.nicknameStore[room.id] = {};
 	}
 
