@@ -85,10 +85,14 @@ export class Room {
 		const index = this.connections.findIndex(c => c.id === conn.id);
 		if (this.turn === conn) {
 			clearInterval(this.turnTimer);
-			this.turn = this.connections[(index + 1) % this.connections.length];
-			this.dealCards(this.turn!, N_TAKE);
-			this.turn!.nCardsPlayed = 0;
-			this.setTimer();
+			if (this.connections.length > 1) {
+				this.turn = this.connections[(index + 1) % this.connections.length];
+				this.dealCards(this.turn!, N_TAKE);
+				this.turn!.nCardsPlayed = 0;
+				this.setTimer();
+			} else {
+				this.turn = null;
+			}
 		}
 		this.connections.splice(index, 1);
 
