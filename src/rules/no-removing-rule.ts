@@ -25,6 +25,6 @@ export class NoRemovingRule extends RuleBase implements Rule {
 	public ruleName = 'no_removing';
 
 	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, _conn: Connection): RoomStateMessage {
-		return {...message, variables: {...message.variables, disableBackspace: false}};
+		return {...message, variables: {...message.variables, disableBackspace: true}};
 	}
 }
