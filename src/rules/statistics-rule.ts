@@ -59,6 +59,9 @@ export class StatisticsRule extends RuleBase implements Rule {
 	}
 
 	public applyTextMessage(_parameters: RuleParameters, message: TextMessage, conn: Connection): TextMessage {
+		if (message.validateOnly) {
+			return message;
+		}
 		this.statisticsStore[conn.room!.id]!.addStatistics(message, conn);
 		conn.room!.sendStateMessages();
 		return message;
