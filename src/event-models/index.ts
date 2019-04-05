@@ -1,18 +1,76 @@
+import path from 'path';
+import Knex from 'knex';
+import {Model, knexSnakeCaseMappers} from 'objection';
 import EventModel from './lib/event-model';
 
-export {default as ActiveRuleEvent} from './active-rule';
-export {default as ChatMessageEvent} from './chat-message';
-export {default as PlayedCardEvent} from './played-card';
-export {default as RoomStateUserEvent} from './room-state-user';
-export {default as RoomStateEvent} from './room-state';
-export {default as RoomEvent} from './room';
-export {default as RuleEvent} from './rule';
-export {default as UserEvent} from './user';
+import ActiveRule from './active-rule';
+import ChatMessage from './chat-message';
+import RoomState from './room-state';
+import Room from './room';
+import RoomStateUser from './room-state-user';
+
+export {ActiveRule as ActiveRuleEvent};
+export {ChatMessage as ChatMessageEvent};
+export {RoomState as RoomStateEvent};
+export {Room as RoomEvent};
+export {RoomStateUser as RoomStateUserEvent};
 
 export const flushEvents = () => {
 	EventModel.flush();
 };
 
-export const setFilePath = (path: string) => {
-	EventModel.setFilePath(path);
+export const setFilePath = (p: string) => {
+	EventModel.setFilePath(p);
+};
+
+const buildTable = (table: Knex.CreateTableBuilder, model: any) => {
+	const keys = Object.keys(model.jsonSchema.properties);
+
+	for (const colName of keys) {
+		const prop = model.jsonSchema.properties[colName];
+
+		if (prop.type === 'string') {
+			if (prop.format === 'date-time') {
+				table.dateTime(colName);
+			} else {
+				table.string(colName);
+			}
+		}
+
+		if (prop.type === 'boolean') {
+			table.boolean(colName);
+		}
+
+		if (prop.type === 'number') {
+			table.float(colName);
+		}
+	}
+
+	table.unique(['id']);
+	table.primary(['id']);
+};
+
+export const initDb = async () => {
+	const knex = Knex({
+		client: 'sqlite3',
+		connection: {
+			filename: path.resolve(__dirname, '../../db.sqlite')
+		},
+		useNullAsDefault: true,
+		...knexSnakeCaseMappers()
+	});
+
+	// Connect objection model to knex instance
+	Model.knex(knex);
+
+	// Ensure database has table schemas
+	const models = [ActiveRule, ChatMessage, RoomState, Room, RoomStateUser];
+	const tasks = models.map(async model => {
+		const hasTable = await knex.schema.hasTable(model.tableName);
+		if (!hasTable) {
+			await knex.schema.createTable(model.tableName, table => buildTable(table, model));
+		}
+	});
+
+	return Promise.all(tasks);
 };
