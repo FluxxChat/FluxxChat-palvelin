@@ -1,5 +1,10 @@
 {
     "en": {
+        "cheat.get.usage": "/get <rule-id> - Places a rule card to your hand",
+        "cheat.resetcounter.usage": "/resetcounter - Resets player cards counter",
+        "cheat.nextplayer.usage": "/nextplayer - Skips immediately to the next turn",
+        "cheat.help.usage": "/help <cheat-name> - Shows help about a cheat command",
+        "cheat.unknown.usage": "Unknown cheat command! Supported commands: /get, /resetcounter, /nextplayer, /help",
         "rule.anonymity.title": "Anonymity",
         "rule.anonymity.description": "Hides the identity of players.",
         "rule.messageMinLength.title": "Message Minimum Length Limit",
@@ -43,6 +48,11 @@
         "rule.allowEmojis.title": "Allow Emojis"
     },
     "fi": {
+        "cheat.get.usage": "/get <rule-id> - Panee sääntökortin käteesi",
+        "cheat.resetcounter.usage": "/resetcounter - Resetoi pelattujen korttien laskurin",
+        "cheat.nextplayer.usage": "/nextplayer - Siirtää vuoron suoraan seuraavalle pelaajalle",
+        "cheat.help.usage": "/help <cheat-name> - Näyttää ohjetekstin huijauskomennolle",
+        "cheat.unknown.usage": "Tuntematon huijauskomento! Tuetut komennot: /get, /resetcounter, /nextplayer, /help",
         "rule.anonymity.title": "Nimettömyys",
         "rule.anonymity.description": "Piilottaa pelaajien identiteetin.",
         "rule.messageMinLength.title": "Viestin minimipituus",
