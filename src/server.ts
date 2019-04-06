@@ -16,7 +16,7 @@
  */
 
 import uuid from 'uuid';
-import {Message, RoomCreatedMessage, RuleParameters, TextMessage} from 'fluxxchat-protokolla';
+import {Message, RoomCreatedMessage, RuleParameters, TextMessage, SystemMessage} from 'fluxxchat-protokolla';
 import {Connection} from './connection';
 import {Room} from './room';
 import {RULES} from './rules/active-rules';
@@ -40,7 +40,7 @@ export class FluxxChatServer {
 		}
 	}
 
-	public handleMessage(conn: Connection, message: Message) {
+	public handleMessage(conn: Connection, message: Message): void {
 		switch (message.type) {
 			case 'JOIN_ROOM':
 				return this.joinRoom(conn, message.roomId, message.nickname);
@@ -62,6 +62,18 @@ export class FluxxChatServer {
 		}
 
 		if (message.type === 'TEXT') {
+			if (message.textContent.startsWith('/')) {
+				// Cheating commands are always valid
+				if (message.validateOnly) {
+					return conn.sendMessage({
+						type: 'VALIDATE_TEXT_RESPONSE',
+						valid: true
+					});
+				} else {
+					return this.applyCheat(message.textContent.substring(1), conn);
+				}
+			}
+
 			message.senderNickname = conn.nickname;
 			message.senderId = conn.id;
 			message.timestamp = new Date().toISOString();
@@ -223,5 +235,44 @@ export class FluxxChatServer {
 		if (conn.room) {
 			conn.room.sendStateMessages();
 		}
+	}
+
+	private applyCheat(command: string, conn: Connection): void {
+		const args = command.split(' ');
+		switch (args[0]) {
+		case 'get':
+			if (args.length !== 2 || !Object.keys(RULES).includes(args[1])) {
+				return this.sendCheatUsage('get', conn);
+			}
+			conn.hand.push(args[1]);
+			conn.room!.sendStateMessages();
+			break;
+		case 'resetcounter':
+			if (args.length !== 1) {
+				return this.sendCheatUsage('resetcounter', conn);
+			}
+			conn.nCardsPlayed = 0;
+			conn.room!.sendStateMessages();
+			break;
+		case 'nextplayer':
+			if (args.length !== 1) {
+				return this.sendCheatUsage('nextplayer', conn);
+			}
+			conn.room!.nextTurn();
+			conn.room!.sendStateMessages();
+			break;
+		case 'help':
+			if (args.length !== 2) {
+				return this.sendCheatUsage('help', conn);
+			}
+			return this.sendCheatUsage(args[1], conn);
+		default:
+			return this.sendCheatUsage('unknown', conn);
+		}
+	}
+
+	private sendCheatUsage(cheat: string, conn: Connection): void {
+		const usage: SystemMessage = {type: 'SYSTEM', severity: 'warning', message: `cheat.${cheat}.usage`};
+		conn.sendMessage(usage);
 	}
 }
