@@ -37,7 +37,10 @@
         "rule.disableAudioMessages.title": "Disable voice messages",
         "rule.inputMinHeight.title": "Message Textfield Height",
         "rule.inputMinHeight.description": "Set the height of the message input field (between 1 and 25).",
-        "rule.disableInputMinHeight.title": "Return original textfield height"
+		"rule.disableInputMinHeight.title": "Return original textfield height",
+		"rule.threads.title": "Threads",
+		"rule.threads.description": "Allow users to start threads on individual messages.",
+		"rule.disableThreads.title": "Disable thread responses"
     },
     "fi": {
         "rule.anonymity.title": "Nimettömyys",
@@ -77,6 +80,9 @@
         "rule.disableAudioMessages.title": "Ei ääniviestejä",
         "rule.inputMinHeight.title": "Viestikentän korkeus",
         "rule.inputMinHeight.description": "Aseta viestien kirjoituskentän korkeus (väliltä 1 ja 25).",
-        "rule.disableInputMinHeight.title": "Palauta alkuperäinen viestikentän korkeus"
+        "rule.disableInputMinHeight.title": "Palauta alkuperäinen viestikentän korkeus",
+		"rule.threads.title": "Viestiketjut",
+		"rule.threads.description": "Pelaajat voivat aloittaa viestiketjuja vastaamalla yksittäisiin viesteihin.",
+		"rule.disableThreads.title": "Estä viestiketjuihin vastaaminen"
     }
 }
