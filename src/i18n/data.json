@@ -96,7 +96,7 @@
         "rule.disableInputMinHeight.title": "Palauta alkuperäinen viestikentän korkeus",
         "rule.threads.title": "Viestiketjut",
         "rule.threads.description": "Pelaajat voivat aloittaa viestiketjuja vastaamalla yksittäisiin viesteihin.",
-        "rule.disableThreads.title": "Estä viestiketjuihin vastaaminen"
+        "rule.disableThreads.title": "Estä viestiketjuihin vastaaminen",
         "rule.noEmojis.title": "Kiellä kuvahymiöt",
         "rule.noEmojis.description": "Kiellä kuvahymiöt viesteissä",
         "rule.allowEmojis.title": "Salli kuvahymiöt"
