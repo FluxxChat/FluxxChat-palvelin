@@ -1,9 +1,21 @@
-import EventModel from './lib/event-model';
+import {Model} from 'objection';
 
-class RoomState extends EventModel<{
-	id: string;
-	roomId: string;
-	turnUserId: string;
-}> {}
+export default class RoomState extends Model {
+	public static tableName = 'room_state';
 
-export default new RoomState();
+	public static jsonSchema = {
+		type: 'object',
+		required: ['id', 'roomId', 'turnUserId', 'createdAt'],
+		properties: {
+			id: {type: 'string'},
+			roomId: {type: 'string'},
+			turnUserId: {type: 'string'},
+			createdAt: {type: 'string', format: 'date-time'}
+		}
+	};
+
+	public id!: string;
+	public roomId!: string;
+	public turnUserId!: string;
+	public createdAt!: string;
+}

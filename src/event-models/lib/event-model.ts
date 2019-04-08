@@ -7,7 +7,7 @@ type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 type Reserved = 'timestamp';
 
 interface ModelPropertiesIndex {
-	[key: string]: string | boolean | undefined;
+	[key: string]: string | boolean | undefined | ModelPropertiesIndex | ModelPropertiesIndex[];
 }
 
 export type ModelProperties = ModelPropertiesIndex & {
