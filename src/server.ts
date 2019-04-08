@@ -16,7 +16,7 @@
  */
 
 import uuid from 'uuid';
-import {Message, RoomCreatedMessage, RuleParameters, TextMessage} from 'fluxxchat-protokolla';
+import {Message, RoomCreatedMessage, RuleParameters, TextMessage, SystemMessage} from 'fluxxchat-protokolla';
 import {Connection} from './connection';
 import {Room} from './room';
 import {RULES} from './rules/active-rules';
@@ -25,22 +25,11 @@ import ErrorMessage from './lib/error';
 import localeMessages from './i18n/data.json';
 import * as events from './event-models';
 
-const EVENT_FLUSH_INTERVAL_MS = 10 * 1000;
-
 export class FluxxChatServer {
 	private connections: Connection[] = [];
 	private rooms: {[id: string]: Room} = {};
 
-	public constructor() {
-		setInterval(events.flushEvents, EVENT_FLUSH_INTERVAL_MS);
-
-		// Log available rules
-		for (const rule of Object.values(RULES)) {
-			events.RuleEvent.insert({name: rule.ruleName});
-		}
-	}
-
-	public handleMessage(conn: Connection, message: Message) {
+	public async handleMessage(conn: Connection, message: Message) {
 		switch (message.type) {
 			case 'JOIN_ROOM':
 				return this.joinRoom(conn, message.roomId, message.nickname);
@@ -62,6 +51,18 @@ export class FluxxChatServer {
 		}
 
 		if (message.type === 'TEXT') {
+			if (message.textContent.startsWith('/')) {
+				// Cheating commands are always valid
+				if (message.validateOnly) {
+					return conn.sendMessage({
+						type: 'VALIDATE_TEXT_RESPONSE',
+						valid: true
+					});
+				} else {
+					return this.applyCheat(message.textContent.substring(1), conn);
+				}
+			}
+
 			message.senderNickname = conn.nickname;
 			message.senderId = conn.id;
 			message.timestamp = new Date().toISOString();
@@ -78,7 +79,7 @@ export class FluxxChatServer {
 					blockingRules.push(rule.rule.title);
 				}
 
-				newMessage = rule.applyTextMessage(message, conn);
+				newMessage = rule.applyTextMessage(newMessage, conn);
 				if (newMessage === null) {
 					break;
 				}
@@ -86,13 +87,16 @@ export class FluxxChatServer {
 
 			const isMessageValid = blockingRules.length === 0 && newMessage !== null;
 
-			events.ChatMessageEvent.insert({
+			await events.ChatMessageEvent.query().insert({
 				id: uuid.v4(),
 				roomStateId: conn.room!.stateId,
 				userId: conn.id,
-				userVisibleName: conn.nickname,
+				userVisibleNickname: newMessage ? newMessage.senderNickname : message.senderNickname,
 				content: message.textContent,
-				draft: message.validateOnly
+				draft: message.validateOnly,
+				valid: isMessageValid,
+				invalidReason: isMessageValid ? undefined : JSON.stringify(blockingRules),
+				createdAt: new Date().toISOString()
 			});
 
 			if (message.validateOnly) {
@@ -167,7 +171,7 @@ export class FluxxChatServer {
 		return params;
 	}
 
-	private enactRule(conn: Connection, ruleName: string, ruleParameters: RuleParameters) {
+	private async enactRule(conn: Connection, ruleName: string, ruleParameters: RuleParameters) {
 		if (!conn.room) {
 			throw new ErrorMessage({internal: true, message: 'Must be connected to a room'});
 		}
@@ -175,8 +179,6 @@ export class FluxxChatServer {
 		if (!conn.room.turn || conn.room.turn.id !== conn.id) {
 			throw new ErrorMessage({internal: true, message: 'You can only play cards on your turn'});
 		}
-
-		events.PlayedCardEvent.insert({roomStateId: conn.room.stateId, ruleName, userId: conn.id});
 
 		const rule = RULES[ruleName];
 		if (!rule) {
@@ -188,11 +190,15 @@ export class FluxxChatServer {
 		conn.room.addRule(rule, parameters);
 	}
 
-	private createRoom(conn: Connection) {
+	private async createRoom(conn: Connection) {
 		const room = new Room();
 		this.rooms[room.id] = room;
 
-		events.RoomEvent.insert({id: room.id});
+		await events.RoomEvent.query().insert({
+			id: room.id,
+			availableRules: JSON.stringify(Object.keys(RULES)),
+			createdAt: new Date().toISOString()
+		});
 
 		conn.sendMessage({type: 'ROOM_CREATED', roomId: room.id} as RoomCreatedMessage);
 	}
@@ -223,5 +229,44 @@ export class FluxxChatServer {
 		if (conn.room) {
 			conn.room.sendStateMessages();
 		}
+	}
+
+	private applyCheat(command: string, conn: Connection): void {
+		const args = command.split(' ');
+		switch (args[0]) {
+		case 'get':
+			if (args.length !== 2 || !Object.keys(RULES).includes(args[1])) {
+				return this.sendCheatUsage('get', conn);
+			}
+			conn.hand.push(args[1]);
+			conn.room!.sendStateMessages();
+			break;
+		case 'resetcounter':
+			if (args.length !== 1) {
+				return this.sendCheatUsage('resetcounter', conn);
+			}
+			conn.nCardsPlayed = 0;
+			conn.room!.sendStateMessages();
+			break;
+		case 'nextplayer':
+			if (args.length !== 1) {
+				return this.sendCheatUsage('nextplayer', conn);
+			}
+			conn.room!.nextTurn();
+			conn.room!.sendStateMessages();
+			break;
+		case 'help':
+			if (args.length !== 2) {
+				return this.sendCheatUsage('help', conn);
+			}
+			return this.sendCheatUsage(args[1], conn);
+		default:
+			return this.sendCheatUsage('unknown', conn);
+		}
+	}
+
+	private sendCheatUsage(cheat: string, conn: Connection): void {
+		const usage: SystemMessage = {type: 'SYSTEM', severity: 'warning', message: `cheat.${cheat}.usage`};
+		conn.sendMessage(usage);
 	}
 }

@@ -1,5 +1,10 @@
 {
     "en": {
+        "cheat.get.usage": "/get <rule-id> - Places a rule card to your hand",
+        "cheat.resetcounter.usage": "/resetcounter - Resets player cards counter",
+        "cheat.nextplayer.usage": "/nextplayer - Skips immediately to the next turn",
+        "cheat.help.usage": "/help <cheat-name> - Shows help about a cheat command",
+        "cheat.unknown.usage": "Unknown cheat command! Supported commands: /get, /resetcounter, /nextplayer, /help",
         "rule.anonymity.title": "Anonymity",
         "rule.anonymity.description": "Hides the identity of players.",
         "rule.messageMinLength.title": "Message Minimum Length Limit",
@@ -38,15 +43,26 @@
         "rule.inputMinHeight.title": "Message Textfield Height",
         "rule.inputMinHeight.description": "Set the height of the message input field (between 1 and 25).",
         "rule.disableInputMinHeight.title": "Return original textfield height",
+        "rule.threads.title": "Threads",
+        "rule.threads.description": "Allow users to start threads on individual messages.",
+        "rule.disableThreads.title": "Disable thread responses",
         "rule.noEmojis.title": "No Emojis",
         "rule.noEmojis.description": "Disallow emojis in messages",
         "rule.allowEmojis.title": "Allow Emojis",
         "rule.statistics.title": "Statistics",
         "rule.noStatistics.title": "No Statistics",
         "rule.statistics.description": "Display statistics",
-        "rule.statistics.statistics": "{statistics}"
+        "rule.statistics.statistics": "{statistics}",
+        "rule.noRemoving.title": "Disable Backspace",
+        "rule.noRemoving.description": "Forbid removing characters from the input field",
+        "rule.allowRemoving.title": "Allow Backspace"
     },
     "fi": {
+        "cheat.get.usage": "/get <rule-id> - Panee sääntökortin käteesi",
+        "cheat.resetcounter.usage": "/resetcounter - Resetoi pelattujen korttien laskurin",
+        "cheat.nextplayer.usage": "/nextplayer - Siirtää vuoron suoraan seuraavalle pelaajalle",
+        "cheat.help.usage": "/help <cheat-name> - Näyttää ohjetekstin huijauskomennolle",
+        "cheat.unknown.usage": "Tuntematon huijauskomento! Tuetut komennot: /get, /resetcounter, /nextplayer, /help",
         "rule.anonymity.title": "Nimettömyys",
         "rule.anonymity.description": "Piilottaa pelaajien identiteetin.",
         "rule.messageMinLength.title": "Viestin minimipituus",
@@ -85,12 +101,18 @@
         "rule.inputMinHeight.title": "Viestikentän korkeus",
         "rule.inputMinHeight.description": "Aseta viestien kirjoituskentän korkeus (väliltä 1 ja 25).",
         "rule.disableInputMinHeight.title": "Palauta alkuperäinen viestikentän korkeus",
+        "rule.threads.title": "Viestiketjut",
+        "rule.threads.description": "Pelaajat voivat aloittaa viestiketjuja vastaamalla yksittäisiin viesteihin.",
+        "rule.disableThreads.title": "Estä viestiketjuihin vastaaminen",
         "rule.noEmojis.title": "Kiellä kuvahymiöt",
         "rule.noEmojis.description": "Kiellä kuvahymiöt viesteissä",
         "rule.allowEmojis.title": "Salli kuvahymiöt",
         "rule.statistics.title": "Tilastot",
         "rule.noStatistics.title": "Ei tilastoja",
         "rule.statistics.description": "Näytä tilastoja",
-        "rule.statistics.statistics": "{statistics}"
+        "rule.statistics.statistics": "{statistics}",
+        "rule.noRemoving.title": "Kiellä merkkien poistaminen",
+        "rule.noRemoving.description": "Kieltää merkkien kumittamisen syötekentässä",
+        "rule.allowRemoving.title": "Salli merkkien poistaminen"
     }
 }

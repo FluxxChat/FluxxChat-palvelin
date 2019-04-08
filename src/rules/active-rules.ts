@@ -27,8 +27,10 @@ import {HaikuRule} from './haiku-rule';
 import {ImageMessageRule} from './image-message-rule';
 import {AudioMessageRule} from './audio-message-rule';
 import {InputMinHeight} from './input-min-height';
+import {ThreadsRule} from './threads-rule';
 import {NoEmojisRule} from './emoji-rule';
 import {StatisticsRule} from './statistics-rule';
+import {NoRemovingRule} from './no-removing-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_MIN_LENGTH = new MessageMinLengthRule();
@@ -43,8 +45,10 @@ const HAIKU = new HaikuRule();
 const IMAGE_MESSAGES = new ImageMessageRule();
 const AUDIO_MESSAGES = new AudioMessageRule();
 const INPUT_MIN_HEIGHT = new InputMinHeight();
+const THREADS = new ThreadsRule();
 const NO_EMOJIS = new NoEmojisRule();
 const STATISTICS = new StatisticsRule();
+const NO_REMOVING = new NoRemovingRule();
 
 export const RULES: {[key: string]: Rule} = {
 	anonymity: ANONYMITY,
@@ -68,11 +72,15 @@ export const RULES: {[key: string]: Rule} = {
 	no_audio_messages: new DisablingRule([AUDIO_MESSAGES], 'no_audio_messages', 'rule.disableAudioMessages.title'),
 	input_min_height: INPUT_MIN_HEIGHT,
 	no_input_min_height: new DisablingRule([INPUT_MIN_HEIGHT], 'no_input_min_height', 'rule.disableInputMinHeight.title'),
+	threads: THREADS,
+	no_threads: new DisablingRule([THREADS], 'no_threads', 'rule.disableThreads.title'),
 	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting', 'rule.disableFormatting.title'),
 	return_names: new DisablingRule([ANONYMITY, PSEUDONYMS], 'return_names', 'rule.returnNames.title'),
 	no_emojis: NO_EMOJIS,
 	allow_emojis: new DisablingRule([NO_EMOJIS], 'allow_emojis', 'rule.allowEmojis.title'),
 	statistics: STATISTICS,
 	no_statistics: new DisablingRule([STATISTICS], 'no_statistics', 'rule.noStatistics.title'),
+	no_removing: NO_REMOVING,
+	allow_removing: new DisablingRule([NO_REMOVING], 'allow_removing', 'rule.allowRemoving.title'),
 	disable_all: new DisablingRule(_r => true, 'disable_all', 'rule.disableAll.title', 'rule.disableAll.description')
 };
