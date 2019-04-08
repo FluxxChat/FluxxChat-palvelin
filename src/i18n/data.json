@@ -48,7 +48,10 @@
         "rule.disableThreads.title": "Disable thread responses",
         "rule.noEmojis.title": "No Emojis",
         "rule.noEmojis.description": "Disallow emojis in messages",
-        "rule.allowEmojis.title": "Allow Emojis"
+        "rule.allowEmojis.title": "Allow Emojis",
+        "rule.noRemoving.title": "Disable Backspace",
+        "rule.noRemoving.description": "Forbid removing characters from the input field",
+        "rule.allowRemoving.title": "Allow Backspace"
     },
     "fi": {
         "cheat.get.usage": "/get <rule-id> - Panee sääntökortin käteesi",
@@ -99,6 +102,9 @@
         "rule.disableThreads.title": "Estä viestiketjuihin vastaaminen",
         "rule.noEmojis.title": "Kiellä kuvahymiöt",
         "rule.noEmojis.description": "Kiellä kuvahymiöt viesteissä",
-        "rule.allowEmojis.title": "Salli kuvahymiöt"
+        "rule.allowEmojis.title": "Salli kuvahymiöt",
+        "rule.noRemoving.title": "Kiellä merkkien poistaminen",
+        "rule.noRemoving.description": "Kieltää merkkien kumittamisen syötekentässä",
+        "rule.allowRemoving.title": "Salli merkkien poistaminen"
     }
 }
