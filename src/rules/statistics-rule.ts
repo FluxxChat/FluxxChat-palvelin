@@ -70,11 +70,11 @@ export class StatisticsRule extends RuleBase implements Rule {
 	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, conn: Connection): RoomStateMessage {
 		return {
 			...message,
-			enabledRules: message.enabledRules.map(r => ({
+			enabledRules: message.enabledRules.map(r => (r.ruleName === this.ruleName ? {
 				...r,
 				description: 'rule.statistics.statistics',
 				values: {statistics: this.statisticsStore[conn.room!.id]!.getStatisticsString()}
-			}))
+			} : r))
 		};
 	}
 }
