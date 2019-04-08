@@ -29,7 +29,7 @@ export class FluxxChatServer {
 	private connections: Connection[] = [];
 	private rooms: {[id: string]: Room} = {};
 
-	public handleMessage(conn: Connection, message: Message): void {
+	public async handleMessage(conn: Connection, message: Message) {
 		switch (message.type) {
 			case 'JOIN_ROOM':
 				return this.joinRoom(conn, message.roomId, message.nickname);

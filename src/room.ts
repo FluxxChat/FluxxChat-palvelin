@@ -129,7 +129,7 @@ export class Room {
 		this.sendStateMessages();
 	}
 
-	public sendStateMessages() {
+	public async sendStateMessages() {
 		if (this.connections.length === 0) {
 			return;
 		}
