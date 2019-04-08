@@ -29,6 +29,7 @@ import {AudioMessageRule} from './audio-message-rule';
 import {InputMinHeight} from './input-min-height';
 import {ThreadsRule} from './threads-rule';
 import {NoEmojisRule} from './emoji-rule';
+import {StatisticsRule} from './statistics-rule';
 import {NoRemovingRule} from './no-removing-rule';
 
 const ANONYMITY = new AnonymityRule();
@@ -46,6 +47,7 @@ const AUDIO_MESSAGES = new AudioMessageRule();
 const INPUT_MIN_HEIGHT = new InputMinHeight();
 const THREADS = new ThreadsRule();
 const NO_EMOJIS = new NoEmojisRule();
+const STATISTICS = new StatisticsRule();
 const NO_REMOVING = new NoRemovingRule();
 
 export const RULES: {[key: string]: Rule} = {
@@ -76,6 +78,8 @@ export const RULES: {[key: string]: Rule} = {
 	return_names: new DisablingRule([ANONYMITY, PSEUDONYMS], 'return_names', 'rule.returnNames.title'),
 	no_emojis: NO_EMOJIS,
 	allow_emojis: new DisablingRule([NO_EMOJIS], 'allow_emojis', 'rule.allowEmojis.title'),
+	statistics: STATISTICS,
+	no_statistics: new DisablingRule([STATISTICS], 'no_statistics', 'rule.noStatistics.title'),
 	no_removing: NO_REMOVING,
 	allow_removing: new DisablingRule([NO_REMOVING], 'allow_removing', 'rule.allowRemoving.title'),
 	disable_all: new DisablingRule(_r => true, 'disable_all', 'rule.disableAll.title', 'rule.disableAll.description')
