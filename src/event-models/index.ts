@@ -23,11 +23,13 @@ export const setFilePath = (p: string) => {
 	EventModel.setFilePath(p);
 };
 
-const buildTable = (table: Knex.CreateTableBuilder, model: any) => {
+const MODELS = [ActiveRule, ChatMessage, RoomState, Room, RoomStateUser];
+
+const buildTable = (table: Knex.CreateTableBuilder, model: typeof MODELS[number]) => {
 	const keys = Object.keys(model.jsonSchema.properties);
 
 	for (const colName of keys) {
-		const prop = model.jsonSchema.properties[colName];
+		const prop: {type: string; format?: string} = model.jsonSchema.properties[colName];
 
 		if (prop.type === 'string') {
 			if (prop.format === 'date-time') {
@@ -64,8 +66,7 @@ export const initDb = async () => {
 	Model.knex(knex);
 
 	// Ensure database has table schemas
-	const models = [ActiveRule, ChatMessage, RoomState, Room, RoomStateUser];
-	const tasks = models.map(async model => {
+	const tasks = MODELS.map(async model => {
 		const hasTable = await knex.schema.hasTable(model.tableName);
 		if (!hasTable) {
 			await knex.schema.createTable(model.tableName, table => buildTable(table, model));
