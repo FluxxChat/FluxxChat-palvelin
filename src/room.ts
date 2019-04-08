@@ -113,19 +113,23 @@ export class Room {
 		this.turnTimer = setInterval(() => {
 			counter--;
 			if (counter < 0 && this.connections.length > 0) {
-				clearInterval(this.turnTimer);
-				const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
-				const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
-				this.turn = this.connections[nextTurnIndex];
-				this.dealCards(this.turn!, N_TAKE);
-				this.turn!.nCardsPlayed = 0;
-				this.setTimer();
-				this.sendStateMessages();
+				this.nextTurn();
 			}
 		}, 1000);
 	}
 
-	public async sendStateMessages() {
+	public nextTurn() {
+		clearInterval(this.turnTimer);
+		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
+		const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
+		this.turn = this.connections[nextTurnIndex];
+		this.dealCards(this.turn!, N_TAKE);
+		this.turn!.nCardsPlayed = 0;
+		this.setTimer();
+		this.sendStateMessages();
+	}
+
+	public sendStateMessages() {
 		if (this.connections.length === 0) {
 			return;
 		}
