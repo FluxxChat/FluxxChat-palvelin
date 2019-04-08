@@ -1,9 +1,25 @@
-import EventModel from './lib/event-model';
+import {Model} from 'objection';
 
-// Many-to-many relation link table for RoomState and User
-class RoomStateUser extends EventModel<{
-	roomStateId: string;
-	userId: string;
-}> {}
+export default class RoomStateUser extends Model {
+	public static tableName = 'room_state_user';
 
-export default new RoomStateUser();
+	public static jsonSchema = {
+		type: 'object',
+		required: ['id', 'userId', 'nickname', 'roomStateId', 'hand', 'createdAt'],
+		properties: {
+			id: {type: 'string'},
+			userId: {type: 'string'},
+			nickname: {type: 'string'},
+			roomStateId: {type: 'string'},
+			hand: {type: 'string'},
+			createdAt: {type: 'string', format: 'date-time'}
+		}
+	};
+
+	public id!: string;
+	public userId!: string;
+	public nickname!: string;
+	public roomStateId!: string;
+	public hand!: string;
+	public createdAt!: string;
+}

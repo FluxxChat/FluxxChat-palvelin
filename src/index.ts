@@ -50,17 +50,21 @@ for (const [user, pass] of logins) {
 	users.set(user, pass);
 }
 
-// Event logs endpoint with http basic auth
-app.get('/events', basicAuth(users), (_req, res) => {
-	return res.sendFile(path.resolve(__dirname, '../events.log'));
-});
+(async () => {
+	await events.initDb();
 
-// Fallback to index.html
-app.get('/', (_req, res) => {
-	return res.json({message: 'Hello World!'});
-});
+	// Event logs endpoint with http basic auth
+	app.get('/events', basicAuth(users), (_req, res) => {
+		return res.sendFile(path.resolve(__dirname, '../events.log'));
+	});
 
-const PORT = parseInt(process.env.PORT || '3000', 10);
-httpServer.listen(PORT, () => {
-	console.log('Server listening on port ' + PORT); // tslint:disable-line:no-console
-});
+	// Fallback to index.html
+	app.get('/', (_req, res) => {
+		return res.json({message: 'Hello World!'});
+	});
+
+	const PORT = parseInt(process.env.PORT || '3000', 10);
+	httpServer.listen(PORT, () => {
+		console.log('Server listening on port ' + PORT); // tslint:disable-line:no-console
+	});
+})();

@@ -36,7 +36,7 @@ export class Room {
 	public turnTimer: NodeJS.Timeout;
 	public turnEndTime: number;
 
-	public addConnection(conn: Connection) {
+	public async addConnection(conn: Connection) {
 		if (this.connections.length === 0) {
 			this.turn = conn;
 			this.setTimer();
@@ -50,15 +50,14 @@ export class Room {
 		this.dealCards(conn, N_FIRST_HAND);
 
 		this.broadcast('info', 'server.userConnected', {nickname: conn.nickname});
-		events.UserEvent.insert({id: conn.id, name: conn.nickname, connected: true});
 	}
 
-	public addRule(rule: Rule, parameters: RuleParameters) {
+	public async addRule(rule: Rule, parameters: RuleParameters) {
 		if (this.turn!.nCardsPlayed === N_PLAY) {
 			throw new ErrorMessage({message: 'Play limit reached', internal: false});
 		}
 
-		const enabledRule = new EnabledRule(rule, parameters);
+		const enabledRule = new EnabledRule(rule, parameters, this.turn!);
 		this.enabledRules.push(enabledRule);
 		rule.ruleEnabled(this, enabledRule);
 
@@ -67,13 +66,6 @@ export class Room {
 
 		this.sendStateMessages();
 		this.broadcast('info', 'server.newRule', {title: rule.title});
-
-		events.ActiveRuleEvent.insert({
-			ruleName: rule.ruleName,
-			parameters: JSON.stringify(parameters),
-			roomStateId: this.stateId,
-			userId: this.turn!.id
-		});
 	}
 
 	public removeRule(rule: EnabledRule) {
@@ -81,7 +73,7 @@ export class Room {
 		this.enabledRules.splice(this.enabledRules.indexOf(rule), 1);
 	}
 
-	public removeConnection(conn: Connection) {
+	public async removeConnection(conn: Connection) {
 		const index = this.connections.findIndex(c => c.id === conn.id);
 		if (this.turn === conn) {
 			clearInterval(this.turnTimer);
@@ -101,7 +93,6 @@ export class Room {
 			: null;
 
 		this.broadcast('info', 'server.userDisconnected', {nickname: conn.nickname});
-		events.UserEvent.insert({id: conn.id, name: conn.nickname, connected: false});
 	}
 
 	public broadcastMessage(msg: Message) {
@@ -138,7 +129,7 @@ export class Room {
 		this.sendStateMessages();
 	}
 
-	public sendStateMessages() {
+	public async sendStateMessages() {
 		if (this.connections.length === 0) {
 			return;
 		}
@@ -146,18 +137,60 @@ export class Room {
 		this.stateId = uuid.v4();
 		const stateMessage = this.getStateMessage();
 
-		events.RoomStateEvent.insert({id: this.stateId, roomId: this.id, turnUserId: this.turn!.id});
+		for (const conn of this.connections) {
+			let msg: RoomStateMessage | null = {...stateMessage, nickname: conn.nickname, userId: conn.id, hand: conn.getCardsInHand()};
 
-		outer: for (const conn of this.connections) {
-			let msg: RoomStateMessage = {...stateMessage, nickname: conn.nickname, userId: conn.id, hand: conn.getCardsInHand()};
 			for (const rule of this.enabledRules) {
-				const newMsg = rule.applyRoomStateMessage(msg, conn);
-				if (!newMsg) { continue outer; }
-				msg = newMsg;
+				msg = rule.applyRoomStateMessage(msg, conn);
+				if (!msg) {
+					break;
+				}
 			}
-			conn.sendMessage(msg);
-			events.RoomStateUserEvent.insert({roomStateId: this.stateId, userId: conn.id});
+
+			if (msg) {
+				conn.sendMessage(msg);
+			}
 		}
+
+		const dbInserts: Array<Promise<any>> = [];
+
+		for (const conn of this.connections) {
+			dbInserts.push(
+				events.RoomStateUserEvent.query().insert({
+					id: uuid.v4(),
+					userId: conn.id,
+					nickname: conn.nickname,
+					hand: JSON.stringify(conn.hand),
+					roomStateId: this.stateId,
+					createdAt: new Date().toISOString()
+				})
+			);
+		}
+
+		for (const enabledRule of this.enabledRules) {
+			dbInserts.push(
+				events.ActiveRuleEvent.query().insert({
+					id: uuid.v4(),
+					ruleName: enabledRule.rule.ruleName,
+					parameters: JSON.stringify(enabledRule.parameters),
+					roomStateId: this.stateId,
+					userId: enabledRule.playedBy.id,
+					createdAt: new Date().toISOString()
+				})
+			);
+		}
+
+		dbInserts.push(
+			events.RoomStateEvent.query().insert({
+				id: this.stateId,
+				roomId: this.id,
+				turnUserId: this.turn!.id,
+				createdAt: new Date().toISOString()
+			})
+		);
+
+		// Wait for database insertions to finish
+		await Promise.all(dbInserts);
 	}
 
 	private getStateMessage(): RoomStateMessage {

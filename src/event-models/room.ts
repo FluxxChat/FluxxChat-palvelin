@@ -1,7 +1,19 @@
-import EventModel from './lib/event-model';
+import {Model} from 'objection';
 
-class Room extends EventModel<{
-	id: string;
-}> {}
+export default class Room extends Model {
+	public static tableName = 'room';
 
-export default new Room();
+	public static jsonSchema = {
+		type: 'object',
+		required: ['id', 'availableRules', 'createdAt'],
+		properties: {
+			id: {type: 'string'},
+			availableRules: {type: 'string'},
+			createdAt: {type: 'string', format: 'date-time'}
+		}
+	};
+
+	public id!: string;
+	public availableRules!: string;
+	public createdAt!: string;
+}
