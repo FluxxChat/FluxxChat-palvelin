@@ -15,21 +15,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Rule, RuleBase} from './rule';
+import {Rule, RuleBase, EnabledRule} from './rule';
 import {Connection} from '../connection';
 import {Room} from '../room';
 import {RuleParameters, TextMessage, RoomStateMessage} from 'fluxxchat-protokolla';
 
 class RoomStatistics {
 	public userStatistics: {[userId: string]: UserStatistics} = {};
+	public wordStatistics: {[word: string]: WordStatistics} = {};
 
-	public addStatistics(_message: TextMessage, conn: Connection): void {
+	public addStatistics(message: TextMessage, conn: Connection): void {
 		this.userStatistics[conn.id] = this.userStatistics[conn.id] || new UserStatistics(conn);
 		this.userStatistics[conn.id].messageCount += 1;
+
+		for (let word of message.textContent.split(/\s+/)) {
+			word = word.replace(/[^\w\-]/gu, '').toLowerCase();
+			this.wordStatistics[word] = this.wordStatistics[word] || new WordStatistics(word);
+			this.wordStatistics[word].count += 1;
+		}
 	}
 
 	public getStatisticsString(): string {
-		return Object.values(this.userStatistics).map(s => s.user.nickname + ': ' + s.messageCount).join(', ');
+		let msg = Object.values(this.userStatistics).map(s => s.user.nickname + ': ' + s.messageCount).join(', ');
+		msg += '\n';
+		msg += Object.values(this.wordStatistics).sort((a, b) => b.count - a.count).slice(0, 10).map((s, i) => (i + 1) + '. ' + s.word + ' (' + s.count + ')').join('\n');
+		return msg;
 	}
 }
 
@@ -43,6 +53,16 @@ class UserStatistics {
 	}
 }
 
+class WordStatistics {
+	public word: string;
+	public count: number;
+
+	constructor(word: string) {
+		this.word = word;
+		this.count = 0;
+	}
+}
+
 export class StatisticsRule extends RuleBase implements Rule {
 	public title = 'rule.statistics.title';
 	public description = 'rule.statistics.description';
@@ -50,7 +70,8 @@ export class StatisticsRule extends RuleBase implements Rule {
 
 	private statisticsStore: {[roomId: string]: RoomStatistics | undefined} = {};
 
-	public ruleEnabled(room: Room) {
+	public ruleEnabled(room: Room, enabledRule: EnabledRule) {
+		super.ruleEnabled(room, enabledRule);
 		this.statisticsStore[room.id] = new RoomStatistics();
 	}
 
