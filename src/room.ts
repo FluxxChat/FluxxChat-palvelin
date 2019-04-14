@@ -37,20 +37,22 @@ export class Room {
 	public turnTimer: NodeJS.Timeout;
 	public turnEndTime: number;
 
-	public async addConnection(conn: Connection) {
+	public async addConnection(newPlayer: Connection) {
 		if (this.connections.length === 0) {
-			this.activePlayer = conn;
+			this.activePlayer = newPlayer;
 			this.setTimer();
-			this.dealCards(conn, N_TAKE);
+			this.dealCards(newPlayer, N_TAKE);
 		}
 
-		// Push to front so new players get their turn last
-		this.connections.unshift(conn);
-		conn.room = this;
-		conn.nCardsPlayed = 0;
-		this.dealCards(conn, N_FIRST_HAND);
+		// Insert new player into turn order before active player
+		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.activePlayer!.id);
+		this.connections.splice(currentTurnIndex, 0, newPlayer);
 
-		this.broadcast('info', 'server.userConnected', {nickname: conn.nickname});
+		newPlayer.room = this;
+		newPlayer.nCardsPlayed = 0;
+		this.dealCards(newPlayer, N_FIRST_HAND);
+
+		this.broadcast('info', 'server.userConnected', {nickname: newPlayer.nickname});
 	}
 
 	public async addRule(rule: Rule, parameters: RuleParameters) {
