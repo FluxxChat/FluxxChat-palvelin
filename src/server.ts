@@ -176,7 +176,7 @@ export class FluxxChatServer {
 			throw new ErrorMessage({internal: true, message: 'Must be connected to a room'});
 		}
 
-		if (!conn.room.turn || conn.room.turn.id !== conn.id) {
+		if (!conn.room.activePlayer || conn.room.activePlayer.id !== conn.id) {
 			throw new ErrorMessage({internal: true, message: 'You can only play cards on your turn'});
 		}
 
