@@ -26,7 +26,7 @@ import * as events from './event-models';
 const N_TAKE = 3;
 const N_PLAY = 3;
 const N_FIRST_HAND = 5;
-const TURN_LENGHT = 120; // in seconds
+const TURN_LENGTH = 120; // in seconds
 
 export class Room {
 	public id = uuid.v4();
@@ -36,6 +36,7 @@ export class Room {
 	public activePlayer: Connection | null;
 	public turnTimer: NodeJS.Timeout;
 	public turnEndTime: number;
+	public turnLength: number = TURN_LENGTH;
 
 	public async addConnection(newPlayer: Connection) {
 		if (this.connections.length === 0) {
@@ -111,8 +112,8 @@ export class Room {
 
 	public setTimer() {
 		const startTime = Date.now();
-		this.turnEndTime = startTime + TURN_LENGHT * 1000;
-		let counter: number = TURN_LENGHT;
+		this.turnEndTime = startTime + this.turnLength * 1000;
+		let counter: number = this.turnLength;
 		this.turnTimer = setInterval(() => {
 			counter--;
 			if (counter < 0 && this.connections.length > 0) {
@@ -207,6 +208,7 @@ export class Room {
 			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
 			turnUserId: this.activePlayer!.id,
 			turnEndTime: this.turnEndTime,
+			turnLength: this.turnLength,
 			hand: [],
 			nickname: '',
 			userId: '',
