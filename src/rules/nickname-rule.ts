@@ -15,13 +15,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Rule, RuleBase, EnabledRule} from './rule';
-import {Connection} from '../connection';
-import {Room} from '../room';
-import {RuleParameters, TextMessage, RoomStateMessage} from 'fluxxchat-protokolla';
+import { Rule, RuleBase, EnabledRule } from './rule';
+import { Connection } from '../connection';
+import { Room } from '../room';
+import { RuleParameters, TextMessage, RoomStateMessage } from 'fluxxchat-protokolla';
 
 export abstract class NicknameRule extends RuleBase implements Rule {
-	private nicknameStore: {[roomId: string]: {[connId: string]: string} | undefined} = {};
+	private nicknameStore: { [roomId: string]: { [connId: string]: string } | undefined } = {};
 
 	public ruleEnabled(room: Room, enabledRule: EnabledRule) {
 		room.enabledRules
@@ -39,19 +39,11 @@ export abstract class NicknameRule extends RuleBase implements Rule {
 
 	public applyTextMessage(_parameters: RuleParameters, message: TextMessage, conn: Connection): TextMessage {
 		const nickname = this.getNickname(conn);
-		return {...message, senderNickname: nickname};
+		return { ...message, senderNickname: nickname };
 	}
 
 	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, conn: Connection): RoomStateMessage {
-		return {
-			...message,
-			nickname: this.getNickname(conn),
-			users: message.users.map(user => ({
-				...user,
-				nickname: this.getNickname(conn.room!.connections.find(c => c.id === user.id)!),
-				profileImg: 'default'
-			}))
-		};
+		return { ...message };
 	}
 
 	protected abstract createNickname(conn: Connection): string;
