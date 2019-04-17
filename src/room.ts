@@ -29,15 +29,18 @@ import tokenizerEN from './models/EN/tokenizer.json';
 const N_TAKE = 3;
 const N_PLAY = 3;
 const N_FIRST_HAND = 5;
+const TURN_LENGTH = 120; // in seconds
 
 export class Room {
 	public id = uuid.v4();
 	public stateId = uuid.v4();
 	public connections: Connection[] = [];
 	public enabledRules: EnabledRule[] = [];
-	public turn: Connection | null;
+	public activePlayer: Connection | null;
 	public turnTimer: NodeJS.Timeout;
 	public turnEndTime: number;
+	public turnLength: number = TURN_LENGTH;
+
 	public modelFI: tf.Sequential;
 	public modelEN: tf.Sequential;
 
@@ -46,33 +49,35 @@ export class Room {
 		this.modelEN = modelEN;
 	}
 
-	public addConnection(conn: Connection) {
+	public addConnection(newPlayer: Connection) {
 		if (this.connections.length === 0) {
-			this.turn = conn;
+			this.activePlayer = newPlayer;
 			this.setTimer();
-			this.dealCards(conn, N_TAKE);
+			this.dealCards(newPlayer, N_TAKE);
 		}
 
-		// Push to front so new players get their turn last
-		this.connections.unshift(conn);
-		conn.room = this;
-		conn.nCardsPlayed = 0;
-		this.dealCards(conn, N_FIRST_HAND);
+		// Insert new player into turn order before active player
+		const currentTurnIndex = this.connections.findIndex(c => c.id === this.activePlayer!.id);
+		this.connections.splice(currentTurnIndex, 0, newPlayer);
 
-		this.broadcast('info', 'server.userConnected', {nickname: conn.nickname});
+		newPlayer.room = this;
+		newPlayer.nCardsPlayed = 0;
+		this.dealCards(newPlayer, N_FIRST_HAND);
+
+		this.broadcast('info', 'server.userConnected', {nickname: newPlayer.nickname});
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
-		if (this.turn!.nCardsPlayed === N_PLAY) {
+		if (this.activePlayer!.nCardsPlayed === N_PLAY) {
 			throw new ErrorMessage({message: 'Play limit reached', internal: false});
 		}
 
-		const enabledRule = new EnabledRule(rule, parameters, this.turn!);
+		const enabledRule = new EnabledRule(rule, parameters, this.activePlayer!);
 		this.enabledRules.push(enabledRule);
 		rule.ruleEnabled(this, enabledRule);
 
-		this.turn!.hand.splice(this.turn!.hand.findIndex(ruleName => ruleName === rule.ruleName), 1);
-		this.turn!.nCardsPlayed += 1;
+		this.activePlayer!.hand.splice(this.activePlayer!.hand.findIndex(ruleName => ruleName === rule.ruleName), 1);
+		this.activePlayer!.nCardsPlayed += 1;
 
 		this.sendStateMessages();
 		this.broadcast('info', 'server.newRule', {title: rule.title});
@@ -85,20 +90,20 @@ export class Room {
 
 	public removeConnection(conn: Connection) {
 		const index = this.connections.findIndex(c => c.id === conn.id);
-		if (this.turn === conn) {
+		if (this.activePlayer === conn) {
 			clearInterval(this.turnTimer);
 			if (this.connections.length > 1) {
-				this.turn = this.connections[(index + 1) % this.connections.length];
-				this.dealCards(this.turn!, N_TAKE);
-				this.turn!.nCardsPlayed = 0;
+				this.activePlayer = this.connections[(index + 1) % this.connections.length];
+				this.dealCards(this.activePlayer!, N_TAKE);
+				this.activePlayer!.nCardsPlayed = 0;
 				this.setTimer();
 			} else {
-				this.turn = null;
+				this.activePlayer = null;
 			}
 		}
 		this.connections.splice(index, 1);
 
-		this.turn = this.connections.length > 0
+		this.activePlayer = this.connections.length > 0
 			? this.connections[index % this.connections.length]
 			: null;
 
@@ -118,8 +123,8 @@ export class Room {
 
 	public setTimer() {
 		const startTime = Date.now();
-		this.turnEndTime = startTime + 120000;
-		let counter: number = 120;
+		this.turnEndTime = startTime + this.turnLength * 1000;
+		let counter: number = this.turnLength;
 		this.turnTimer = setInterval(() => {
 			counter--;
 			if (counter < 0 && this.connections.length > 0) {
@@ -129,12 +134,16 @@ export class Room {
 	}
 
 	public nextTurn() {
-		clearInterval(this.turnTimer);
-		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
+		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.activePlayer!.id);
 		const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
-		this.turn = this.connections[nextTurnIndex];
-		this.dealCards(this.turn!, N_TAKE);
-		this.turn!.nCardsPlayed = 0;
+		this.giveTurn(this.connections[nextTurnIndex]);
+	}
+	
+	public giveTurn(nextInTurn: Connection) {
+		clearInterval(this.turnTimer);
+		this.activePlayer = nextInTurn;
+		this.dealCards(this.activePlayer!, N_TAKE);
+		this.activePlayer!.nCardsPlayed = 0;
 		this.setTimer();
 		this.sendStateMessages();
 	}
@@ -194,7 +203,7 @@ export class Room {
 			events.RoomStateEvent.query().insert({
 				id: this.stateId,
 				roomId: this.id,
-				turnUserId: this.turn!.id,
+				turnUserId: this.activePlayer!.id,
 				createdAt: new Date().toISOString()
 			})
 		);
@@ -208,8 +217,8 @@ export class Room {
 		if (words.length > 1 && seedText.lastIndexOf(' ') === seedText.length - 1) {
 			const model: tf.Sequential = language === 'fi' ? this.modelFI : this.modelEN;
 			const tokenizer: any = language === 'fi' ? tokenizerFI : tokenizerEN;
-			let firstWord: number = tokenizer.word_index[words[words.length - 3]];
-			let secondWord: number = tokenizer.word_index[words[words.length - 2]];
+			let firstWord: number = tokenizer.word_index[words[words.length - 2]];
+			let secondWord: number = tokenizer.word_index[words[words.length - 1]];
 			if (!firstWord) {
 				firstWord = tokenizer.word_index[Math.floor(Math.random() * Object.keys(tokenizer.word_index).length / 3)];
 			}
@@ -228,12 +237,13 @@ export class Room {
 			type: 'ROOM_STATE',
 			users: this.connections.map(conn => ({id: conn.id, nickname: conn.nickname, profileImg: conn.profileImg})),
 			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
-			turnUserId: this.turn!.id,
+			turnUserId: this.activePlayer!.id,
 			turnEndTime: this.turnEndTime,
+			turnLength: this.turnLength,
 			hand: [],
 			nickname: '',
 			userId: '',
-			playableCardsLeft: N_PLAY - this.turn!.nCardsPlayed,
+			playableCardsLeft: N_PLAY - this.activePlayer!.nCardsPlayed,
 			variables: {
 				inputMinHeight: 1,
 				imageMessages: false
