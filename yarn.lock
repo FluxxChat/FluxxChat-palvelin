@@ -1326,7 +1326,7 @@ flagged-respawn@^1.0.0:
 
 "fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git":
   version "1.0.0"
-  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#6524f6f6b6ec57fd747b50c0eb738b90a4349930"
+  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#38b36283e86339a9a2609ae0ade03ab6af0578ed"
 
 for-in@^1.0.1, for-in@^1.0.2:
   version "1.0.2"
