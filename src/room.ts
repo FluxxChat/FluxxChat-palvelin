@@ -36,7 +36,7 @@ export class Room {
 	public turnTimer: NodeJS.Timeout;
 	public turnEndTime: number;
 
-	public async addConnection(conn: Connection) {
+	public addConnection(conn: Connection) {
 		if (this.connections.length === 0) {
 			this.turn = conn;
 			this.setTimer();
@@ -52,7 +52,7 @@ export class Room {
 		this.broadcast('info', 'server.userConnected', {nickname: conn.nickname});
 	}
 
-	public async addRule(rule: Rule, parameters: RuleParameters) {
+	public addRule(rule: Rule, parameters: RuleParameters) {
 		if (this.turn!.nCardsPlayed === N_PLAY) {
 			throw new ErrorMessage({message: 'Play limit reached', internal: false});
 		}
@@ -73,7 +73,7 @@ export class Room {
 		this.enabledRules.splice(this.enabledRules.indexOf(rule), 1);
 	}
 
-	public async removeConnection(conn: Connection) {
+	public removeConnection(conn: Connection) {
 		const index = this.connections.findIndex(c => c.id === conn.id);
 		if (this.turn === conn) {
 			clearInterval(this.turnTimer);
@@ -129,7 +129,7 @@ export class Room {
 		this.sendStateMessages();
 	}
 
-	public async sendStateMessages() {
+	public sendStateMessages() {
 		if (this.connections.length === 0) {
 			return;
 		}
@@ -190,7 +190,7 @@ export class Room {
 		);
 
 		// Wait for database insertions to finish
-		await Promise.all(dbInserts);
+		Promise.all(dbInserts);
 	}
 
 	private getStateMessage(): RoomStateMessage {

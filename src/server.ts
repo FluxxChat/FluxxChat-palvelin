@@ -29,7 +29,7 @@ export class FluxxChatServer {
 	private connections: Connection[] = [];
 	private rooms: {[id: string]: Room} = {};
 
-	public async handleMessage(conn: Connection, message: Message) {
+	public handleMessage(conn: Connection, message: Message) {
 		switch (message.type) {
 			case 'JOIN_ROOM':
 				return this.joinRoom(conn, message.roomId, message.nickname);
@@ -87,7 +87,7 @@ export class FluxxChatServer {
 
 			const isMessageValid = blockingRules.length === 0 && newMessage !== null;
 
-			await events.ChatMessageEvent.query().insert({
+			events.ChatMessageEvent.query().insert({
 				id: uuid.v4(),
 				roomStateId: conn.room!.stateId,
 				userId: conn.id,
@@ -171,7 +171,7 @@ export class FluxxChatServer {
 		return params;
 	}
 
-	private async enactRule(conn: Connection, ruleName: string, ruleParameters: RuleParameters) {
+	private enactRule(conn: Connection, ruleName: string, ruleParameters: RuleParameters) {
 		if (!conn.room) {
 			throw new ErrorMessage({internal: true, message: 'Must be connected to a room'});
 		}
@@ -190,11 +190,11 @@ export class FluxxChatServer {
 		conn.room.addRule(rule, parameters);
 	}
 
-	private async createRoom(conn: Connection) {
+	private createRoom(conn: Connection) {
 		const room = new Room();
 		this.rooms[room.id] = room;
 
-		await events.RoomEvent.query().insert({
+		events.RoomEvent.query().insert({
 			id: room.id,
 			availableRules: JSON.stringify(Object.keys(RULES)),
 			createdAt: new Date().toISOString()
