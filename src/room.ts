@@ -49,7 +49,7 @@ export class Room {
 		this.modelEN = modelEN;
 	}
 
-	public addConnection(conn: Connection) {
+	public addConnection(newPlayer: Connection) {
 		if (this.connections.length === 0) {
 			this.activePlayer = newPlayer;
 			this.setTimer();
@@ -68,7 +68,7 @@ export class Room {
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
-		if (this.turn!.nCardsPlayed === N_PLAY) {
+		if (this.activePlayer!.nCardsPlayed === N_PLAY) {
 			throw new ErrorMessage({message: 'Play limit reached', internal: false});
 		}
 
