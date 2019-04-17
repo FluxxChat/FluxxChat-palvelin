@@ -32,7 +32,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "emoji-regex": "^8.0.0",
     "express": "^4.16.4",
-    "fluxxchat-protokolla": "git://github.com/FluxxChat/FluxxChat-protokolla.git#cf89aaa39df97dc457b5703b7b68d1d5335f110f",
+    "fluxxchat-protokolla": "git://github.com/FluxxChat/FluxxChat-protokolla.git",
     "husky": "^1.3.1",
     "knex": "^0.16.3",
     "objection": "^1.6.7",
