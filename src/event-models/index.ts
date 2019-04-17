@@ -73,5 +73,7 @@ export const initDb = async () => {
 		}
 	});
 
-	return Promise.all(tasks);
+	await Promise.all(tasks);
+
+	return knex;
 };

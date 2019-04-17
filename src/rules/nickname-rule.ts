@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Rule, RuleBase, EnabledRule } from './rule';
-import { Connection } from '../connection';
-import { Room } from '../room';
-import { RuleParameters, TextMessage, RoomStateMessage } from 'fluxxchat-protokolla';
+import {Rule, RuleBase, EnabledRule} from './rule';
+import {Connection} from '../connection';
+import {Room} from '../room';
+import {RuleParameters, TextMessage, RoomStateMessage} from 'fluxxchat-protokolla';
 
 export abstract class NicknameRule extends RuleBase implements Rule {
 	private nicknameStore: { [roomId: string]: { [connId: string]: string } | undefined } = {};
@@ -39,11 +39,11 @@ export abstract class NicknameRule extends RuleBase implements Rule {
 
 	public applyTextMessage(_parameters: RuleParameters, message: TextMessage, conn: Connection): TextMessage {
 		const nickname = this.getNickname(conn);
-		return { ...message, senderNickname: nickname };
+		return {...message, senderNickname: nickname};
 	}
 
 	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, conn: Connection): RoomStateMessage {
-		return { ...message };
+		return {...message};
 	}
 
 	protected abstract createNickname(conn: Connection): string;
