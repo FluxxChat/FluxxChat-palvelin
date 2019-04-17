@@ -58,7 +58,10 @@
         "rule.allowRemoving.title": "Allow Backspace",
         "rule.predictWord.title": "Word Suggestions",
         "rule.predictWord.description": "Get word suggestions to finish your sentences.",
-        "rule.disablePredictWord.title": "Disable word suggestions"
+        "rule.disablePredictWord.title": "Disable word suggestions",
+        "verb": "verbs",
+        "adjective": "adjectives",
+        "noun": "nouns"
     },
     "fi": {
         "cheat.get.usage": "/get <rule-id> - Panee sääntökortin käteesi",
@@ -119,6 +122,9 @@
         "rule.allowRemoving.title": "Salli merkkien poistaminen",
         "rule.predictWord.title": "Sanaehdotukset",
         "rule.predictWord.description": "Saa sanaehdotuksia auttamaan viestien kirjoittamista.",
-        "rule.disablePredictWord.title": "Ei sanaehdotuksia"
+        "rule.disablePredictWord.title": "Ei sanaehdotuksia",
+        "verb": "verbit",
+        "adjective": "adjektiivit",
+        "noun": "substantiivit"
     }
 }
