@@ -250,6 +250,8 @@ export class FluxxChatServer {
 	}
 
 	private createRoom(conn: Connection) {
+		if (conn.room) { return; }
+
 		const room = new Room(this.modelFI, this.modelEN);
 		this.rooms[room.id] = room;
 
