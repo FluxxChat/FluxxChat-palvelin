@@ -68,3 +68,5 @@ for (const [user, pass] of logins) {
 		console.log('Server listening on port ' + PORT); // tslint:disable-line:no-console
 	});
 })();
+
+server.initializeModels();

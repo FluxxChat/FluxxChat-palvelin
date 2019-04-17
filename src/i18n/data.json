@@ -56,6 +56,9 @@
         "rule.noRemoving.title": "Disable Backspace",
         "rule.noRemoving.description": "Forbid removing characters from the input field",
         "rule.allowRemoving.title": "Allow Backspace",
+        "rule.predictWord.title": "Word Suggestions",
+        "rule.predictWord.description": "Get word suggestions to finish your sentences.",
+        "rule.disablePredictWord.title": "Disable word suggestions",
         "verb": "verbs",
         "adjective": "adjectives",
         "noun": "nouns"
@@ -117,6 +120,9 @@
         "rule.noRemoving.title": "Kiellä merkkien poistaminen",
         "rule.noRemoving.description": "Kieltää merkkien kumittamisen syötekentässä",
         "rule.allowRemoving.title": "Salli merkkien poistaminen",
+        "rule.predictWord.title": "Sanaehdotukset",
+        "rule.predictWord.description": "Saa sanaehdotuksia auttamaan viestien kirjoittamista.",
+        "rule.disablePredictWord.title": "Ei sanaehdotuksia",
         "verb": "verbit",
         "adjective": "adjektiivit",
         "noun": "substantiivit"
