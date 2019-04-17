@@ -208,8 +208,8 @@ export class Room {
 		if (words.length > 1 && seedText.lastIndexOf(' ') === seedText.length - 1) {
 			const model: tf.Sequential = language === 'fi' ? this.modelFI : this.modelEN;
 			const tokenizer: any = language === 'fi' ? tokenizerFI : tokenizerEN;
-			let firstWord: number = tokenizer.word_index[words[words.length - 3]];
-			let secondWord: number = tokenizer.word_index[words[words.length - 2]];
+			let firstWord: number = tokenizer.word_index[words[words.length - 2]];
+			let secondWord: number = tokenizer.word_index[words[words.length - 1]];
 			if (!firstWord) {
 				firstWord = tokenizer.word_index[Math.floor(Math.random() * Object.keys(tokenizer.word_index).length / 3)];
 			}
