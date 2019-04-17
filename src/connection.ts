@@ -33,6 +33,7 @@ export class Connection {
 	public profileImg: string = 'default';
 	public hand: string[] = [];
 	public nCardsPlayed: number;
+	public clientLanguage: string = 'en';
 
 	private socket: WebSocket;
 	private messageHandlers: MessageHandler[] = [];

@@ -27,6 +27,7 @@
     "typescript": "3.1"
   },
   "dependencies": {
+    "@tensorflow/tfjs": "^1.0.4",
     "commitizen": "^3.0.5",
     "cz-conventional-changelog": "^2.1.0",
     "emoji-regex": "^8.0.0",

@@ -24,12 +24,17 @@ import {Rule} from './rules/rule';
 import ErrorMessage from './lib/error';
 import localeMessages from './i18n/data.json';
 import * as events from './event-models';
+import * as tf from '@tensorflow/tfjs';
+import FImodelJSON from './models/FI/model.json';
+import ENmodelJSON from './models/EN/model.json';
 
 export class FluxxChatServer {
 	private connections: Connection[] = [];
 	private rooms: {[id: string]: Room} = {};
+	private modelFI: tf.Sequential;
+	private modelEN: tf.Sequential;
 
-	public async handleMessage(conn: Connection, message: Message) {
+	public handleMessage(conn: Connection, message: Message) {
 		switch (message.type) {
 			case 'JOIN_ROOM':
 				return this.joinRoom(conn, message.roomId, message.nickname);
@@ -39,6 +44,8 @@ export class FluxxChatServer {
 				return this.removeConnection(conn);
 			case 'PROFILE_IMG_CHANGE':
 				return this.changeProfileImage(conn, message.profileImg);
+			case 'CLIENT_LANGUAGE_CHANGE':
+				conn.clientLanguage = message.language;
 			default:
 				if (!conn.room) {
 					throw new ErrorMessage({internal: true, message: 'Must be connected to a room'});
@@ -83,11 +90,18 @@ export class FluxxChatServer {
 				if (newMessage === null) {
 					break;
 				}
+
+				if (newMessage.predictedWord) {
+					conn.sendMessage({
+						type: 'WORD_PREDICTION',
+						prediction: newMessage.predictedWord
+					});
+				}
 			}
 
 			const isMessageValid = blockingRules.length === 0 && newMessage !== null;
 
-			await events.ChatMessageEvent.query().insert({
+			events.ChatMessageEvent.query().insert({
 				id: uuid.v4(),
 				roomStateId: conn.room!.stateId,
 				userId: conn.id,
@@ -140,6 +154,51 @@ export class FluxxChatServer {
 		conn.sendMessage({type: 'LANGUAGE_DATA', messages: localeMessages});
 	}
 
+	public async initializeModels() {
+		const fs = require('fs');
+		fs.readFile('./src/models/FI/group1-shard1of3.bin', (err1: any, data1: Buffer) => {
+			if (err1) { throw err1; }
+			fs.readFile('./src/models/FI/group1-shard2of3.bin', (err2: any, data2: Buffer) => {
+				if (err2) { throw err2; }
+				fs.readFile('./src/models/FI/group1-shard3of3.bin', (err3: any, data3: Buffer) => {
+					if (err3) { throw err3; }
+					const weightBuffer = Buffer.concat([data1, data2, data3]).buffer;
+					const weightsManifestEntries: tf.io.WeightsManifestEntry[] = [];
+					FImodelJSON.weightsManifest[0].weights.forEach((entry: tf.io.WeightsManifestEntry) => {
+						weightsManifestEntries.push({name: entry.name, shape: entry.shape, dtype: 'float32'});
+					});
+					const assignModel = async (weightData: ArrayBuffer) => {
+						this.modelFI = await tf.loadLayersModel(tf.io.fromMemory(
+							FImodelJSON.modelTopology,
+							weightsManifestEntries,
+							weightData
+						)) as tf.Sequential;
+					};
+					assignModel(weightBuffer as ArrayBuffer);
+				});
+			});
+		});
+		fs.readFile('./src/models/EN/group1-shard1of2.bin', (err1: any, data1: Buffer) => {
+			if (err1) { throw err1; }
+			fs.readFile('./src/models/EN/group1-shard2of2.bin', (err2: any, data2: Buffer) => {
+				if (err2) { throw err2; }
+				const weightBuffer = Buffer.concat([data1, data2]).buffer;
+				const weightsManifestEntries: tf.io.WeightsManifestEntry[] = [];
+				ENmodelJSON.weightsManifest[0].weights.forEach((entry: tf.io.WeightsManifestEntry) => {
+					weightsManifestEntries.push({name: entry.name, shape: entry.shape, dtype: 'float32'});
+				});
+				const assignModel = async (weightData: ArrayBuffer) => {
+					this.modelEN = await tf.loadLayersModel(tf.io.fromMemory(
+						ENmodelJSON.modelTopology,
+						weightsManifestEntries,
+						weightData
+					)) as tf.Sequential;
+				};
+				assignModel(weightBuffer as ArrayBuffer);
+			});
+		});
+	}
+
 	private validateRuleParameters(conn: Connection, rule: Rule, ruleParameters: RuleParameters) {
 		const params = {};
 
@@ -171,7 +230,7 @@ export class FluxxChatServer {
 		return params;
 	}
 
-	private async enactRule(conn: Connection, ruleName: string, ruleParameters: RuleParameters) {
+	private enactRule(conn: Connection, ruleName: string, ruleParameters: RuleParameters) {
 		if (!conn.room) {
 			throw new ErrorMessage({internal: true, message: 'Must be connected to a room'});
 		}
@@ -190,11 +249,11 @@ export class FluxxChatServer {
 		conn.room.addRule(rule, parameters);
 	}
 
-	private async createRoom(conn: Connection) {
-		const room = new Room();
+	private createRoom(conn: Connection) {
+		const room = new Room(this.modelFI, this.modelEN);
 		this.rooms[room.id] = room;
 
-		await events.RoomEvent.query().insert({
+		events.RoomEvent.query().insert({
 			id: room.id,
 			availableRules: JSON.stringify(Object.keys(RULES)),
 			createdAt: new Date().toISOString()
