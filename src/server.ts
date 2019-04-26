@@ -104,7 +104,7 @@ export class FluxxChatServer {
 				valid: isMessageValid,
 				invalidReason: isMessageValid ? undefined : JSON.stringify(blockingRules),
 				createdAt: new Date().toISOString()
-			});
+			}).execute();
 
 			if (message.validateOnly) {
 				// This message is a draft. Return validity response to client.
@@ -134,9 +134,14 @@ export class FluxxChatServer {
 	public removeConnection(conn: Connection) {
 		const index = this.connections.findIndex(c => c.id === conn.id);
 		this.connections.splice(index, 1);
-		if (conn.room) {
-			conn.room.removeConnection(conn);
-			conn.room.sendStateMessages();
+		const room = conn.room;
+		if (room) {
+			room.removeConnection(conn);
+			room.sendStateMessages();
+
+			if (room.connections.length === 0) {
+				this.removeRoom(room);
+			}
 		}
 	}
 
@@ -252,9 +257,17 @@ export class FluxxChatServer {
 			id: room.id,
 			availableRules: JSON.stringify(Object.keys(RULES)),
 			createdAt: new Date().toISOString()
-		});
+		}).execute();
 
 		conn.sendMessage({type: 'ROOM_CREATED', roomId: room.id} as RoomCreatedMessage);
+	}
+
+	private removeRoom(room: Room) {
+		delete this.rooms[room.id];
+
+		events.RoomEvent.query().patchAndFetchById(room.id, {
+			removedAt: new Date().toISOString()
+		}).execute();
 	}
 
 	private joinRoom(conn: Connection, roomId: string, requestedNickname: string) {

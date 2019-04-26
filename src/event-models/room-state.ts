@@ -5,7 +5,7 @@ export default class RoomState extends Model {
 
 	public static jsonSchema = {
 		type: 'object',
-		required: ['id', 'roomId', 'turnUserId', 'createdAt'],
+		required: ['id', 'roomId', 'createdAt'],
 		properties: {
 			id: {type: 'string'},
 			roomId: {type: 'string'},
@@ -16,6 +16,6 @@ export default class RoomState extends Model {
 
 	public id!: string;
 	public roomId!: string;
-	public turnUserId!: string;
+	public turnUserId?: string;
 	public createdAt!: string;
 }

@@ -83,7 +83,7 @@ if (process.env.LOGINS) {
 	});
 
 	app.post('/admin/query', [tokenAuth(tokens), bodyParser.json()], async (req, res) => {
-		const query = req.body.query;
+		const query = req.body.query.split('\n').filter(l => !l.startsWith('--')).join('\n');
 
 		// Make sure query is a select statement
 		if (!/^select/i.test(query)) {

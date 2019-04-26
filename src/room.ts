@@ -138,7 +138,7 @@ export class Room {
 		const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
 		this.giveTurn(this.connections[nextTurnIndex]);
 	}
-	
+
 	public giveTurn(nextInTurn: Connection) {
 		clearInterval(this.turnTimer);
 		this.activePlayer = nextInTurn;
@@ -149,11 +149,8 @@ export class Room {
 	}
 
 	public sendStateMessages() {
-		if (this.connections.length === 0) {
-			return;
-		}
-
 		this.stateId = uuid.v4();
+
 		const stateMessage = this.getStateMessage();
 
 		for (const conn of this.connections) {
@@ -203,7 +200,7 @@ export class Room {
 			events.RoomStateEvent.query().insert({
 				id: this.stateId,
 				roomId: this.id,
-				turnUserId: this.activePlayer!.id,
+				turnUserId: this.activePlayer ? this.activePlayer.id : undefined,
 				createdAt: new Date().toISOString()
 			})
 		);
@@ -237,13 +234,13 @@ export class Room {
 			type: 'ROOM_STATE',
 			users: this.connections.map(conn => ({id: conn.id, nickname: conn.nickname, profileImg: conn.profileImg})),
 			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
-			turnUserId: this.activePlayer!.id,
+			turnUserId: this.activePlayer ? this.activePlayer.id : '',
 			turnEndTime: this.turnEndTime,
 			turnLength: this.turnLength,
 			hand: [],
 			nickname: '',
 			userId: '',
-			playableCardsLeft: N_PLAY - this.activePlayer!.nCardsPlayed,
+			playableCardsLeft: this.activePlayer ? N_PLAY - this.activePlayer.nCardsPlayed : 0,
 			variables: {
 				inputMinHeight: 1,
 				imageMessages: false
