@@ -22,57 +22,65 @@ import {EnabledRule, Rule} from './rules/rule';
 import {RULES} from './rules/active-rules';
 import ErrorMessage from './lib/error';
 import * as events from './event-models';
+import * as tf from '@tensorflow/tfjs';
+import tokenizerFI from './models/FI/tokenizer.json';
+import tokenizerEN from './models/EN/tokenizer.json';
 
 const N_TAKE = 3;
 const N_PLAY = 3;
 const N_FIRST_HAND = 5;
+const TURN_LENGTH = 120; // in seconds
 
 export class Room {
 	public id = uuid.v4();
 	public stateId = uuid.v4();
 	public connections: Connection[] = [];
 	public enabledRules: EnabledRule[] = [];
-	public turn: Connection | null;
+	public activePlayer: Connection | null;
+	public turnTimer: NodeJS.Timeout;
 	public turnEndTime: number;
+	public turnLength: number = TURN_LENGTH;
 
-	public addConnection(conn: Connection) {
+	public modelFI: tf.Sequential;
+	public modelEN: tf.Sequential;
+
+	constructor(modelFI: tf.Sequential, modelEN: tf.Sequential) {
+		this.modelFI = modelFI;
+		this.modelEN = modelEN;
+	}
+
+	public addConnection(newPlayer: Connection) {
 		if (this.connections.length === 0) {
-			this.turn = conn;
+			this.activePlayer = newPlayer;
 			this.setTimer();
-			this.dealCards(conn, N_TAKE);
+			this.dealCards(newPlayer, N_TAKE);
 		}
 
-		// Push to front so new players get their turn last
-		this.connections.unshift(conn);
-		conn.room = this;
-		conn.nCardsPlayed = 0;
-		this.dealCards(conn, N_FIRST_HAND);
+		// Insert new player into turn order before active player
+		const currentTurnIndex = this.connections.findIndex(c => c.id === this.activePlayer!.id);
+		this.connections.splice(currentTurnIndex, 0, newPlayer);
 
-		this.broadcast('info', 'server.userConnected', {nickname: conn.nickname});
-		events.UserEvent.insert({id: conn.id, name: conn.nickname, connected: true});
+		newPlayer.room = this;
+		newPlayer.nCardsPlayed = 0;
+		this.dealCards(newPlayer, N_FIRST_HAND);
+
+		this.broadcast('info', 'server.userConnected', {nickname: newPlayer.nickname});
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
-		if (this.turn !== undefined && this.turn!.nCardsPlayed === N_PLAY) {
+		if (this.activePlayer !== undefined && this.activePlayer!.nCardsPlayed === N_PLAY) {
 			throw new ErrorMessage({message: 'Play limit reached', internal: false});
 		}
 
-		const enabledRule = new EnabledRule(rule, parameters);
+		const enabledRule = new EnabledRule(rule, parameters, this.activePlayer!);
 		this.enabledRules.push(enabledRule);
 		rule.ruleEnabled(this, enabledRule);
 
-		this.turn!.hand.splice(this.turn!.hand.findIndex(ruleName => ruleName === rule.ruleName), 1);
-		this.turn!.nCardsPlayed += 1;
+		this.activePlayer!.hand.splice(this.activePlayer!.hand.findIndex(ruleName => ruleName === rule.ruleName), 1);
+		this.activePlayer!.nCardsPlayed += 1;
 
 		this.sendStateMessages();
 		this.broadcast('info', 'server.newRule', {title: rule.title});
-
-		events.ActiveRuleEvent.insert({
-			ruleName: rule.ruleName,
-			parameters: JSON.stringify(parameters),
-			roomStateId: this.stateId,
-			userId: this.turn!.id
-		});
 	}
 
 	public removeRule(rule: EnabledRule) {
@@ -82,14 +90,24 @@ export class Room {
 
 	public removeConnection(conn: Connection) {
 		const index = this.connections.findIndex(c => c.id === conn.id);
+		if (this.activePlayer === conn) {
+			clearInterval(this.turnTimer);
+			if (this.connections.length > 1) {
+				this.activePlayer = this.connections[(index + 1) % this.connections.length];
+				this.dealCards(this.activePlayer!, N_TAKE);
+				this.activePlayer!.nCardsPlayed = 0;
+				this.setTimer();
+			} else {
+				this.activePlayer = null;
+			}
+		}
 		this.connections.splice(index, 1);
 
-		this.turn = this.connections.length > 0
+		this.activePlayer = this.connections.length > 0
 			? this.connections[index % this.connections.length]
 			: null;
 
 		this.broadcast('info', 'server.userDisconnected', {nickname: conn.nickname});
-		events.UserEvent.insert({id: conn.id, name: conn.nickname, connected: false});
 	}
 
 	public broadcastMessage(msg: Message) {
@@ -105,21 +123,29 @@ export class Room {
 
 	public setTimer() {
 		const startTime = Date.now();
-		this.turnEndTime = startTime + 120000;
-		let counter: number = 120;
-		const interval = setInterval(() => {
+		this.turnEndTime = startTime + this.turnLength * 1000;
+		let counter: number = this.turnLength;
+		this.turnTimer = setInterval(() => {
 			counter--;
 			if (counter < 0 && this.connections.length > 0) {
-				clearInterval(interval);
-				const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.turn!.id);
-				const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
-				this.turn = this.connections[nextTurnIndex];
-				this.dealCards(this.turn!, N_TAKE);
-				this.turn!.nCardsPlayed = 0;
-				this.setTimer();
-				this.sendStateMessages();
+				this.nextTurn();
 			}
 		}, 1000);
+	}
+
+	public nextTurn() {
+		const currentTurnIndex = this.connections.findIndex(conn => conn.id === this.activePlayer!.id);
+		const nextTurnIndex = (currentTurnIndex + 1) % this.connections.length;
+		this.giveTurn(this.connections[nextTurnIndex]);
+	}
+	
+	public giveTurn(nextInTurn: Connection) {
+		clearInterval(this.turnTimer);
+		this.activePlayer = nextInTurn;
+		this.dealCards(this.activePlayer!, N_TAKE);
+		this.activePlayer!.nCardsPlayed = 0;
+		this.setTimer();
+		this.sendStateMessages();
 	}
 
 	public sendStateMessages() {
@@ -130,18 +156,80 @@ export class Room {
 		this.stateId = uuid.v4();
 		const stateMessage = this.getStateMessage();
 
-		events.RoomStateEvent.insert({id: this.stateId, roomId: this.id, turnUserId: this.turn!.id});
+		for (const conn of this.connections) {
+			let msg: RoomStateMessage | null = {...stateMessage, nickname: conn.nickname, userId: conn.id, hand: conn.getCardsInHand()};
 
-		outer: for (const conn of this.connections) {
-			let msg: RoomStateMessage = {...stateMessage, nickname: conn.nickname, userId: conn.id, hand: conn.getCardsInHand()};
 			for (const rule of this.enabledRules) {
-				const newMsg = rule.applyRoomStateMessage(msg, conn);
-				if (!newMsg) { continue outer; }
-				msg = newMsg;
+				msg = rule.applyRoomStateMessage(msg, conn);
+				if (!msg) {
+					break;
+				}
 			}
-			conn.sendMessage(msg);
-			events.RoomStateUserEvent.insert({roomStateId: this.stateId, userId: conn.id});
+
+			if (msg) {
+				conn.sendMessage(msg);
+			}
 		}
+
+		const dbInserts: Array<Promise<any>> = [];
+
+		for (const conn of this.connections) {
+			dbInserts.push(
+				events.RoomStateUserEvent.query().insert({
+					id: uuid.v4(),
+					userId: conn.id,
+					nickname: conn.nickname,
+					hand: JSON.stringify(conn.hand),
+					roomStateId: this.stateId,
+					createdAt: new Date().toISOString()
+				})
+			);
+		}
+
+		for (const enabledRule of this.enabledRules) {
+			dbInserts.push(
+				events.ActiveRuleEvent.query().insert({
+					id: uuid.v4(),
+					ruleName: enabledRule.rule.ruleName,
+					parameters: JSON.stringify(enabledRule.parameters),
+					roomStateId: this.stateId,
+					userId: enabledRule.playedBy.id,
+					createdAt: new Date().toISOString()
+				})
+			);
+		}
+
+		dbInserts.push(
+			events.RoomStateEvent.query().insert({
+				id: this.stateId,
+				roomId: this.id,
+				turnUserId: this.activePlayer!.id,
+				createdAt: new Date().toISOString()
+			})
+		);
+
+		// Wait for database insertions to finish
+		Promise.all(dbInserts);
+	}
+
+	public predictNextWord(seedText: string, language: string): string {
+		const words = seedText.split(' ').filter(word => word.length > 1 || word.match(/^[a-zA-Z0-9]/));
+		if (words.length > 1 && seedText.lastIndexOf(' ') === seedText.length - 1) {
+			const model: tf.Sequential = language === 'fi' ? this.modelFI : this.modelEN;
+			const tokenizer: any = language === 'fi' ? tokenizerFI : tokenizerEN;
+			let firstWord: number = tokenizer.word_index[words[words.length - 2]];
+			let secondWord: number = tokenizer.word_index[words[words.length - 1]];
+			if (!firstWord) {
+				firstWord = tokenizer.word_index[Math.floor(Math.random() * Object.keys(tokenizer.word_index).length / 3)];
+			}
+			if (!secondWord) {
+				secondWord = tokenizer.word_index[Math.floor(Math.random() * Object.keys(tokenizer.word_index).length / 3)];
+			}
+			const prediction = model.predict(tf.tensor2d([firstWord, secondWord], [1, 2], 'float32')) as tf.Tensor2D;
+			const predictedClass = tf.argMax(prediction, -1).arraySync() as number;
+			return tokenizer.index_word[predictedClass];
+		}
+		return '';
 	}
 
 	private getStateMessage(): RoomStateMessage {
@@ -149,12 +237,13 @@ export class Room {
 			type: 'ROOM_STATE',
 			users: this.connections.map(conn => ({id: conn.id, nickname: conn.nickname, profileImg: conn.profileImg})),
 			enabledRules: this.enabledRules.map(enabledRule => enabledRule.toJSON()),
-			turnUserId: this.turn!.id,
+			turnUserId: this.activePlayer!.id,
 			turnEndTime: this.turnEndTime,
+			turnLength: this.turnLength,
 			hand: [],
 			nickname: '',
 			userId: '',
-			playableCardsLeft: N_PLAY - this.turn!.nCardsPlayed,
+			playableCardsLeft: N_PLAY - this.activePlayer!.nCardsPlayed,
 			variables: {
 				inputMinHeight: 1,
 				imageMessages: false

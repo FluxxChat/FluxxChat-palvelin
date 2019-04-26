@@ -20,3 +20,4 @@ stats.json
 .DS_Store
 next_git_comment.txt
 mingw32
+*.sqlite

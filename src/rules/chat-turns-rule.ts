@@ -25,9 +25,9 @@ export class ChatTurnsRule extends RuleBase implements Rule {
 	public ruleName = 'chat_turns';
 
 	public isValidMessage(_parameters: RuleParameters, _message: Message, sender: Connection) {
-		if (!sender.room || !sender.room.turn) {
+		if (!sender.room || !sender.room.activePlayer) {
 			return true;
 		}
-		return sender.id === sender.room.turn.id;
+		return sender.id === sender.room.activePlayer.id;
 	}
 }
