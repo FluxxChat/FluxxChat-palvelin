@@ -40,6 +40,7 @@
     "fluxxchat-protokolla": "git://github.com/FluxxChat/FluxxChat-protokolla.git",
     "husky": "^1.3.1",
     "knex": "^0.16.3",
+    "lodash": "^4.17.11",
     "objection": "^1.6.7",
     "pos": "^0.4.2",
     "sqlite3": "^4.0.6",
