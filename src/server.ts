@@ -16,7 +16,7 @@
  */
 
 import uuid from 'uuid';
-import {Message, RoomCreatedMessage, RuleParameters, TextMessage, SystemMessage} from 'fluxxchat-protokolla';
+import {Message, RoomCreatedMessage, RoomParameters, RuleParameters, TextMessage, SystemMessage} from 'fluxxchat-protokolla';
 import {Connection} from './connection';
 import {Room} from './room';
 import {RULES} from './rules/active-rules';
@@ -39,7 +39,7 @@ export class FluxxChatServer {
 			case 'JOIN_ROOM':
 				return this.joinRoom(conn, message.roomId, message.nickname);
 			case 'CREATE_ROOM':
-				return this.createRoom(conn);
+				return this.createRoom(conn, message.params);
 			case 'LEAVE_ROOM':
 				return this.removeConnection(conn);
 			case 'PROFILE_IMG_CHANGE':
@@ -247,10 +247,10 @@ export class FluxxChatServer {
 		conn.room.addRule(rule, parameters);
 	}
 
-	private createRoom(conn: Connection) {
+	private createRoom(conn: Connection, params?: RoomParameters) {
 		if (conn.room) { return; }
 
-		const room = new Room(this.modelFI, this.modelEN);
+		const room = new Room(this.modelFI, this.modelEN, params);
 		this.rooms[room.id] = room;
 
 		events.RoomEvent.query().insert({

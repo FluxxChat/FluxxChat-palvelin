@@ -1,3 +1,8 @@
+import { EnabledRule } from "./rules/rule";
+import { Card } from "fluxxchat-protokolla";
+import { Connection } from "./connection";
+import { RULES } from "./rules/active-rules";
+
 /* FluxxChat-palvelin
  * Copyright (C) 2019 Helsingin yliopisto
  * 
@@ -23,4 +28,8 @@ export function intersection<T>(setA: Set<T>, setB: Set<T>): Set<T> {
 		}
 	}
 	return _intersection;
+}
+
+export function enabledRulefromCard(card: Card, player?: Connection): EnabledRule {
+	return new EnabledRule(RULES[card.ruleName], card.parameters, player ? player : null);
 }

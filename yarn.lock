@@ -2100,9 +2100,9 @@ flagged-respawn@^1.0.0:
   resolved "https://registry.yarnpkg.com/flagged-respawn/-/flagged-respawn-1.0.1.tgz#e7de6f1279ddd9ca9aac8a5971d618606b3aab41"
   integrity sha512-lNaHNVymajmk0OJMBn8fVUAU1BtDeKIqKoVhk4xAALB57aALg6b4W0MfJ/cUE0g9YBXy5XhSlPIpYIJ7HaY/3Q==
 
-"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git":
+"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git#2e3b9ec98d06b6ebf58aea5a7046cb05b1fec2f0":
   version "1.0.0"
-  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#6a91c8e6a43d67e23cfef8f530923bc00aeec3c0"
+  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#2e3b9ec98d06b6ebf58aea5a7046cb05b1fec2f0"
 
 for-in@^1.0.1, for-in@^1.0.2:
   version "1.0.2"
@@ -4987,9 +4987,9 @@ type-fest@^0.3.0:
   integrity sha512-cUGJnCdr4STbePCgqNFbpVNCepa+kAVohJs1sLhxzdH+gnEoOd8VhbYa7pD3zZYGiURWM2xzEII3fQcRizDkYQ==
 
 type-is@~1.6.16, type-is@~1.6.17:
-  version "1.6.17"
-  resolved "https://registry.yarnpkg.com/type-is/-/type-is-1.6.17.tgz#9ef72233f08ffbe83b8fa3c93f4f93ecbc330bc2"
-  integrity sha512-jYZzkOoAPVyQ9vlZ4xEJ4BBbHC4a7hbY1xqyCPe6AiQVVqfbZEulJm0VpqK4B+096O1VQi0l6OBGH210ejx/bA==
+  version "1.6.18"
+  resolved "https://registry.yarnpkg.com/type-is/-/type-is-1.6.18.tgz#4e552cd05df09467dcbc4ef739de89f2cf37c131"
+  integrity sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==
   dependencies:
     media-typer "0.3.0"
     mime-types "~2.1.24"

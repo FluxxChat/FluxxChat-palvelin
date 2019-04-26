@@ -17,19 +17,21 @@
 
 import uuid from 'uuid';
 import {Connection} from './connection';
-import {RoomStateMessage, Message, RuleParameters, SystemMessage, Severity} from 'fluxxchat-protokolla';
+import {RoomStateMessage, RoomParameters, Message, RuleParameters, SystemMessage, Severity} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
 import {RULES} from './rules/active-rules';
+import {enabledRulefromCard} from './util';
 import ErrorMessage from './lib/error';
 import * as events from './event-models';
 import * as tf from '@tensorflow/tfjs';
 import tokenizerFI from './models/FI/tokenizer.json';
 import tokenizerEN from './models/EN/tokenizer.json';
 
-const N_TAKE = 3;
-const N_PLAY = 3;
-const N_FIRST_HAND = 5;
-const TURN_LENGTH = 120; // in seconds
+const DEFAULT_TURN_LENGTH = 120; // in seconds
+const DEFAULT_N_STARTING_HAND = 5;
+const DEFAULT_N_DRAW = 3;
+const DEFAULT_N_PLAY = 3;
+const DEFAULT_N_MAX_HAND = null;
 
 export class Room {
 	public id = uuid.v4();
@@ -39,21 +41,34 @@ export class Room {
 	public activePlayer: Connection | null;
 	public turnTimer: NodeJS.Timeout;
 	public turnEndTime: number;
-	public turnLength: number = TURN_LENGTH;
+	public turnLength: number = DEFAULT_TURN_LENGTH;
+	public nStartingHand: number = DEFAULT_N_STARTING_HAND;
+	public nDraw: number = DEFAULT_N_DRAW;
+	public nPlay: number = DEFAULT_N_PLAY;
+	public nMaxHand: number | null = DEFAULT_N_MAX_HAND;
 
 	public modelFI: tf.Sequential;
 	public modelEN: tf.Sequential;
 
-	constructor(modelFI: tf.Sequential, modelEN: tf.Sequential) {
+	constructor(modelFI: tf.Sequential, modelEN: tf.Sequential, params?: RoomParameters) {
 		this.modelFI = modelFI;
 		this.modelEN = modelEN;
+
+		if (params) {
+			if (params.turnLength) { this.turnLength = params.turnLength; }
+			if (params.nStartingHand) { this.nStartingHand = params.nStartingHand; }
+			if (params.nDraw) { this.nDraw = params.nDraw; }
+			if (params.nPlay) { this.nPlay = params.nPlay; }
+			if (params.nMaxHand) { this.nMaxHand = params.nMaxHand; }
+			if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRulefromCard(card))); }
+		}
 	}
 
 	public addConnection(newPlayer: Connection) {
 		if (this.connections.length === 0) {
 			this.activePlayer = newPlayer;
 			this.setTimer();
-			this.dealCards(newPlayer, N_TAKE);
+			this.dealCards(newPlayer, this.nDraw);
 		}
 
 		// Insert new player into turn order before active player
@@ -62,13 +77,13 @@ export class Room {
 
 		newPlayer.room = this;
 		newPlayer.nCardsPlayed = 0;
-		this.dealCards(newPlayer, N_FIRST_HAND);
+		this.dealCards(newPlayer, this.nStartingHand);
 
 		this.broadcast('info', 'server.userConnected', {nickname: newPlayer.nickname});
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
-		if (this.activePlayer !== undefined && this.activePlayer!.nCardsPlayed === N_PLAY) {
+		if (this.activePlayer !== undefined && this.activePlayer!.nCardsPlayed === this.nPlay) {
 			throw new ErrorMessage({message: 'Play limit reached', internal: false});
 		}
 
@@ -93,10 +108,7 @@ export class Room {
 		if (this.activePlayer === conn) {
 			clearInterval(this.turnTimer);
 			if (this.connections.length > 1) {
-				this.activePlayer = this.connections[(index + 1) % this.connections.length];
-				this.dealCards(this.activePlayer!, N_TAKE);
-				this.activePlayer!.nCardsPlayed = 0;
-				this.setTimer();
+				this.giveTurn(this.connections[(index + 1) % this.connections.length]);
 			} else {
 				this.activePlayer = null;
 			}
@@ -142,7 +154,7 @@ export class Room {
 	public giveTurn(nextInTurn: Connection) {
 		clearInterval(this.turnTimer);
 		this.activePlayer = nextInTurn;
-		this.dealCards(this.activePlayer!, N_TAKE);
+		this.dealCards(this.activePlayer!, this.nDraw);
 		this.activePlayer!.nCardsPlayed = 0;
 		this.setTimer();
 		this.sendStateMessages();
@@ -190,7 +202,7 @@ export class Room {
 					ruleName: enabledRule.rule.ruleName,
 					parameters: JSON.stringify(enabledRule.parameters),
 					roomStateId: this.stateId,
-					userId: enabledRule.playedBy.id,
+					userId: (enabledRule.playedBy ? enabledRule.playedBy.id : null),
 					createdAt: new Date().toISOString()
 				})
 			);
@@ -240,7 +252,7 @@ export class Room {
 			hand: [],
 			nickname: '',
 			userId: '',
-			playableCardsLeft: this.activePlayer ? N_PLAY - this.activePlayer.nCardsPlayed : 0,
+			playableCardsLeft: this.activePlayer ? this.nPlay - this.activePlayer.nCardsPlayed : 0,
 			variables: {
 				inputMinHeight: 1,
 				imageMessages: false
