@@ -68,7 +68,7 @@ export class Room {
 	}
 
 	public addRule(rule: Rule, parameters: RuleParameters) {
-		if (this.activePlayer!.nCardsPlayed === N_PLAY) {
+		if (this.activePlayer !== undefined && this.activePlayer!.nCardsPlayed === N_PLAY) {
 			throw new ErrorMessage({message: 'Play limit reached', internal: false});
 		}
 
