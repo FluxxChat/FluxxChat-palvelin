@@ -90,13 +90,6 @@ export class FluxxChatServer {
 				if (newMessage === null) {
 					break;
 				}
-
-				if (newMessage.predictedWord) {
-					conn.sendMessage({
-						type: 'WORD_PREDICTION',
-						prediction: newMessage.predictedWord
-					});
-				}
 			}
 
 			const isMessageValid = blockingRules.length === 0 && newMessage !== null;

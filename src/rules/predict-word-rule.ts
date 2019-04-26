@@ -27,9 +27,12 @@ export class PredictWordRule extends RuleBase implements Rule {
 
 	public applyTextMessage(_parameters: RuleParameters, message: TextMessage, sender: Connection): TextMessage {
 		if (sender.room) {
-			return {...message, predictedWord: sender.room.predictNextWord(message.textContent, sender.clientLanguage)};
+			sender.sendMessage({
+				type: 'WORD_PREDICTION',
+				prediction: sender.room.predictNextWord(message.textContent, sender.clientLanguage)
+			});
 		}
-		return {...message, predictedWord: ''};
+		return {...message};
 	}
 
 	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, _conn: Connection): RoomStateMessage {
