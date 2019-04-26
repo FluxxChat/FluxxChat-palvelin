@@ -220,6 +220,12 @@ export class FluxxChatServer {
 				}
 
 				params[key] = value;
+			} else if (Array.isArray(type)) {
+				if (!type.includes(value)) {
+					throw new ErrorMessage({internal: true, message: 'Invalid value'});
+				}
+
+				params[key] = value;
 			} else {
 				params[key] = value;
 			}
