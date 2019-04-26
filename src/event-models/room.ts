@@ -9,11 +9,13 @@ export default class Room extends Model {
 		properties: {
 			id: {type: 'string'},
 			availableRules: {type: 'string'},
+			removedAt: {type: 'string', format: 'date-time'},
 			createdAt: {type: 'string', format: 'date-time'}
 		}
 	};
 
 	public id!: string;
 	public availableRules!: string;
+	public removedAt?: string;
 	public createdAt!: string;
 }
