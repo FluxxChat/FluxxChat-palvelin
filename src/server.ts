@@ -209,11 +209,15 @@ export class FluxxChatServer {
 			}
 
 			if (type === 'number') {
-				if (isNaN(Number(value))) {
+				const n = Number(value);
+				if (isNaN(n)) {
 					throw new ErrorMessage({internal: true, message: `Parameter ${key} must be numeric`});
 				}
+				if (n < 0) {
+					throw new ErrorMessage({internal: true, message: `Parameter ${key} must be non-negative`});
+				}
 
-				params[key] = Number(value);
+				params[key] = n;
 			} else if (type === 'player') {
 				if (!conn.room || !conn.room.connections.find(c => c.id === value)) {
 					throw new ErrorMessage({internal: true, message: 'Invalid target'});
