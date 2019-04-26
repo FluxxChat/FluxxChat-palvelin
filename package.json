@@ -65,7 +65,7 @@
       "ts-node/register"
     ],
     "files": [
-      "test/**/*"
+      "src/test/**/*"
     ]
   },
   "commitlint": {

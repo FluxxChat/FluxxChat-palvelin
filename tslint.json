@@ -20,5 +20,8 @@
     "max-classes-per-file": false,
     "no-trailing-whitespace": false
   },
+  "linterOptions": {
+    "exclude": ["src/test/**/*"]
+  },
   "rulesDirectory": []
 }
