@@ -26,10 +26,10 @@ export class PredictWordRule extends RuleBase implements Rule {
 	public parameterTypes = {} as RuleParameterTypes;
 
 	public applyTextMessage(_parameters: RuleParameters, message: TextMessage, sender: Connection): TextMessage {
-		if (sender.room) {
+		if (message.validateOnly) {
 			sender.sendMessage({
 				type: 'WORD_PREDICTION',
-				prediction: sender.room.predictNextWord(message.textContent, sender.clientLanguage)
+				prediction: sender.room!.predictNextWord(message.textContent, sender.clientLanguage)
 			});
 		}
 		return {...message};
