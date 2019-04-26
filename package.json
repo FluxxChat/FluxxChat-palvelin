@@ -1,15 +1,14 @@
 {
   "name": "fluxxchat-palvelin",
   "version": "1.0.0",
-  "main": "index.js",
   "repository": "git@github.com:FluxxChat/FluxxChat-palvelin",
   "author": "Olavi Mustanoja <tilastokeskus@gmail.com>",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
-    "start": "node ./dist/index.js",
-    "start:watch": "node ./dist/index.js",
+    "start": "node ./dist/src/index.js",
+    "start:watch": "node ./dist/src/index.js",
     "commit": "git-cz",
     "test": "tsc && ava",
     "lint": "tslint --fix \"src/**/*.ts\"",
