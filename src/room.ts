@@ -46,6 +46,7 @@ export class Room {
 	public nDraw: number = DEFAULT_N_DRAW;
 	public nPlay: number = DEFAULT_N_PLAY;
 	public nMaxHand: number | null = DEFAULT_N_MAX_HAND;
+	public cardDistribution: string[];
 
 	public modelFI: tf.Sequential;
 	public modelEN: tf.Sequential;
@@ -54,12 +55,19 @@ export class Room {
 		this.modelFI = modelFI;
 		this.modelEN = modelEN;
 
+		this.cardDistribution = [];
+
+		for (const ruleName of Object.keys(RULES)) {
+			this.cardDistribution.push(ruleName);
+		}
+
 		if (params) {
 			if (params.turnLength) { this.turnLength = params.turnLength; }
 			if (params.nStartingHand) { this.nStartingHand = params.nStartingHand; }
 			if (params.nDraw) { this.nDraw = params.nDraw; }
 			if (params.nPlay) { this.nPlay = params.nPlay; }
 			if (params.nMaxHand) { this.nMaxHand = params.nMaxHand; }
+			if (params.deck) {this.cardDistribution = this.getDistribution(params.deck);}
 			if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRulefromCard(card))); }
 		}
 	}
@@ -267,7 +275,18 @@ export class Room {
 	}
 
 	private getRandomRuleName() {
-		const randomNumber = Math.floor(Math.random() * Object.keys(RULES).length);
-		return Object.keys(RULES)[randomNumber];
+		const randomNumber = Math.floor(Math.random() * this.cardDistribution.length);
+		return this.cardDistribution[randomNumber];
+	}
+
+	private getDistribution(deck: {[ruleName: string]: number}): string[] {
+		const distribution: string[] = [];
+
+		for (const ruleName of Object.keys(deck)) {
+			for (let i = 0; i < deck[ruleName]; i++) {
+				distribution.push(ruleName);
+			}
+		}
+		return distribution;
 	}
 }

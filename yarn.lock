@@ -2100,9 +2100,9 @@ flagged-respawn@^1.0.0:
   resolved "https://registry.yarnpkg.com/flagged-respawn/-/flagged-respawn-1.0.1.tgz#e7de6f1279ddd9ca9aac8a5971d618606b3aab41"
   integrity sha512-lNaHNVymajmk0OJMBn8fVUAU1BtDeKIqKoVhk4xAALB57aALg6b4W0MfJ/cUE0g9YBXy5XhSlPIpYIJ7HaY/3Q==
 
-"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git#2e3b9ec98d06b6ebf58aea5a7046cb05b1fec2f0":
+"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git#a900f0b40f3751daffc2dc1e91bc61e600ba3f35":
   version "1.0.0"
-  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#2e3b9ec98d06b6ebf58aea5a7046cb05b1fec2f0"
+  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#a900f0b40f3751daffc2dc1e91bc61e600ba3f35"
 
 for-in@^1.0.1, for-in@^1.0.2:
   version "1.0.2"

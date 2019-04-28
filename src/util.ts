@@ -1,7 +1,7 @@
-import { EnabledRule } from "./rules/rule";
-import { Card } from "fluxxchat-protokolla";
-import { Connection } from "./connection";
-import { RULES } from "./rules/active-rules";
+import {EnabledRule} from './rules/rule';
+import {Card} from 'fluxxchat-protokolla';
+import {Connection} from './connection';
+import {RULES} from './rules/active-rules';
 
 /* FluxxChat-palvelin
  * Copyright (C) 2019 Helsingin yliopisto

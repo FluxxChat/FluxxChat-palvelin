@@ -97,6 +97,6 @@ export class Connection {
 	}
 
 	public getCardsInHand(): Card[] {
-		return this.hand.map(key => RULES[key].toJSON());
+		return this.hand.map(key => RULES[key]!.toJSON());
 	}
 }

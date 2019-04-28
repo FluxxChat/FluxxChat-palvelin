@@ -150,6 +150,7 @@ export class FluxxChatServer {
 		conn.onMessage((_, message) => this.handleMessage(conn, message));
 		conn.onClose(() => this.removeConnection(conn));
 		conn.sendMessage({type: 'LANGUAGE_DATA', messages: localeMessages});
+		conn.sendMessage({type: 'SERVER_STATE', availableCards: Object.keys(RULES).map(key => RULES[key].toJSON())});
 	}
 
 	public async initializeModels() {
