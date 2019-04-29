@@ -19,7 +19,7 @@ export default class ActiveRule extends Model {
 	public id!: string;
 	public ruleName!: string;
 	public roomStateId!: string;
-	public userId!: string;
+	public userId: string | null;
 	public parameters!: string;
 	public createdAt!: string;
 }
