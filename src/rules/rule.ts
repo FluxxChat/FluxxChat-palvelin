@@ -27,7 +27,7 @@ export class EnabledRule {
 	constructor(rule: Rule, parameter: RuleParameters, playedBy?: Connection | null) {
 		this.rule = rule;
 		this.parameters = parameter;
-		(playedBy) ? this.playedBy = playedBy : this.playedBy = null;
+		this.playedBy = playedBy || null;
 	}
 
 	public applyTextMessage(message: TextMessage, sender: Connection) {

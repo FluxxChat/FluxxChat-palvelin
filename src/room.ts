@@ -20,7 +20,7 @@ import {Connection} from './connection';
 import {RoomStateMessage, RoomParameters, Message, RuleParameters, SystemMessage, Severity} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
 import {RULES} from './rules/active-rules';
-import {enabledRulefromCard} from './util';
+import {enabledRuleFromCard} from './util';
 import ErrorMessage from './lib/error';
 import * as events from './event-models';
 import * as tf from '@tensorflow/tfjs';
@@ -45,7 +45,7 @@ export class Room {
 	public nStartingHand: number = DEFAULT_N_STARTING_HAND;
 	public nDraw: number = DEFAULT_N_DRAW;
 	public nPlay: number = DEFAULT_N_PLAY;
-	public nMaxHand: number | null = DEFAULT_N_MAX_HAND;
+	public nMaxHand: number | null = DEFAULT_N_MAX_HAND; // null indicates no hand limit
 	public cardDistribution: string[];
 
 	public modelFI: tf.Sequential;
@@ -57,18 +57,21 @@ export class Room {
 
 		this.cardDistribution = [];
 
-		for (const ruleName of Object.keys(RULES)) {
-			this.cardDistribution.push(ruleName);
-		}
-
 		if (params) {
 			if (params.turnLength) { this.turnLength = params.turnLength; }
 			if (params.nStartingHand) { this.nStartingHand = params.nStartingHand; }
 			if (params.nDraw) { this.nDraw = params.nDraw; }
 			if (params.nPlay) { this.nPlay = params.nPlay; }
 			if (params.nMaxHand) { this.nMaxHand = params.nMaxHand; }
-			if (params.deck) {this.cardDistribution = this.getDistribution(params.deck); }
-			if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRulefromCard(card))); }
+			if (params.deck) { this.cardDistribution = this.getDistribution(params.deck); }
+			if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRuleFromCard(card))); }
+		}
+
+		// default card distribution for when no deck is specified
+		if (!params || !params.deck) {
+			for (const ruleName of Object.keys(RULES)) {
+				this.cardDistribution.push(ruleName);
+			}
 		}
 	}
 

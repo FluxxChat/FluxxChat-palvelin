@@ -30,6 +30,6 @@ export function intersection<T>(setA: Set<T>, setB: Set<T>): Set<T> {
 	return _intersection;
 }
 
-export function enabledRulefromCard(card: Card, player?: Connection): EnabledRule {
+export function enabledRuleFromCard(card: Card, player?: Connection): EnabledRule {
 	return new EnabledRule(RULES[card.ruleName], card.parameters, player ? player : null);
 }
