@@ -67,7 +67,7 @@ export class Room {
 			if (params.nDraw) { this.nDraw = params.nDraw; }
 			if (params.nPlay) { this.nPlay = params.nPlay; }
 			if (params.nMaxHand) { this.nMaxHand = params.nMaxHand; }
-			if (params.deck) {this.cardDistribution = this.getDistribution(params.deck);}
+			if (params.deck) {this.cardDistribution = this.getDistribution(params.deck); }
 			if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRulefromCard(card))); }
 		}
 	}
