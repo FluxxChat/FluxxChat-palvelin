@@ -22,12 +22,12 @@ import {Room} from '../room';
 export class EnabledRule {
 	public rule: Rule;
 	public parameters: RuleParameters;
-	public playedBy: Connection;
+	public playedBy: Connection | null;
 
-	constructor(rule: Rule, parameter: RuleParameters, playedBy: Connection) {
+	constructor(rule: Rule, parameter: RuleParameters, playedBy?: Connection | null) {
 		this.rule = rule;
 		this.parameters = parameter;
-		this.playedBy = playedBy;
+		this.playedBy = playedBy || null;
 	}
 
 	public applyTextMessage(message: TextMessage, sender: Connection) {
