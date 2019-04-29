@@ -59,6 +59,9 @@
         "rule.predictWord.title": "Word Suggestions",
         "rule.predictWord.description": "Get word suggestions to finish your sentences.",
         "rule.disablePredictWord.title": "Disable word suggestions",
+        "rule.shooting.title": "Shooting",
+        "rule.shooting.description": "Forbid using lower case letters",
+        "rule.noShooting.title": "Disable Shooting",
         "verb": "verbs",
         "adjective": "adjectives",
         "noun": "nouns"
@@ -123,6 +126,9 @@
         "rule.predictWord.title": "Sanaehdotukset",
         "rule.predictWord.description": "Saa sanaehdotuksia auttamaan viestien kirjoittamista.",
         "rule.disablePredictWord.title": "Ei sanaehdotuksia",
+        "rule.shooting.title": "Huutaminen",
+        "rule.shooting.description": "Kiellä pienten kirjainten käyttö",
+        "rule.noShooting.title": "Kumoa huutaminen",
         "verb": "verbit",
         "adjective": "adjektiivit",
         "noun": "substantiivit"
