@@ -49,11 +49,11 @@ export class Room {
 		this.cardDistribution = [];
 
 		if (params) {
-			if (params.turnLength) { this.turnLength = params.turnLength; }
-			if (params.nStartingHand) { this.nStartingHand = params.nStartingHand; }
-			if (params.nDraw) { this.nDraw = params.nDraw; }
-			if (params.nPlay) { this.nPlay = params.nPlay; }
-			if (params.nMaxHand) { this.nMaxHand = params.nMaxHand; }
+			if (params.turnLength) { this.turnLength = Math.max(1, params.turnLength); }
+			if (params.nStartingHand) { this.nStartingHand = Math.max(0, params.nStartingHand); }
+			if (params.nDraw) { this.nDraw = Math.max(0, params.nDraw); }
+			if (params.nPlay) { this.nPlay = Math.max(0, params.nPlay); }
+			if (params.nMaxHand) { this.nMaxHand = Math.max(0, params.nMaxHand); }
 			if (params.deck) { this.cardDistribution = this.getDistribution(params.deck); }
 			if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRuleFromCard(card))); }
 		}
