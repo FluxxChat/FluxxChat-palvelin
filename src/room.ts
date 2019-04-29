@@ -32,6 +32,11 @@ const DEFAULT_N_STARTING_HAND = 5;
 const DEFAULT_N_DRAW = 3;
 const DEFAULT_N_PLAY = 3;
 const DEFAULT_N_MAX_HAND = null;
+const MIN_TURN_LENGTH = 10;
+const MIN_N_STARTING_HAND = 1;
+const MIN_N_DRAW = 1;
+const MIN_N_PLAY = 1;
+const MIN_N_MAX_HAND = 1;
 
 export class Room {
 	public id = uuid.v4();
@@ -58,11 +63,41 @@ export class Room {
 		this.cardDistribution = [];
 
 		if (params) {
-			if (params.turnLength) { this.turnLength = params.turnLength; }
-			if (params.nStartingHand) { this.nStartingHand = params.nStartingHand; }
-			if (params.nDraw) { this.nDraw = params.nDraw; }
-			if (params.nPlay) { this.nPlay = params.nPlay; }
-			if (params.nMaxHand) { this.nMaxHand = params.nMaxHand; }
+			if (params.turnLength) { 
+				if(params.turnLength < MIN_TURN_LENGTH) {
+					this.turnLength = MIN_TURN_LENGTH;
+				} else {
+					this.turnLength = params.turnLength; 
+				}
+			}
+			if (params.nStartingHand) {
+				if (params.nStartingHand < MIN_N_STARTING_HAND) {
+					this.nStartingHand = MIN_N_STARTING_HAND;
+				} else {
+					this.nStartingHand = params.nStartingHand;
+				}
+			}
+			if (params.nDraw) {
+				if (params.nDraw < MIN_N_DRAW) {
+					this.nDraw = MIN_N_DRAW;
+				} else {
+					this.nDraw = params.nDraw;
+				}
+			}
+			if (params.nPlay) { 
+				if (params.nPlay < MIN_N_PLAY) {
+					this.nPlay = MIN_N_PLAY;
+				} else {
+					this.nPlay = params.nPlay; 
+				}
+			}
+			if (params.nMaxHand) { 
+				if (params.nMaxHand < MIN_N_MAX_HAND) {
+					this.nMaxHand = MIN_N_MAX_HAND;
+				} else {
+					this.nMaxHand = params.nMaxHand;
+				}
+			}
 			if (params.deck) { this.cardDistribution = this.getDistribution(params.deck); }
 			if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRuleFromCard(card))); }
 		}
