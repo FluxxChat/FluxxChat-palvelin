@@ -19,10 +19,10 @@ import {Rule, RuleBase} from './rule';
 import {TextMessage, RuleParameters} from 'fluxxchat-protokolla';
 import {Connection} from '../connection';
 
-export class ShootingRule extends RuleBase implements Rule {
-	public title = 'rule.shooting.title';
-	public description = 'rule.shooting.description';
-	public ruleName = 'shooting';
+export class ShoutingRule extends RuleBase implements Rule {
+	public title = 'rule.shouting.title';
+	public description = 'rule.shouting.description';
+	public ruleName = 'shouting';
 
 	public isValidMessage(_parameters: RuleParameters, message: TextMessage, _sender: Connection) {
 		return message.textContent.toUpperCase() === message.textContent;

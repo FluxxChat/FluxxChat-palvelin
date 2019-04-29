@@ -32,7 +32,7 @@ import {NoEmojisRule} from './emoji-rule';
 import {StatisticsRule} from './statistics-rule';
 import {NoRemovingRule} from './no-removing-rule';
 import {PredictWordRule} from './predict-word-rule';
-import {ShootingRule} from './shouting-rule';
+import {ShoutingRule} from './shouting-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_MIN_LENGTH = new MessageMinLengthRule();
@@ -52,7 +52,7 @@ const NO_EMOJIS = new NoEmojisRule();
 const STATISTICS = new StatisticsRule();
 const NO_REMOVING = new NoRemovingRule();
 const PREDICT_WORD = new PredictWordRule();
-const SHOOTING = new ShootingRule();
+const SHOUTING = new ShoutingRule();
 
 export const RULES: {[key: string]: Rule} = {
 	anonymity: ANONYMITY,
@@ -88,7 +88,7 @@ export const RULES: {[key: string]: Rule} = {
 	allow_removing: new DisablingRule([NO_REMOVING], 'allow_removing', 'rule.allowRemoving.title'),
 	predict_word: PREDICT_WORD,
 	disable_predict_word: new DisablingRule([PREDICT_WORD], 'disable_predict_word', 'rule.disablePredictWord.title'),
-	shooting: SHOOTING,
-	no_shooting: new DisablingRule([SHOOTING], 'no_shooting', 'rule.noShooting.title'),
+	shooting: SHOUTING,
+	no_shouting: new DisablingRule([SHOUTING], 'no_shouting', 'rule.noShouting.title'),
 	disable_all: new DisablingRule(_r => true, 'disable_all', 'rule.disableAll.title', 'rule.disableAll.description')
 };
