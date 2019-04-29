@@ -88,7 +88,7 @@ export const RULES: {[key: string]: Rule} = {
 	allow_removing: new DisablingRule([NO_REMOVING], 'allow_removing', 'rule.allowRemoving.title'),
 	predict_word: PREDICT_WORD,
 	disable_predict_word: new DisablingRule([PREDICT_WORD], 'disable_predict_word', 'rule.disablePredictWord.title'),
-	shooting: SHOUTING,
+	shouting: SHOUTING,
 	no_shouting: new DisablingRule([SHOUTING], 'no_shouting', 'rule.noShouting.title'),
 	disable_all: new DisablingRule(_r => true, 'disable_all', 'rule.disableAll.title', 'rule.disableAll.description')
 };
