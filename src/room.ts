@@ -23,9 +23,6 @@ import {RULES} from './rules/active-rules';
 import {enabledRuleFromCard} from './util';
 import ErrorMessage from './lib/error';
 import * as events from './event-models';
-import * as tf from '@tensorflow/tfjs';
-import tokenizerFI from './models/FI/tokenizer.json';
-import tokenizerEN from './models/EN/tokenizer.json';
 
 const DEFAULT_TURN_LENGTH = 120; // in seconds
 const DEFAULT_N_STARTING_HAND = 5;
@@ -48,13 +45,7 @@ export class Room {
 	public nMaxHand: number | null = DEFAULT_N_MAX_HAND; // null indicates no hand limit
 	public cardDistribution: string[];
 
-	public modelFI: tf.Sequential;
-	public modelEN: tf.Sequential;
-
-	constructor(modelFI: tf.Sequential, modelEN: tf.Sequential, params?: RoomParameters) {
-		this.modelFI = modelFI;
-		this.modelEN = modelEN;
-
+	constructor(params?: RoomParameters) {
 		this.cardDistribution = [];
 
 		if (params) {
@@ -230,26 +221,6 @@ export class Room {
 
 		// Wait for database insertions to finish
 		Promise.all(dbInserts);
-	}
-
-	public predictNextWord(seedText: string, language: string): string {
-		const words = seedText.split(' ').filter(word => word.length > 1 || word.match(/^[a-zA-Z0-9]/));
-		if (words.length > 1 && seedText.lastIndexOf(' ') === seedText.length - 1) {
-			const model: tf.Sequential = language === 'fi' ? this.modelFI : this.modelEN;
-			const tokenizer: any = language === 'fi' ? tokenizerFI : tokenizerEN;
-			let firstWord: number = tokenizer.word_index[words[words.length - 2]];
-			let secondWord: number = tokenizer.word_index[words[words.length - 1]];
-			if (!firstWord) {
-				firstWord = tokenizer.word_index[Math.floor(Math.random() * Object.keys(tokenizer.word_index).length / 3)];
-			}
-			if (!secondWord) {
-				secondWord = tokenizer.word_index[Math.floor(Math.random() * Object.keys(tokenizer.word_index).length / 3)];
-			}
-			const prediction = model.predict(tf.tensor2d([firstWord, secondWord], [1, 2], 'float32')) as tf.Tensor2D;
-			const predictedClass = tf.argMax(prediction, -1).arraySync() as number;
-			return tokenizer.index_word[predictedClass];
-		}
-		return '';
 	}
 
 	private getStateMessage(): RoomStateMessage {
