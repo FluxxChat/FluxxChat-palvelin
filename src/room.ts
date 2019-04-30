@@ -17,18 +17,30 @@
 
 import uuid from 'uuid';
 import {Connection} from './connection';
-import {RoomStateMessage, RoomParameters, Message, RuleParameters, SystemMessage, Severity} from 'fluxxchat-protokolla';
+import {RoomStateMessage, RoomParameters, Message, RuleParameters, SystemMessage, Severity, ServerStateMessage} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
 import {RULES} from './rules/active-rules';
 import {enabledRuleFromCard} from './util';
 import ErrorMessage from './lib/error';
 import * as events from './event-models';
+import yaml from 'js-yaml';
+import fs from 'fs';
 
-const DEFAULT_TURN_LENGTH = 120; // in seconds
-const DEFAULT_N_STARTING_HAND = 5;
-const DEFAULT_N_DRAW = 3;
-const DEFAULT_N_PLAY = 3;
-const DEFAULT_N_MAX_HAND = null;
+let serverConfig: ServerStateMessage = {type: 'SERVER_STATE'};
+
+try {
+	serverConfig = yaml.safeLoad(fs.readFileSync('server-config.yaml', 'utf8'));
+} catch (e) {
+	console.log('Failed to load server settings:'); // tslint:disable-line:no-console
+	console.log(e); // tslint:disable-line:no-console
+}
+
+const DEFAULT_SERVER_STATE = serverConfig;
+const DEFAULT_TURN_LENGTH = ((DEFAULT_SERVER_STATE.defaultRoomParameters && DEFAULT_SERVER_STATE.defaultRoomParameters.turnLength) ? DEFAULT_SERVER_STATE.defaultRoomParameters.turnLength : 120); // in seconds
+const DEFAULT_N_STARTING_HAND = ((DEFAULT_SERVER_STATE.defaultRoomParameters && DEFAULT_SERVER_STATE.defaultRoomParameters.nStartingHand) ? DEFAULT_SERVER_STATE.defaultRoomParameters.nStartingHand : 5);
+const DEFAULT_N_DRAW = ((DEFAULT_SERVER_STATE.defaultRoomParameters && DEFAULT_SERVER_STATE.defaultRoomParameters.nDraw) ? DEFAULT_SERVER_STATE.defaultRoomParameters.nDraw : 3);
+const DEFAULT_N_PLAY = ((DEFAULT_SERVER_STATE.defaultRoomParameters && DEFAULT_SERVER_STATE.defaultRoomParameters.nPlay) ? DEFAULT_SERVER_STATE.defaultRoomParameters.nPlay : 3);
+const DEFAULT_N_MAX_HAND = ((DEFAULT_SERVER_STATE.defaultRoomParameters && DEFAULT_SERVER_STATE.defaultRoomParameters.nMaxHand) ? DEFAULT_SERVER_STATE.defaultRoomParameters.nMaxHand : null);
 
 export class Room {
 	public id = uuid.v4();
@@ -46,6 +58,7 @@ export class Room {
 	public cardDistribution: string[];
 
 	constructor(params?: RoomParameters) {
+
 		this.cardDistribution = [];
 
 		if (params) {
@@ -67,6 +80,7 @@ export class Room {
 	}
 
 	public addConnection(newPlayer: Connection) {
+
 		if (this.connections.length === 0) {
 			this.activePlayer = newPlayer;
 			this.setTimer();
