@@ -25,8 +25,8 @@ import FImodelJSON from '../models/FI/model.json';
 import ENmodelJSON from '../models/EN/model.json';
 import * as fs from 'fs';
 
-var modelFI: tf.Sequential;
-var modelEN: tf.Sequential;
+let modelFI: tf.Sequential;
+let modelEN: tf.Sequential;
 if (process.env.ENABLE_PREDICTION) {
 	initializeModels();
 }
