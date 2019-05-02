@@ -25,6 +25,8 @@ import FImodelJSON from '../models/FI/model.json';
 import ENmodelJSON from '../models/EN/model.json';
 import * as fs from 'fs';
 
+var modelFI: tf.Sequential;
+var modelEN: tf.Sequential;
 if (process.env.ENABLE_PREDICTION) {
 	initializeModels();
 }
@@ -34,6 +36,8 @@ export class PredictWordRule extends RuleBase implements Rule {
 	public description = 'rule.predictWord.description';
 	public ruleName = 'predict_word';
 	public parameterTypes = {} as RuleParameterTypes;
+	public modelFI: tf.Sequential = modelFI;
+	public modelEN: tf.Sequential = modelEN;
 
 	public applyTextMessage(_parameters: RuleParameters, message: TextMessage, sender: Connection): TextMessage {
 		if (message.validateOnly) {
@@ -63,7 +67,7 @@ function initializeModels() {
 					weightsManifestEntries.push({name: entry.name, shape: entry.shape, dtype: 'float32'});
 				});
 				const assignModel = async (weightData: ArrayBuffer) => {
-					this.modelFI = await tf.loadLayersModel(tf.io.fromMemory(
+					modelFI = await tf.loadLayersModel(tf.io.fromMemory(
 						FImodelJSON.modelTopology,
 						weightsManifestEntries,
 						weightData
@@ -83,7 +87,7 @@ function initializeModels() {
 				weightsManifestEntries.push({name: entry.name, shape: entry.shape, dtype: 'float32'});
 			});
 			const assignModel = async (weightData: ArrayBuffer) => {
-				this.modelEN = await tf.loadLayersModel(tf.io.fromMemory(
+				modelEN = await tf.loadLayersModel(tf.io.fromMemory(
 					ENmodelJSON.modelTopology,
 					weightsManifestEntries,
 					weightData
@@ -97,7 +101,7 @@ function initializeModels() {
 function predictNextWord(seedText: string, language: string): string {
 	const words = seedText.split(' ').filter(word => word.length > 1 || word.match(/^[a-zA-Z0-9]/));
 	if (words.length > 1 && seedText.lastIndexOf(' ') === seedText.length - 1) {
-		const model: tf.Sequential = language === 'fi' ? this.modelFI : this.modelEN;
+		const model: tf.Sequential = language === 'fi' ? modelFI : modelEN;
 		const tokenizer: any = language === 'fi' ? tokenizerFI : tokenizerEN;
 		let firstWord: number = tokenizer.word_index[words[words.length - 2]];
 		let secondWord: number = tokenizer.word_index[words[words.length - 1]];
