@@ -36,8 +36,6 @@ export class PredictWordRule extends RuleBase implements Rule {
 	public description = 'rule.predictWord.description';
 	public ruleName = 'predict_word';
 	public parameterTypes = {} as RuleParameterTypes;
-	public modelFI: tf.Sequential = modelFI;
-	public modelEN: tf.Sequential = modelEN;
 
 	public applyTextMessage(_parameters: RuleParameters, message: TextMessage, sender: Connection): TextMessage {
 		if (message.validateOnly) {
