@@ -1,0 +1,9 @@
+---
+type: "SERVER_STATE"
+defaultRoomParameters:
+  turnLength:     120
+  nStartingHand:  5
+  nDraw:          3
+  nPlay:          3
+  nMaxHand:       null
+# when deck is left undefined, it includes one of each existing card defined in source code

@@ -24,12 +24,6 @@ import {enabledRuleFromCard} from './util';
 import ErrorMessage from './lib/error';
 import * as events from './event-models';
 
-const DEFAULT_TURN_LENGTH = 120; // in seconds
-const DEFAULT_N_STARTING_HAND = 5;
-const DEFAULT_N_DRAW = 3;
-const DEFAULT_N_PLAY = 3;
-const DEFAULT_N_MAX_HAND = null;
-
 export class Room {
 	public id = uuid.v4();
 	public stateId = uuid.v4();
@@ -38,35 +32,36 @@ export class Room {
 	public activePlayer: Connection | null;
 	public turnTimer: NodeJS.Timeout;
 	public turnEndTime: number;
-	public turnLength: number = DEFAULT_TURN_LENGTH;
-	public nStartingHand: number = DEFAULT_N_STARTING_HAND;
-	public nDraw: number = DEFAULT_N_DRAW;
-	public nPlay: number = DEFAULT_N_PLAY;
-	public nMaxHand: number | null = DEFAULT_N_MAX_HAND; // null indicates no hand limit
+	public turnLength: number;
+	public nStartingHand: number;
+	public nDraw: number;
+	public nPlay: number;
+	public nMaxHand: number | null; // null indicates no hand limit
 	public cardDistribution: string[];
 
-	constructor(params?: RoomParameters) {
-		this.cardDistribution = [];
+	constructor(params: RoomParameters) {
 
-		if (params) {
-			if (params.turnLength) { this.turnLength = Math.max(1, params.turnLength); }
-			if (params.nStartingHand) { this.nStartingHand = Math.max(0, params.nStartingHand); }
-			if (params.nDraw) { this.nDraw = Math.max(0, params.nDraw); }
-			if (params.nPlay) { this.nPlay = Math.max(0, params.nPlay); }
-			if (params.nMaxHand) { this.nMaxHand = Math.max(0, params.nMaxHand); }
-			if (params.deck) { this.cardDistribution = this.getDistribution(params.deck); }
-			if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRuleFromCard(card))); }
-		}
-
-		// default card distribution for when no deck is specified
-		if (!params || !params.deck) {
+		// the one's with exclamation points need to be defined in defaultDefaultRoomParameters
+		this.turnLength = Math.max(1, params.turnLength!);
+		this.nStartingHand = Math.max(0, params.nStartingHand!);
+		this.nDraw = Math.max(0, params.nDraw!);
+		this.nPlay = Math.max(0, params.nPlay!);
+		this.nMaxHand = params.nMaxHand ? Math.max(0, params.nMaxHand) : null;
+		if (params.deck) {
+			this.cardDistribution = this.getDistribution(params.deck);
+		} else {
+			// default card distribution for when no deck is specified
+			this.cardDistribution = [];
 			for (const ruleName of Object.keys(RULES)) {
 				this.cardDistribution.push(ruleName);
 			}
 		}
+		if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRuleFromCard(card))); }
+
 	}
 
 	public addConnection(newPlayer: Connection) {
+
 		if (this.connections.length === 0) {
 			this.activePlayer = newPlayer;
 			this.setTimer();
