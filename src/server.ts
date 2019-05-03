@@ -16,7 +16,7 @@
  */
 
 import uuid from 'uuid';
-import {Message, RoomCreatedMessage, RoomParameters, RuleParameters, TextMessage, SystemMessage} from 'fluxxchat-protokolla';
+import {Message, RoomCreatedMessage, RoomParameters, RuleParameters, TextMessage, SystemMessage, ServerStateMessage} from 'fluxxchat-protokolla';
 import {Connection} from './connection';
 import {Room} from './room';
 import {RULES} from './rules/active-rules';
@@ -24,6 +24,32 @@ import {Rule} from './rules/rule';
 import ErrorMessage from './lib/error';
 import localeMessages from './i18n/data.json';
 import * as events from './event-models';
+import yaml from 'js-yaml';
+import fs from 'fs';
+
+let serverConfig: ServerStateMessage = {type: 'SERVER_STATE'};
+
+try {
+	serverConfig = yaml.safeLoad(fs.readFileSync('server-config.yaml', 'utf8'));
+} catch (e) {
+	console.log('Failed to load server settings:'); // tslint:disable-line:no-console
+	console.log(e); // tslint:disable-line:no-console
+}
+
+// for when the server doesn't send any defaults
+// turnLength, nStartingHand, nDraw and nPlay HAVE TO BE DEFINED here, see constructor of room.ts
+const defaultDefaultRoomParameters = {
+	turnLength: 120,
+	nStartingHand: 5,
+	nDraw: 3,
+	nPlay: 3,
+	nMaxHand: null
+};
+
+const defaultRoomParameters = {
+	...defaultDefaultRoomParameters,
+	...serverConfig.defaultRoomParameters
+};
 
 export class FluxxChatServer {
 	private connections: Connection[] = [];
@@ -144,7 +170,7 @@ export class FluxxChatServer {
 		this.connections.push(conn);
 		conn.onMessage((_, message) => this.handleMessage(conn, message));
 		conn.onClose(() => this.removeConnection(conn));
-		conn.sendMessage({type: 'SERVER_STATE', availableCards: Object.keys(RULES).map(key => RULES[key].toJSON()), messages: localeMessages});
+		conn.sendMessage({type: 'SERVER_STATE', availableCards: Object.keys(RULES).map(key => RULES[key].toJSON()), messages: localeMessages, defaultRoomParameters});
 	}
 
 	private validateRuleParameters(conn: Connection, rule: Rule, ruleParameters: RuleParameters) {
@@ -207,8 +233,10 @@ export class FluxxChatServer {
 		conn.room.addRule(rule, parameters);
 	}
 
-	private createRoom(conn: Connection, params?: RoomParameters) {
+	private createRoom(conn: Connection, customParams?: RoomParameters) {
 		if (conn.room) { return; }
+
+		const params = {...defaultRoomParameters, ...customParams};
 
 		const room = new Room(params);
 		this.rooms[room.id] = room;

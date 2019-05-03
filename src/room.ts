@@ -17,30 +17,12 @@
 
 import uuid from 'uuid';
 import {Connection} from './connection';
-import {RoomStateMessage, RoomParameters, Message, RuleParameters, SystemMessage, Severity, ServerStateMessage} from 'fluxxchat-protokolla';
+import {RoomStateMessage, RoomParameters, Message, RuleParameters, SystemMessage, Severity} from 'fluxxchat-protokolla';
 import {EnabledRule, Rule} from './rules/rule';
 import {RULES} from './rules/active-rules';
 import {enabledRuleFromCard} from './util';
 import ErrorMessage from './lib/error';
 import * as events from './event-models';
-import yaml from 'js-yaml';
-import fs from 'fs';
-
-let serverConfig: ServerStateMessage = {type: 'SERVER_STATE'};
-
-try {
-	serverConfig = yaml.safeLoad(fs.readFileSync('server-config.yaml', 'utf8'));
-} catch (e) {
-	console.log('Failed to load server settings:'); // tslint:disable-line:no-console
-	console.log(e); // tslint:disable-line:no-console
-}
-
-const DEFAULT_SERVER_STATE = serverConfig;
-const DEFAULT_TURN_LENGTH = ((DEFAULT_SERVER_STATE.defaultRoomParameters && DEFAULT_SERVER_STATE.defaultRoomParameters.turnLength) ? DEFAULT_SERVER_STATE.defaultRoomParameters.turnLength : 120); // in seconds
-const DEFAULT_N_STARTING_HAND = ((DEFAULT_SERVER_STATE.defaultRoomParameters && DEFAULT_SERVER_STATE.defaultRoomParameters.nStartingHand) ? DEFAULT_SERVER_STATE.defaultRoomParameters.nStartingHand : 5);
-const DEFAULT_N_DRAW = ((DEFAULT_SERVER_STATE.defaultRoomParameters && DEFAULT_SERVER_STATE.defaultRoomParameters.nDraw) ? DEFAULT_SERVER_STATE.defaultRoomParameters.nDraw : 3);
-const DEFAULT_N_PLAY = ((DEFAULT_SERVER_STATE.defaultRoomParameters && DEFAULT_SERVER_STATE.defaultRoomParameters.nPlay) ? DEFAULT_SERVER_STATE.defaultRoomParameters.nPlay : 3);
-const DEFAULT_N_MAX_HAND = ((DEFAULT_SERVER_STATE.defaultRoomParameters && DEFAULT_SERVER_STATE.defaultRoomParameters.nMaxHand) ? DEFAULT_SERVER_STATE.defaultRoomParameters.nMaxHand : null);
 
 export class Room {
 	public id = uuid.v4();
@@ -50,33 +32,32 @@ export class Room {
 	public activePlayer: Connection | null;
 	public turnTimer: NodeJS.Timeout;
 	public turnEndTime: number;
-	public turnLength: number = DEFAULT_TURN_LENGTH;
-	public nStartingHand: number = DEFAULT_N_STARTING_HAND;
-	public nDraw: number = DEFAULT_N_DRAW;
-	public nPlay: number = DEFAULT_N_PLAY;
-	public nMaxHand: number | null = DEFAULT_N_MAX_HAND; // null indicates no hand limit
+	public turnLength: number;
+	public nStartingHand: number;
+	public nDraw: number;
+	public nPlay: number;
+	public nMaxHand: number | null; // null indicates no hand limit
 	public cardDistribution: string[];
 
-	constructor(params?: RoomParameters) {
+	constructor(params: RoomParameters) {
 
-		this.cardDistribution = [];
-
-		if (params) {
-			if (params.turnLength) { this.turnLength = Math.max(1, params.turnLength); }
-			if (params.nStartingHand) { this.nStartingHand = Math.max(0, params.nStartingHand); }
-			if (params.nDraw) { this.nDraw = Math.max(0, params.nDraw); }
-			if (params.nPlay) { this.nPlay = Math.max(0, params.nPlay); }
-			if (params.nMaxHand) { this.nMaxHand = Math.max(0, params.nMaxHand); }
-			if (params.deck) { this.cardDistribution = this.getDistribution(params.deck); }
-			if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRuleFromCard(card))); }
-		}
-
-		// default card distribution for when no deck is specified
-		if (!params || !params.deck) {
+		// the one's with exclamation points need to be defined in defaultDefaultRoomParameters
+		this.turnLength = Math.max(1, params.turnLength!);
+		this.nStartingHand = Math.max(0, params.nStartingHand!);
+		this.nDraw = Math.max(0, params.nDraw!);
+		this.nPlay = Math.max(0, params.nPlay!);
+		this.nMaxHand = params.nMaxHand ? Math.max(0, params.nMaxHand) : null;
+		if (params.deck) {
+			this.cardDistribution = this.getDistribution(params.deck);
+		} else {
+			// default card distribution for when no deck is specified
+			this.cardDistribution = [];
 			for (const ruleName of Object.keys(RULES)) {
 				this.cardDistribution.push(ruleName);
 			}
 		}
+		if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRuleFromCard(card))); }
+
 	}
 
 	public addConnection(newPlayer: Connection) {
