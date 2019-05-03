@@ -48,7 +48,7 @@ export class PredictWordRule extends RuleBase implements Rule {
 	}
 
 	public applyRoomStateMessage(_parameters: RuleParameters, message: RoomStateMessage, _conn: Connection): RoomStateMessage {
-		return {...message, variables: {...message, wordSuggestions: true}};
+		return {...message, variables: {...message.variables, wordSuggestions: true}};
 	}
 }
 
