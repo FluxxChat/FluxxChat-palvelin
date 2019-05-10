@@ -29,9 +29,11 @@ const buildTable = (table: Knex.CreateTableBuilder, model: typeof MODELS[number]
 	const keys = Object.keys(model.jsonSchema.properties);
 
 	for (const colName of keys) {
-		const prop: {type: string; format?: string} = model.jsonSchema.properties[colName];
+		const prop: {type: string | string[]; format?: string} = model.jsonSchema.properties[colName];
 
-		if (prop.type === 'string') {
+		const type = Array.isArray(prop.type) ? prop.type[0] : prop.type;
+
+		if (type === 'string') {
 			if (prop.format === 'date-time') {
 				table.dateTime(colName);
 			} else {
@@ -39,11 +41,11 @@ const buildTable = (table: Knex.CreateTableBuilder, model: typeof MODELS[number]
 			}
 		}
 
-		if (prop.type === 'boolean') {
+		if (type === 'boolean') {
 			table.boolean(colName);
 		}
 
-		if (prop.type === 'number') {
+		if (type === 'number') {
 			table.float(colName);
 		}
 	}
