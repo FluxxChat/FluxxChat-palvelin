@@ -33,6 +33,7 @@ import {StatisticsRule} from './statistics-rule';
 import {NoRemovingRule} from './no-removing-rule';
 import {PredictWordRule} from './predict-word-rule';
 import {ShoutingRule} from './shouting-rule';
+import { RoomParameterRule } from './room-parameter-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_MIN_LENGTH = new MessageMinLengthRule();
@@ -55,40 +56,62 @@ const PREDICT_WORD = new PredictWordRule();
 const SHOUTING = new ShoutingRule();
 
 export const RULES: {[key: string]: Rule} = {
-	anonymity: ANONYMITY,
 	message_min_length: MESSAGE_MIN_LENGTH,
 	message_max_length: MESSAGE_MAX_LENGTH,
 	no_message_length: new DisablingRule([MESSAGE_MAX_LENGTH, MESSAGE_MIN_LENGTH], 'no_message_length', 'rule.noMessageLength.title'),
+	
 	pos_max_limit: POS_MAX_LIMIT,
 	pos_min_limit: POS_MIN_LIMIT,
 	no_pos_limit: new DisablingRule([POS_MAX_LIMIT, POS_MIN_LIMIT], 'no_pos_limit', 'rule.noPosLimit.title'),
+	
 	haiku: HAIKU,
 	no_metre: new DisablingRule([HAIKU], 'no_metre', 'rule.noMetre.title'),
+	
 	mute: MUTE,
 	unmute_all: new DisablingRule([MUTE], 'unmute_all', 'rule.unmute.title'),
+	
 	chat_turns: CHAT_TURNS,
 	no_chat_turns: new DisablingRule([CHAT_TURNS], 'no_chat_turns', 'rule.noChatTurns.title'),
+	
 	markdown_formatting: MARKDOWN,
+	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting', 'rule.disableFormatting.title'),
+	
+	anonymity: ANONYMITY,
 	pseudonyms: PSEUDONYMS,
+	return_names: new DisablingRule([ANONYMITY, PSEUDONYMS], 'return_names', 'rule.returnNames.title'),
+
 	image_messages: IMAGE_MESSAGES,
 	no_image_messages: new DisablingRule([IMAGE_MESSAGES], 'no_image_messages', 'rule.disableImageMessages.title'),
+
 	audio_messages: AUDIO_MESSAGES,
 	no_audio_messages: new DisablingRule([AUDIO_MESSAGES], 'no_audio_messages', 'rule.disableAudioMessages.title'),
+
 	input_min_height: INPUT_MIN_HEIGHT,
 	no_input_min_height: new DisablingRule([INPUT_MIN_HEIGHT], 'no_input_min_height', 'rule.disableInputMinHeight.title'),
+
 	threads: THREADS,
 	no_threads: new DisablingRule([THREADS], 'no_threads', 'rule.disableThreads.title'),
-	disable_formatting: new DisablingRule([MARKDOWN], 'disable_formatting', 'rule.disableFormatting.title'),
-	return_names: new DisablingRule([ANONYMITY, PSEUDONYMS], 'return_names', 'rule.returnNames.title'),
+
 	no_emojis: NO_EMOJIS,
 	allow_emojis: new DisablingRule([NO_EMOJIS], 'allow_emojis', 'rule.allowEmojis.title'),
+
 	statistics: STATISTICS,
 	no_statistics: new DisablingRule([STATISTICS], 'no_statistics', 'rule.noStatistics.title'),
+
 	no_removing: NO_REMOVING,
 	allow_removing: new DisablingRule([NO_REMOVING], 'allow_removing', 'rule.allowRemoving.title'),
+
 	predict_word: PREDICT_WORD,
 	disable_predict_word: new DisablingRule([PREDICT_WORD], 'disable_predict_word', 'rule.disablePredictWord.title'),
+
 	shouting: SHOUTING,
 	no_shouting: new DisablingRule([SHOUTING], 'no_shouting', 'rule.noShouting.title'),
+
+	// No nStartingHand because it is pretty useless after people have joined the room
+	set_turn_length: new RoomParameterRule('turnLength', 'rule.setTurnLength.title', 'rule.setTurnLength.description', 'set_turn_length'),
+	set_n_draw: new RoomParameterRule('nDraw', 'rule.setNDraw.title', 'rule.setNDraw.description', 'set_n_draw'),
+	set_n_play: new RoomParameterRule('nPlay', 'rule.setNPlay.title', 'rule.setNPlay.description', 'set_n_play'),
+	set_n_max_hand: new RoomParameterRule('nMaxHand', 'rule.setNMaxHand.title', 'rule.setNMaxHand.description', 'set_n_max_hand'),
+
 	disable_all: new DisablingRule(_r => true, 'disable_all', 'rule.disableAll.title', 'rule.disableAll.description')
 };
