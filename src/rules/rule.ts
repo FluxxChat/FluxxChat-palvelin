@@ -24,10 +24,10 @@ export class EnabledRule {
 	public parameters: RuleParameters;
 	public playedBy: Connection | null;
 
-	constructor(rule: Rule, parameter: RuleParameters, playedBy?: Connection | null) {
+	constructor(rule: Rule, parameters: RuleParameters, playedBy: Connection | null) {
 		this.rule = rule;
-		this.parameters = parameter;
-		this.playedBy = playedBy || null;
+		this.parameters = parameters;
+		this.playedBy = playedBy;
 	}
 
 	public applyTextMessage(message: TextMessage, sender: Connection) {

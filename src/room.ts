@@ -56,8 +56,14 @@ export class Room {
 				this.cardDistribution.push(ruleName);
 			}
 		}
-		if (params.startingRules) { this.enabledRules.concat(params.startingRules.map(card => enabledRuleFromCard(card))); }
 
+		if (params.startingRules) {
+			for (const card of params.startingRules) {
+				const enabledStartingRule = enabledRuleFromCard(card);
+				this.enabledRules.push(enabledStartingRule);
+				RULES[card.ruleName].ruleEnabled(this, enabledStartingRule);
+			}
+		}
 	}
 
 	public addConnection(newPlayer: Connection) {

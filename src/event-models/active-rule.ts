@@ -5,12 +5,12 @@ export default class ActiveRule extends Model {
 
 	public static jsonSchema = {
 		type: 'object',
-		required: ['id', 'ruleName', 'roomStateId', 'userId', 'parameters', 'createdAt'],
+		required: ['id', 'ruleName', 'roomStateId', 'parameters', 'createdAt'],
 		properties: {
 			id: {type: 'string'},
 			ruleName: {type: 'string'},
 			roomStateId: {type: 'string'},
-			userId: {type: 'string'},
+			userId: {type: ['string', 'null']},
 			parameters: {type: 'string'},
 			createdAt: {type: 'string', format: 'date-time'}
 		}
