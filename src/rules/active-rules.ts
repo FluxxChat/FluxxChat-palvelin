@@ -33,7 +33,7 @@ import {StatisticsRule} from './statistics-rule';
 import {NoRemovingRule} from './no-removing-rule';
 import {PredictWordRule} from './predict-word-rule';
 import {ShoutingRule} from './shouting-rule';
-import { RoomParameterRule } from './room-parameter-rule';
+import {RoomParameterRule} from './room-parameter-rule';
 
 const ANONYMITY = new AnonymityRule();
 const MESSAGE_MIN_LENGTH = new MessageMinLengthRule();
