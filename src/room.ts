@@ -24,6 +24,9 @@ import {enabledRuleFromCard} from './util';
 import ErrorMessage from './lib/error';
 import * as events from './event-models';
 
+// a list of fields of Room that are numerical and can be changed by the RoomParameterRule
+export type NumericalRoomParameter = 'turnLength' | 'nStartingHand' | 'nDraw' | 'nPlay' | 'nMaxHand';
+
 export class Room {
 	public id = uuid.v4();
 	public stateId = uuid.v4();
@@ -238,7 +241,7 @@ export class Room {
 	}
 
 	private dealCards(conn: Connection, numCards: number) {
-		for (let i = 0; i < numCards; i++) {
+		for (let i = 0; i < numCards && (this.nMaxHand === null || conn.hand.length < this.nMaxHand!); i++) {
 			conn.hand.push(this.getRandomRuleName());
 		}
 	}
