@@ -241,7 +241,7 @@ export class Room {
 	}
 
 	private dealCards(conn: Connection, numCards: number) {
-		for (let i = 0; i < numCards; i++) {
+		for (let i = 0; i < numCards && (this.nMaxHand === null || conn.hand.length < this.nMaxHand!); i++) {
 			conn.hand.push(this.getRandomRuleName());
 		}
 	}
